@@ -8,7 +8,7 @@
 # We have attempted to detect the languages in your repository. Please check
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
-#
+
 name: "CodeQL"
 
 on:
@@ -68,3 +68,7 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+  build:
+    runs-on: ubuntu-latest
+    env:
+      FIB_INPUT: 10
