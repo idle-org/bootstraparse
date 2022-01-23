@@ -4,4 +4,4 @@ def fib(n: int) -> int:
 
 
 def test_fibonacci():
-    assert fib(10) == 54
+    assert fib(10) == 55
