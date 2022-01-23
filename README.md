@@ -1,2 +1,2 @@
 # bootstraparse
-A python parser to create html for you
+Bootstraparse is a personal project started with a specific goal in mind: creating static html pages for direct display from a markdown-like file.
