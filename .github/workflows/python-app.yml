@@ -13,6 +13,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      FIB_INPUT: 10
 
     steps:
     - uses: actions/checkout@v2
