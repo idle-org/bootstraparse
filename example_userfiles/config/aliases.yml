@@ -1,0 +1,5 @@
+rest:
+  url: "https://example.org/primenumbers/v1"
+  port: 
+    default: 8443
+    custom: 2883
