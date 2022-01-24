@@ -1,10 +1,11 @@
 # Module sequencing the successive actions necessary for website building
 
-def bigmogol():
+def create_website():
     """
     First function called by bparse.py, calls all other modules in the right order.
     """
     pass
+
 
 def create_environment():
     """
@@ -12,11 +13,13 @@ def create_environment():
     """
     pass
 
+
 def create_config():
     """
     Returns globalConfig as an object from parser_config.yml settings.
     """
     pass
+
 
 def create_crawler():
     """
@@ -24,11 +27,13 @@ def create_crawler():
     """
     pass
 
+
 def create_user_config():
     """
     Returns userConfig as an object from aliases.yml, glossary.yml and website.yml.
     """
     pass
+
 
 def create_template():
     """
@@ -36,17 +41,20 @@ def create_template():
     """
     pass
 
+
 def env_checker():
     """
     Verify all is in order for initialisation of the parserEnvironment object and initialises.
     """
     pass
 
+
 def begin_crawling(pEnv):
     """
     Starts reading every file in the userfiles and adds them to the crawler object progressively.
     """
     pass
+
 
 def begin_preparsing(pEnv):
     """
@@ -55,15 +63,18 @@ def begin_preparsing(pEnv):
     """
     pass
 
+
 def begin_parsing(pEnv):
     """
     For each of the generated files, parses element after element and creates the graph representation of the website,
-    interacts with context_mngr.py to acertain integrity and deal with errors.
+    interacts with context_mngr.py to ascertain integrity and deal with errors.
     """
     pass
 
+
 def begin_export():
     """
-    Replaces all parsed values with their attributed correspondances as per the template_manager and exports the result as a website.
+    Replaces all parsed values with their attributed correspondances as per the template_manager
+    and exports the result as a website.
     """
     pass
