@@ -1,6 +1,7 @@
 # Module sequencing the successive actions necessary for website building
 
-import modules.config as config
+import bootstraparse.modules.config as config
+
 
 
 def create_website():

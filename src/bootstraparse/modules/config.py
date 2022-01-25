@@ -32,4 +32,4 @@ class GlobalConfig(ConfigLoader):
         super().__init__(configfile)
 
 
-conf = ConfigLoader("./example_userfiles/config/aliases.yml")
+# conf = ConfigLoader("./example_userfiles/config/aliases.yml")

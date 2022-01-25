@@ -1,0 +1,7 @@
+flake8==4.0.1
+tox==3.24.3
+pytest==6.2.5
+pytest-cov==2.12.1
+mypy===0.910
+pyyaml==6.0
+rich~=11.0.0
