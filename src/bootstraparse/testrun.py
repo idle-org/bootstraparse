@@ -1,10 +1,6 @@
-import modules.sitecreator as sitecreator
-from rich import print, pretty, inspect
+from bootstraparse.modules.pathresolver import bpath
+import bootstraparse.modules.sitecreator
 
 
-pretty.install()
-
-
-conf = sitecreator.create_config()
-print("[red]test",conf)
-inspect(conf)
+print(bpath())
+print(bootstraparse.modules.sitecreator.create_config())

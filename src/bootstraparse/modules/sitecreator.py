@@ -1,7 +1,7 @@
 # Module sequencing the successive actions necessary for website building
 
 import bootstraparse.modules.config as config
-
+from bootstraparse.modules.pathresolver import bpath
 
 
 def create_website():
@@ -24,7 +24,7 @@ def create_config():
     """
     Returns globalConfig as an object from parser_config.yml settings.
     """
-    return config.GlobalConfig("configs/parser_config.yml")
+    return config.GlobalConfig(bpath("configs/parser_config.yml"))
 
 
 def create_crawler():
