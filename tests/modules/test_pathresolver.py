@@ -2,7 +2,7 @@ import bootstraparse.modules.pathresolver as pathr
 import os
 import re
 
-pathlike_regexp = r'^[A-z]\:\\.+[/\\]src[/\\]bootstraparse[/\\]?$'
+pathlike_regexp = r'^([A-z]\:\\|/).+[/\\]src[/\\]bootstraparse[/\\]?$'
 test_path = '/a/b/c/test'
 test_path_win = test_path.replace('/', '\\')
 
@@ -10,7 +10,7 @@ test_path_win = test_path.replace('/', '\\')
 def test_pathresolver():
     path = pathr.pathresolver(test_path)
     assert path() == os.path.normpath(test_path)
-    assert path() == test_path_win
+    assert path().replace('/', '\\') == test_path_win
     assert path().replace('\\', '/') == test_path
 
 
