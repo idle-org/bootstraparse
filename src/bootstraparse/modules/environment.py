@@ -1,6 +1,9 @@
 # Module for containing super important variables
 
 
+import rich
+
+
 class environment():
     """
     Object containing all the important variables,
@@ -10,7 +13,7 @@ class environment():
 
     def __init__(self):
         # mandatoryParameters
-        self.mParams = {
+        self._mParams = {
             'config': None,
             'context_mngr': None,
             'export_mngr': None,
@@ -20,15 +23,35 @@ class environment():
             }
 
         # secondaryParameters
-        self.sParams = {
+        self._sParams = {
 
         }
 
         # Set all parameters to uninitialised
-        self.wasInitialised = {p: False for p in self.mParams}
+        self._wasInitialised = {p: False for p in self._mParams}
 
     def integritycheck(self):
-        for value in self.wasInitialised.values():
+        for value in self._wasInitialised.values():
             if value is False:
                 return False
         return True
+
+    def __getattr__(self, attribute):
+        if attribute[0] == "_":
+            super().__getattr__(attribute)
+        elif attribute in self._mParams:
+            return self._mParams[attribute]
+        elif attribute in self._sParams:
+            return self._sParams[attribute]
+        else: 
+            raise KeyError(attribute)
+
+    def __setattr__ (self, attribute, value):
+        if attribute[0] == "_":
+            super().__setattr__(attribute, value)
+        elif attribute in self._mParams:
+            self._mParams[attribute] = value
+        elif attribute in self._sParams:
+            self._sParams[attribute] = value
+        else: 
+            raise KeyError(attribute) #could also add attribute as a new entry
