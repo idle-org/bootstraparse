@@ -38,20 +38,20 @@ class environment():
 
     def __getattr__(self, attribute):
         if attribute[0] == "_":
-            super().__getattr__(attribute)
+            super().__getattribute__(attribute)
         elif attribute in self._mParams:
             return self._mParams[attribute]
         elif attribute in self._sParams:
             return self._sParams[attribute]
         else: 
-            raise KeyError(attribute)
+            raise AttributeError(attribute)
 
-    def __setattr__ (self, attribute, value):
+    def __setattr__(self, attribute, value):
         if attribute[0] == "_":
             super().__setattr__(attribute, value)
         elif attribute in self._mParams:
             self._mParams[attribute] = value
         elif attribute in self._sParams:
             self._sParams[attribute] = value
-        else: 
-            raise KeyError(attribute) #could also add attribute as a new entry
+        else:
+            raise AttributeError(attribute) # Could also add attribute as a new entry
