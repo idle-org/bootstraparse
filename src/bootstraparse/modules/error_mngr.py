@@ -5,7 +5,7 @@ import traceback
 import sys
 
 
-def initlogging(filename=None, loglevel="ERROR", filemode='w', handlers=None):
+def initlogging(filename=None, loglevel="ERROR", filemode='w', handler=None):
     """
     Initializes logging
     """
@@ -13,16 +13,16 @@ def initlogging(filename=None, loglevel="ERROR", filemode='w', handlers=None):
     if loglevel not in ["ERROR", "INFO", "WARNING", "DEBUG", "CRITICAL"]:
         print("Incorrect logging", loglevel + ". Defaulting to ERROR.")
         loglevel = "ERROR"
-    if handlers == "rich":
+    if handler == "rich":
         from rich.logging import RichHandler
-        handlers = [RichHandler()]
+        handler = [RichHandler()]
     else:
-        handlers = []
+        handler = []
 
     if filename is not None:
         logging.basicConfig(filename=filename, filemode=filemode, level=logging.__getattribute__(loglevel))
     else:
-        logging.basicConfig(level=logging.__getattribute__(loglevel), handlers=handlers)
+        logging.basicConfig(level=logging.__getattribute__(loglevel), handlers=handler)
 
 
 def log_exception(exception, level="ERROR"):
@@ -41,17 +41,19 @@ def log_exception(exception, level="ERROR"):
         logging.debug("A custom RichException has been raised")
         return
 
-def raiseE():
-    """
-    Raises an exception
-    """
-    raise Exception("The parser encountered an error")
 
+class ParsingError(Exception):
+    """
+    Exception class for parsing errors
+    """
 
-if __name__ == "__main__":
-    initlogging(handlers="rich", filename="test.log")
-    logging.error("This is a debug message")
-    try:
-        raiseE()
-    except Exception as e:
-        log_exception(e)
+    def init(self, message, line=None, column=None):
+        super().init(message)
+        self.line = line
+        self.column = column
+
+    def str(self):
+        if self.line is not None and self.column is not None:
+            return "Line " + str(self.line) + ":" + str(self.column) + ": " + self.args[0]
+        else:
+            return self.args[0]
