@@ -19,7 +19,9 @@ class environment():
             'export_mngr': None,
             'global_path': None,
             'user_path': None,
-            'logging': None,
+            'site_path': None,
+            'export': None,
+            'site_crawler': None,
             }
 
         # secondaryParameters
