@@ -47,12 +47,12 @@ class ParsingError(Exception):
     Exception class for parsing errors
     """
 
-    def init(self, message, line=None, column=None):
-        super().init(message)
+    def __init__(self, message, line=None, column=None):
+        super().__init__(message)
         self.line = line
         self.column = column
 
-    def str(self):
+    def __str__(self):
         if self.line is not None and self.column is not None:
             return "Line " + str(self.line) + ":" + str(self.column) + ": " + self.args[0]
         else:
