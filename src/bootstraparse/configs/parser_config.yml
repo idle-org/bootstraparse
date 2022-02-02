@@ -1,5 +1,17 @@
-name:
-  chaussette: "michel"
+global:
+  template: "bootstrap.yml"
+  verbosity: "debug"
+  output: "example_site/"
+  bootstrap_version: "3.3.7"
+  version: "0.0.1"
+  bootstrap_location: ""
 
-pasteque:
-  pasteque: "taboule"
+parsing:
+  includes: true
+  preparse: true
+  parse: true
+
+
+export:
+  intermediate_files: true
+  type: "html"
