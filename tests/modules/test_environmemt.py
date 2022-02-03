@@ -2,71 +2,71 @@ from logging import exception
 import bootstraparse.modules.environment as e
 
 
-def test_wasInitialised():
-    testcheck = e.environment()
-    for k in testcheck._wasInitialised.values():
+def test_was_initialised():
+    test_check = e.Environment()
+    for k in test_check._wasInitialised.values():
         assert k is False
 
 
-def test_integritycheck():
-    testcheck = e.environment()
-    customtest_p = [p for p in testcheck._mParams.keys()]
-    customtest_v = [False for p in testcheck._mParams.values()]
+def test_integrity_check():
+    test_check = e.Environment()
+    custom_test_p = [p for p in test_check._mParams.keys()]
+    custom_test_v = [False for p in test_check._mParams.values()]
     # Test all False
-    # rich.inspect(testcheck)
+    # rich.inspect(test_check)
 
-    assert testcheck.integritycheck() is False
+    assert test_check.integrity_check() is False
 
-    customtest_v[0] = True
-    testcheck._wasInitialised = dict(zip(customtest_p, customtest_v))
+    custom_test_v[0] = True
+    test_check._wasInitialised = dict(zip(custom_test_p, custom_test_v))
     # Test first False
-    # rich.inspect(testcheck)
+    # rich.inspect(test_check)
 
-    assert testcheck.integritycheck() is False
+    assert test_check.integrity_check() is False
 
-    customtest_v[0] = False
-    customtest_v[-1] = True
-    testcheck._wasInitialised = dict(zip(customtest_p, customtest_v))
+    custom_test_v[0] = False
+    custom_test_v[-1] = True
+    test_check._wasInitialised = dict(zip(custom_test_p, custom_test_v))
     # Test last False
-    # rich.inspect(testcheck)
+    # rich.inspect(test_check)
 
-    assert testcheck.integritycheck() is False
+    assert test_check.integrity_check() is False
 
-    customtest_v[-1] = False
-    customtest_v[len(customtest_v)//2-1] = True
-    testcheck._wasInitialised = dict(zip(customtest_p, customtest_v))
+    custom_test_v[-1] = False
+    custom_test_v[len(custom_test_v)//2-1] = True
+    test_check._wasInitialised = dict(zip(custom_test_p, custom_test_v))
     # Test middle False
-    # rich.inspect(testcheck)
+    # rich.inspect(test_check)
 
-    assert testcheck.integritycheck() is False
+    assert test_check.integrity_check() is False
 
-    customtest_v = [True for p in testcheck._mParams.values()]
-    testcheck._wasInitialised = dict(zip(customtest_p, customtest_v))
+    custom_test_v = [True for p in test_check._mParams.values()]
+    test_check._wasInitialised = dict(zip(custom_test_p, custom_test_v))
     # Test all True
-    # rich.inspect(testcheck)
+    # rich.inspect(test_check)
 
-    assert testcheck.integritycheck() is True
+    assert test_check.integrity_check() is True
 
 
 def test_getter():
-    testcheck = e.environment()
-    for p in testcheck._mParams:
-        assert testcheck.__getattr__(p) == testcheck._mParams[p]
+    test_check = e.Environment()
+    for p in test_check._mParams:
+        assert test_check.__getattr__(p) == test_check._mParams[p]
 
-    testcheck._sParams = {
-        "testparam": "testvalue"
+    test_check._sParams = {
+        "test_param": "test_value"
     }
-    assert testcheck.testparam == "testvalue"
+    assert test_check.test_param == "test_value"
 
     try:
-        testcheck.purposefullyunexistingparameter
+        test_check.purposefullyunexistingparameter
     except AttributeError:
         pass
     except Exception:
         assert False  # Not AttributeError when getting unexisting parameter
 
     try:
-        testcheck._purposefullyunexistingparameter
+        test_check._purposefullyunexistingparameter
     except AttributeError:
         pass
     except Exception:
@@ -74,26 +74,26 @@ def test_getter():
 
 
 def test_setter():
-    testcheck = e.environment()
-    for p in testcheck._mParams:
-        testcheck.__setattr__(p, "testvalue")
-        assert testcheck._mParams[p] == "testvalue"
+    test_check = e.Environment()
+    for p in test_check._mParams:
+        test_check.__setattr__(p, "test_value")
+        assert test_check._mParams[p] == "test_value"
 
-    testcheck._sParams = {
-        "testparam": "testvalue"
+    test_check._sParams = {
+        "test_param": "test_value"
     }
-    testcheck.testparam = "secondtestvalue"
-    assert testcheck.testparam == "secondtestvalue"
+    test_check.test_param = "second_test_value"
+    assert test_check.test_param == "second_test_value"
 
     try:
-        testcheck.purposefullyunexistingparameter = "testvalue"
+        test_check.purposefullyunexistingparameter = "test_value"
     except AttributeError:
         pass
     except Exception:
         assert False  # Not AttributeError when getting unexisting parameter
 
-    testcheck._purposefullyunexistingparameter = "testvalue"
-    assert testcheck._purposefullyunexistingparameter == "testvalue"
+    test_check._purposefullyunexistingparameter = "test_value"
+    assert test_check._purposefullyunexistingparameter == "test_value"
 
 
 if __name__ == "__main__":

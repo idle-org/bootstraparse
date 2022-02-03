@@ -4,7 +4,7 @@
 import rich
 
 
-class environment():
+class Environment:
     """
     Object containing all the important variables,
     with appropriate getters and setters.
@@ -32,7 +32,7 @@ class environment():
         # Set all parameters to uninitialised
         self._wasInitialised = {p: False for p in self._mParams}
 
-    def integritycheck(self):
+    def integrity_check(self):
         for value in self._wasInitialised.values():
             if value is False:
                 return False
@@ -56,4 +56,4 @@ class environment():
         elif attribute in self._sParams:
             self._sParams[attribute] = value
         else:
-            raise AttributeError(attribute) # Could also add attribute as a new entry
+            raise AttributeError(attribute)  # Could also add attribute as a new entry

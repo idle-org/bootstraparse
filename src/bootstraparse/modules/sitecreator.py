@@ -29,7 +29,7 @@ def create_config():
 
 def create_crawler():
     """
-    Returns crawler as an object for navigation in the userfiles.
+    Returns crawler as an object for navigation in the user files.
     """
     pass
 
@@ -58,7 +58,7 @@ def env_checker():
     pass
 
 
-def begin_crawling(pEnv):
+def begin_crawling(p_env):
     """
     Starts reading every file in the userfiles and
     adds them to the crawler object progressively.
@@ -66,7 +66,7 @@ def begin_crawling(pEnv):
     pass
 
 
-def begin_preparsing(pEnv):
+def begin_pre_parsing(p_env):
     """
     Create an importTree and checks for conflicts or loops;
     then replaces imports with their contents,
@@ -75,7 +75,7 @@ def begin_preparsing(pEnv):
     pass
 
 
-def begin_parsing(pEnv):
+def begin_parsing(p_env):
     """
     For each of the generated files,
     parses element after element and creates
@@ -89,7 +89,7 @@ def begin_parsing(pEnv):
 def begin_export():
     """
     Replaces all parsed values with their attributed
-    correspondances as per the template_manager
+    correspondences as per the template_manager
     and exports the result as a website.
     """
     pass
