@@ -1,1 +1,62 @@
 ::< _imported.bpr >
+
+~~article
+
+*italic*
+**bold**
+ 1. Lists
+
+[link]("http://test.icule") {style="underline=None;"}
+
+# Header # {style='height=44px'}
+## Header 2 ##
+
+~~ element oneline element~~ {class="bubuyo"}
+~~ element
+multiple
+lines
+element~~ {class="bubuyo"}
+
+| First header | Second Header | Third header |
+|--------------|-------:-------|-------------:|
+| First tab    | Second tab    | third tab    |
+|2 Big tab like very very big  | Third bab    |
+| Babada       |2   Very big babada           | {class= bigtable} #[skip,3,44,number=33]
+
+article~~
+
+~~header
+
+header~~
+
+
+@{custom_pict}
+@{sch/ht}
+@{vuln}[1]
+@{vuln/2}
+
+@{custom_pict}{class="watabuya"}[number=2, _important=22]
+@{custom_pict/wat}
+
+@[custom_permutation]
+
+@[custom_permutation]{class="bouyou"}[number=44]
+
+@[tab/b&w]
+{class="sjskq" zjak}
+
+::< whatever.vky > < whatever2.vky > (import file whatever.vky)
+
+.vky
+=> base.vky / .bky
+
+
+
+-------------------
+shortcuts.yaml
+    permutations
+    images/icons
+    glossaire
+
+navbar.yaml
+config.yaml
