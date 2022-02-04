@@ -23,11 +23,17 @@ class ConfigLoader:
 
 
 class UserConfig(ConfigLoader):
+    """
+    Reads user config file.
+    """
     def __init__(self, configfile):
         super().__init__(configfile)
 
 
 class GlobalConfig(ConfigLoader):
+    """
+    Reads global config file.
+    """
     def __init__(self, configfile):
         super().__init__(configfile)
 

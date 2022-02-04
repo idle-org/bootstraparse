@@ -30,12 +30,18 @@ class Environment:
         self._wasInitialised = {p: False for p in self._mParams}
 
     def integrity_check(self):
+        """
+        Checks if all mandatory parameters are set.
+        """
         for value in self._wasInitialised.values():
             if value is False:
                 return False
         return True
 
     def __getattr__(self, attribute):
+        """
+        Getter for all parameters.
+        """
         if attribute[0] == "_":
             super().__getattribute__(attribute)
         elif attribute in self._mParams:
@@ -46,6 +52,9 @@ class Environment:
             raise AttributeError(attribute)
 
     def __setattr__(self, attribute, value):
+        """
+        Setter for all parameters.
+        """
         if attribute[0] == "_":
             super().__setattr__(attribute, value)
         elif attribute in self._mParams:
