@@ -2,6 +2,5 @@
 from bootstraparse import bparse
 
 
-def test_totest():
-    assert bparse.totest() is None
-
+def test_to_test():
+    assert bparse.to_test() is None

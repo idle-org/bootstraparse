@@ -1,4 +1,4 @@
 # Main program, use this to start parsing
 
-def totest():
+def to_test():
     print("This is a test")

@@ -3,23 +3,23 @@
 import yaml
 
 
-class ConfigLoader():
+class ConfigLoader:
     """
     Reads config files.
     """
 
     def __init__(self, configfile):
         with open(configfile, "r") as f:
-            self.loadedconf = yaml.safe_load(f)
+            self.loaded_conf = yaml.safe_load(f)
 
     def __getitem__(self, item):
         try:
-            return self.loadedconf[item]
+            return self.loaded_conf[item]
         except KeyError:
             print("Argument", item, "not found.")
 
     def __repr__(self):
-        return(self.loadedconf.__repr__())
+        return self.loaded_conf.__repr__()
 
 
 class UserConfig(ConfigLoader):

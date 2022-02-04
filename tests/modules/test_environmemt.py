@@ -1,8 +1,7 @@
-from logging import exception
 import bootstraparse.modules.environment as e
 
 
-def test_was_initialised():
+def test_wasInitialised():
     test_check = e.Environment()
     for k in test_check._wasInitialised.values():
         assert k is False
@@ -11,7 +10,7 @@ def test_was_initialised():
 def test_integrity_check():
     test_check = e.Environment()
     custom_test_p = [p for p in test_check._mParams.keys()]
-    custom_test_v = [False for p in test_check._mParams.values()]
+    custom_test_v = [False for _ in test_check._mParams.values()]
     # Test all False
     # rich.inspect(test_check)
 
@@ -40,7 +39,7 @@ def test_integrity_check():
 
     assert test_check.integrity_check() is False
 
-    custom_test_v = [True for p in test_check._mParams.values()]
+    custom_test_v = [True for _ in test_check._mParams.values()]
     test_check._wasInitialised = dict(zip(custom_test_p, custom_test_v))
     # Test all True
     # rich.inspect(test_check)
@@ -59,18 +58,18 @@ def test_getter():
     assert test_check.test_param == "test_value"
 
     try:
-        test_check.purposefullyunexistingparameter
+        test_check.purposefully_non_existing_parameter
     except AttributeError:
         pass
     except Exception:
-        assert False  # Not AttributeError when getting unexisting parameter
+        assert False  # Not AttributeError when getting non-existing parameter
 
     try:
-        test_check._purposefullyunexistingparameter
+        test_check._purposefully_non_existing_parameter
     except AttributeError:
         pass
     except Exception:
-        assert False  # Not AttributeError when getting _unexisting parameter
+        assert False  # Not AttributeError when getting underscored non-existing parameter
 
 
 def test_setter():
@@ -86,14 +85,14 @@ def test_setter():
     assert test_check.test_param == "second_test_value"
 
     try:
-        test_check.purposefullyunexistingparameter = "test_value"
+        test_check.purposefully_non_existing_parameter = "test_value"
     except AttributeError:
         pass
     except Exception:
-        assert False  # Not AttributeError when getting unexisting parameter
+        assert False  # Not AttributeError when getting non-existing parameter
 
-    test_check._purposefullyunexistingparameter = "test_value"
-    assert test_check._purposefullyunexistingparameter == "test_value"
+    test_check._purposefully_non_existing_parameter = "test_value"
+    assert test_check._purposefully_non_existing_parameter == "test_value"
 
 
 if __name__ == "__main__":

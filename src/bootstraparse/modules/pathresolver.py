@@ -3,28 +3,28 @@
 import os
 
 
-class pathresolver():
+class PathResolver:
     """
-    Intialised with a relative path and returns the translated absolute path
+    Initialised with a relative path and returns the translated absolute path
     """
 
-    def __init__(self, basepath):
-        self.basepath = os.path.normpath(basepath)
+    def __init__(self, base_path):
+        self.base_path = os.path.normpath(base_path)
 
-    def __call__(self, relativepath='.'):
-        return self.giveabsolute(relativepath)
+    def __call__(self, relative_path='.'):
+        return self.give_absolute(relative_path)
 
-    def giveabsolute(self, relativepath='.'):
-        return os.path.normpath(os.path.join(self.basepath, relativepath))
+    def give_absolute(self, relative_path='.'):
+        return os.path.normpath(os.path.join(self.base_path, relative_path))
 
 
-class boostrapath(pathresolver):
+class BoostraPath(PathResolver):
     """
-    Initialises pathresolver with the path of the bootstraparse installation folder
+    Initialises PathResolver with the path of the bootstraparse installation folder
     """
     def __init__(self):
-        calculatedpath = os.path.join(__file__, "../../")
-        super().__init__(calculatedpath)
+        calculated_path = os.path.join(__file__, "../../")
+        super().__init__(calculated_path)
 
 
-bpath = boostrapath()
+b_path = BoostraPath()

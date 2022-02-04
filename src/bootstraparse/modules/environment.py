@@ -1,9 +1,6 @@
 # Module for containing super important variables
 
 
-import rich
-
-
 class Environment:
     """
     Object containing all the important variables,
