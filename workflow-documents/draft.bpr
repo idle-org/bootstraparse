@@ -9,17 +9,17 @@
 # Header # {style='height=44px'}
 ## Header 2 ##
 
-~~ element oneline element~~ {class="bubuyo"}
+~~ element one line element~~ {class="mega-element"}
 ~~ element 
 multiple
 lines
-element~~ {class="bubuyo"}
+element~~ {class="mini-element"}
 
 | First header | Second Header | Third header |
 |--------------|-------:-------|-------------:|
 | First tab    | Second tab    | third tab    |
-|2 Big tab like very very big  | Third bab    |
-| Babada       |2   Very big babada           | {class= bigtable} #[skip,3,44,number=33]
+|2 Big tab like very very big  | Third tab    |
+| Small Tab    |2   Very big Tab              | {class= bigtable} #[skip,3,44,number=33]
 
 article~~
 

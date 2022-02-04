@@ -46,6 +46,7 @@ class TestLogging(TestCase):
                     error_mngr.log_exception(exception, level="CRITICAL")
             self.assertGreaterEqual(len(captured.records), 1)
 
+
 def test_exception__str__():
     """
     Test the __str__ method of the exception, to make sure it is working
