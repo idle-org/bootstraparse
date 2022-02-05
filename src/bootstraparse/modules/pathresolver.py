@@ -9,7 +9,7 @@ class PathResolver:
     """
 
     def __init__(self, base_path):
-        self.base_path = os.path.normpath(base_path)
+        self.base_path = os.path.normpath(os.path.dirname(base_path))
 
     def __call__(self, relative_path='.'):
         return self.give_absolute(relative_path)
