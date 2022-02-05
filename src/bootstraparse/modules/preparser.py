@@ -10,16 +10,37 @@ class PreParser:
     """
     Takes a path and environment, executes all pre-parsing methods on the specified file.
     """
-    def __init__(self, path, __env, list_of_paths=[], dict_of_imports={}):
-        self.path = path
+    def __init__(self, path, __env, list_of_paths=None, dict_of_imports=None):
+        """
+        Initializes the PreParser object.
+        Takes the following parameters:
+            path: the path of the file to be parsed
+            __env: the environment object
+            path_resolver: the path resolver object, if none is specified, a new one is created with the base path
+            list_of_paths: the list of files that have been imported in this branch of the import tree
+            dict_of_imports: the dictionary of all imported files
+        """
+        if list_of_paths is None:
+            list_of_paths = []
+        if dict_of_imports is None:
+            dict_of_imports = {}
+
         self.__env = __env
-        self.path_resolved = pr.PathResolver(path)
-        self.list_of_paths = list_of_paths + [self.path_resolved]  # List of files in a branch of imports until its end
+        self.path = path
+        self.name = os.path.basename(path)
+        self.base_path = os.path.dirname(path)
+        self.relative_path_resolver = pr.PathResolver(path)  # Gives absolute path for relative paths
+        self.list_of_paths = list_of_paths + [self.relative_path_resolver]  # List of files in a branch of imports until its end
         self.global_dict_of_imports = dict_of_imports  # Dictionary of all imports made to avoid duplicate file opening
-        self.local_dict_of_imports = {}
+        self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening
+        self.file = None
 
     def open(self):
-        pass
+        """
+        Opens the file and returns a file object.
+        """
+        self.file = open(self.relative_path_resolver(self.name), 'r')
+        return self.file
 
     def make_import_list(self):
         """
@@ -34,9 +55,11 @@ class PreParser:
             if e in self.global_dict_of_imports:
                 pp = self.global_dict_of_imports[e]
             else:
+                # todo: get the path of the file
                 pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
                 self.global_dict_of_imports[e] = pp
                 pp.parse_import_list()
+            self.local_dict_of_imports[e] = pp
         return
 
     def parse_import_list(self):
@@ -44,20 +67,44 @@ class PreParser:
         Parses the import list of the file.
         """
         import_list = []
-        # parsing the file
-        return [self.path_resolved(p) for p in import_list]  # converts relative paths to absolute and returns a table
+        # todo: parsing the file
+        return [self.relative_path_resolver(p) for p in import_list]  # converts relative paths to absolute and returns a table
+
+    def export_with_imports(self):
+        """
+        Return the file object as a series of lines and append all imports to the file.
+        """
+        # todo: export the file with all imports
+        self.open()
+        lines = self.file.readlines()
+        self.close()
+        return lines
 
     def close(self):
         """
         Closes the file.
         """
-        pass
+        if self.file:
+            self.file.close()
+            self.file = None
 
     def __del__(self):
         """
         Destructor.
         """
         self.close()
+
+    def __repr__(self):
+        """
+        Returns a string representation of the PreParser object.
+        """
+        return "PreParser(path={}, file={}, list_of_paths={}, dict_of_imports={})".format(self.path, self.file, self.list_of_paths, self.global_dict_of_imports)
+
+    def __str__(self):
+        """
+        Returns a string representation of the PreParser object.
+        """
+        return self.__repr__()
 
 
 if __name__ == "__main__":
