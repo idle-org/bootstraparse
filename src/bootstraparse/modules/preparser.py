@@ -42,6 +42,14 @@ class PreParser:
         self.file = open(self.relative_path_resolver(self.name), 'r')
         return self.file
 
+    def readlines(self):
+        """
+        Reads the file and returns a list of lines.
+        """
+        if self.file is None:
+            return self.open().readlines()
+        return self.file.readlines()
+
     def make_import_list(self):
         """
         Creates a list of all files to be imported.
@@ -55,7 +63,7 @@ class PreParser:
             if e in self.global_dict_of_imports:
                 pp = self.global_dict_of_imports[e]
             else:
-                # todo: get the path of the file
+                # todo: get the path of the file and append it to the path given
                 pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
                 self.global_dict_of_imports[e] = pp
                 pp.parse_import_list()
@@ -75,9 +83,7 @@ class PreParser:
         Return the file object as a series of lines and append all imports to the file.
         """
         # todo: export the file with all imports
-        self.open()
-        lines = self.file.readlines()
-        self.close()
+        lines = self.readlines()
         return lines
 
     def close(self):
@@ -107,8 +113,8 @@ class PreParser:
         return self.__repr__()
 
 
-if __name__ == "__main__":
-    site_path = "../../../example_userfiles/index.bpr"
-    __env = environment.Environment()
-    michel = PreParser(site_path, __env)
-    rich.inspect(michel)
+# if __name__ == "__main__":
+#     site_path = "../../../example_userfiles/index.bpr"
+#     __env = environment.Environment()
+#     michel = PreParser(site_path, __env)
+#     rich.inspect(michel)
