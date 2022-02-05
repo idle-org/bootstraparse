@@ -10,10 +10,13 @@ class PreParser:
     """
     Takes a path and environment, executes all pre-parsing methods on the specified file.
     """
-    def __init__(self, path, __env):
+    def __init__(self, path, __env, list_of_paths=[], dict_of_imports={}):
         self.path = path
         self.__env = __env
         self.path_resolved = pr.PathResolver(path)
+        self.list_of_paths = list_of_paths + [self.path_resolved]  # List of files in a branch of imports until its end
+        self.global_dict_of_imports = dict_of_imports  # Dictionary of all imports made to avoid duplicate file opening
+        self.local_dict_of_imports = {}
 
     def open(self):
         pass
@@ -26,10 +29,15 @@ class PreParser:
         """
         import_list = self.parse_import_list()
         for e in import_list:
-            pp = PreParser(e, self.__env)
-            pp.parse_import_list()
-            # todo: add to import log list
-            # todo: check for recursion errors
+            if e in self.list_of_paths:
+                raise RecursionError("Error: {} was imported earlier in {}".format(e, self.list_of_paths))
+            if e in self.global_dict_of_imports:
+                pp = self.global_dict_of_imports[e]
+            else:
+                pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
+                self.global_dict_of_imports[e] = pp
+                pp.parse_import_list()
+        return
 
     def parse_import_list(self):
         """
@@ -55,4 +63,5 @@ class PreParser:
 if __name__ == "__main__":
     site_path = "../../../example_userfiles/index.bpr"
     __env = environment.Environment()
-    # rich.inspect(__env)
+    michel = PreParser(site_path, __env)
+    rich.inspect(michel)
