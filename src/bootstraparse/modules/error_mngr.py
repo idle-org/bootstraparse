@@ -5,7 +5,9 @@ import traceback
 import sys
 
 # Define the error codes
-__all__ = ["ParsingError"]
+
+_ERRORS = ["ParsingError"]
+__all__ = _ERRORS+[]
 
 
 def initlogging(filename=None, loglevel="ERROR", filemode='w', handler=None):
@@ -52,7 +54,8 @@ class ParsingError(Exception):
 
     def __init__(self, message=None, line=None, column=None, file=None):
         """
-        Initializes the ParsingError class with the filename and a line and column number based on the current position in the file (if available)
+        Initializes the ParsingError class with the filename and a line and column number
+        based on the current position in the file (if available)
         """
         super().__init__(message)
         self.line = line

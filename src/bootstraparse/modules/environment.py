@@ -48,7 +48,7 @@ class Environment:
             return self._mParams[attribute]
         elif attribute in self._sParams:
             return self._sParams[attribute]
-        else: 
+        else:
             raise AttributeError(attribute)
 
     def __setattr__(self, attribute, value):

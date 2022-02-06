@@ -65,7 +65,9 @@ Test content
 Test content"""
 content_page1 = """Test page1"""
 content_page2 = """Test page2"""
-content_import_list = ["exemple_userfiles/pages/page1.bpr", "exemple_userfiles/pages/page2.bpr", "exemple_userfiles/pages/page1.bpr"]
+content_import_list = ["exemple_userfiles/pages/page1.bpr",
+                       "exemple_userfiles/pages/page2.bpr",
+                       "exemple_userfiles/pages/page1.bpr"]
 
 final_content = """Test content
 Test page1
@@ -79,8 +81,6 @@ Test content"""
 @pytest.fixture(scope="module")
 def p_index():
     return make_false_PreParser("example_userfiles/index.bpr", content_import_list, content_index)
-# p_index = preparser.PreParser("example_userfiles/index.bpr", env)
-# p_index.open = false_file_open(content_index)
 
 
 ################################################################################
@@ -108,7 +108,7 @@ def test_preparser_content(p_index):
 
     p_page1 = make_false_PreParser("exemple_userfiles/pages/page1.bpr", content_import_list, content_page1)
     assert p_page1.open().readlines() == ["Test page1"]
-#
+
     p_page2 = make_false_PreParser("exemple_userfiles/pages/page2.bpr", content_import_list, content_page2)
     assert p_page2.open().readlines() == ["Test page2"]
 

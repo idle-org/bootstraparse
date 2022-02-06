@@ -4,9 +4,11 @@ from importlib import reload
 from unittest import TestCase
 import pytest
 import bootstraparse.modules.error_mngr as error_mngr
-from bootstraparse.modules.error_mngr import *
+from bootstraparse.modules.error_mngr import ParsingError
 
-all_logging_tests = [(i, j, k) for i in [None, "test.log"] for j in ["DEBUG", "INFO",  "WARNING", "ERROR", "CRITICAL", "NOPE_PARAM"] for k in ["rich", None]]
+all_logging_tests = [(i, j, k) for i in [None, "test.log"]
+                     for j in ["DEBUG", "INFO",  "WARNING", "ERROR", "CRITICAL", "NOPE_PARAM"]
+                     for k in ["rich", None]]
 all_non_blocking_exception_tests = [
     (ParsingError("test error", 10, 10, "testfile.bpr")),
     (ParsingError())

@@ -1,9 +1,9 @@
 # Module for pre-parsing user files in preparation for the parser
 
 import os
-from bootstraparse.modules import environment
 from bootstraparse.modules import pathresolver as pr
-import rich
+# from bootstraparse.modules import environment
+# import rich
 
 
 class PreParser:
@@ -18,7 +18,7 @@ class PreParser:
             __env: the environment object
             path_resolver: the path resolver object, if none is specified, a new one is created with the base path
             list_of_paths: the list of files that have been imported in this branch of the import tree
-            dict_of_imports: the dictionary of all imported files
+            dict_of_imports: Dictionary of all imports made to avoid duplicate file opening / pre-parsing
         """
         if list_of_paths is None:
             list_of_paths = []
@@ -29,10 +29,10 @@ class PreParser:
         self.path = path
         self.name = os.path.basename(path)
         self.base_path = os.path.dirname(path)
-        self.relative_path_resolver = pr.PathResolver(path)  # Gives absolute path for relative paths
-        self.list_of_paths = list_of_paths + [self.relative_path_resolver]  # List of files in a branch of imports until its end
-        self.global_dict_of_imports = dict_of_imports  # Dictionary of all imports made to avoid duplicate file opening
-        self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening
+        self.relative_path_resolver = pr.PathResolver(path)
+        self.list_of_paths = list_of_paths + [self.relative_path_resolver]
+        self.global_dict_of_imports = dict_of_imports
+        self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
         self.file = None
 
     def open(self):
@@ -104,7 +104,8 @@ class PreParser:
         """
         Returns a string representation of the PreParser object.
         """
-        return "PreParser(path={}, file={}, list_of_paths={}, dict_of_imports={})".format(self.path, self.file, self.list_of_paths, self.global_dict_of_imports)
+        return "PreParser(path={}, file={}, list_of_paths={}, dict_of_imports={})".format(
+            self.path, self.file, self.list_of_paths, self.global_dict_of_imports)
 
     def __str__(self):
         """
