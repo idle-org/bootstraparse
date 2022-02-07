@@ -1,9 +1,16 @@
 # Module for pre-parsing user files in preparation for the parser
 
 import os
+import re
+import regex
+
 from bootstraparse.modules import pathresolver as pr
-# from bootstraparse.modules import environment
-# import rich
+from bootstraparse.modules import environment
+import rich
+
+# list of regexps
+_rgx_import_file = regex.compile(r'::( ?\< ?([\w\-\.\_]+) ?\>[ \s]*)+')
+_rgx_import_file_g = 2
 
 
 class PreParser:
@@ -75,8 +82,15 @@ class PreParser:
         Parses the import list of the file.
         """
         import_list = []
-        # todo: parsing the file
-        return [self.relative_path_resolver(p) for p in import_list]  # converts relative paths to absolute and returns a table
+
+        for line in self.readlines():
+            results = regex.match(_rgx_import_file, line)
+            if results:
+                import_list += results.captures(_rgx_import_file_g)
+        rich.inspect(import_list)
+
+        # converts relative paths to absolute and returns a table
+        return [self.relative_path_resolver(p) for p in import_list]
 
     def export_with_imports(self):
         """
@@ -114,8 +128,8 @@ class PreParser:
         return self.__repr__()
 
 
-# if __name__ == "__main__":
-#     site_path = "../../../example_userfiles/index.bpr"
-#     __env = environment.Environment()
-#     michel = PreParser(site_path, __env)
-#     rich.inspect(michel)
+if __name__ == "__main__":
+    site_path = "../../../example_userfiles/index.bpr"
+    __env = environment.Environment()
+    michel = PreParser(site_path, __env)
+    michel.parse_import_list()
