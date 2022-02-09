@@ -45,7 +45,7 @@ header~~
 @[tab/b&w]
 {class="sjskq" zjak}
 
-::< whatever.vky > < whatever2.vky > (import file whatever.vky)
+::< whatever.bpr > < whatever2.bpr > (import file whatever.bpr)
 
 .vky
 => base.vky / .bky
