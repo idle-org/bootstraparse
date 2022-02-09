@@ -56,7 +56,7 @@ class PreParser:
         :return: a list of lines
         """
         if self.file is None:
-            self.open()
+            return self.open().readlines()
         return self.file.readlines()
 
     def make_import_list(self):
@@ -77,6 +77,7 @@ class PreParser:
                 self.global_dict_of_imports[e] = pp
                 pp.make_import_list()
             self.local_dict_of_imports[e] = pp
+        self.close()
         return
 
     def parse_import_list(self):
@@ -121,7 +122,7 @@ class PreParser:
         """
         if self.file:
             self.file.close()
-            self.file = None
+        self.file = None
 
     def __del__(self):
         """
@@ -150,4 +151,4 @@ if __name__ == "__main__":
     __env = environment.Environment()
     michel = PreParser(site_path, __env)
     michel.parse_import_list()
-    michel.export_with_imports()
+    # michel.export_with_imports()

@@ -1,4 +1,5 @@
 # Testing the preparser module
+import os
 
 import pytest
 import io
@@ -8,9 +9,11 @@ from bootstraparse.modules import environment
 
 env = environment.Environment()
 
+_BASE_PATH_PREPARSER = "../../"
 
-@pytest.mark.parametrize("path", ["example_userfiles/index.bpr", "example_userfiles/pages/page1.bpr"])
-def test_preparser_init(path):
+
+@pytest.mark.parametrize("path, line_found", [("example_userfiles/index.bpr", 1), ("example_userfiles/pages/page1.bpr", 12)])
+def test_preparser_init(path, line_found):
     """
     Test the preparser module initialization and all base functions
     """
@@ -41,17 +44,28 @@ def false_import_list(table):
     return _import_list
 
 
+def false_readlines(text):
+    def _readlines():
+        return text
+    return _readlines
+
+
 def assert_readlines_equals(lines1, lines2):
     for line1, line2 in zip(lines1, lines2):
         assert line1.strip("\n") == line2.strip("\n")
 
 
 def make_false_PreParser(path, list_imports, content):
-    pp = preparser.PreParser(path, env)
-    pp.open = false_file_open(content)
-    pp.parse_import_list = false_import_list(list_imports)
-    pp.make_import_list()
-    return pp
+    def _monkey_patched_PreParser(monkeypatch):
+        pp = preparser.PreParser(os.path.join(_BASE_PATH_PREPARSER, path), env)
+        monkeypatch.setattr(pp, "open", false_file_open(content))
+        monkeypatch.setattr(pp, "parse_import_list", false_import_list(list_imports))
+        # pp.open = false_file_open(content)
+        # pp.readlines = false_readlines(content.split("\n"))
+        # pp.parse_import_list = false_import_list(list_imports)
+        pp.make_import_list()
+        return pp
+    return _monkey_patched_PreParser
 
 
 ################################################################################
@@ -65,9 +79,9 @@ Test content
 Test content"""
 content_page1 = """Test page1"""
 content_page2 = """Test page2"""
-content_import_list = ["exemple_userfiles/pages/page1.bpr",
-                       "exemple_userfiles/pages/page2.bpr",
-                       "exemple_userfiles/pages/page1.bpr"]
+content_import_list = [("exemple_userfiles/pages/page1.bpr", 1),
+                       ("exemple_userfiles/pages/page2.bpr", 3),
+                       ("exemple_userfiles/pages/page1.bpr", 5)]
 
 final_content = """Test content
 Test page1
@@ -78,9 +92,9 @@ Test page1
 Test content"""
 
 
-@pytest.fixture(scope="module")
-def p_index():
-    return make_false_PreParser("example_userfiles/index.bpr", content_import_list, content_index)
+@pytest.fixture
+def p_index(monkeypatch):
+    return make_false_PreParser("example_userfiles/index.bpr", content_import_list, content_index)(monkeypatch)
 
 
 ################################################################################
@@ -96,8 +110,8 @@ def test_import_list():
         raise NotImplementedError("Import list is not correct")
 
 
-@pytest.mark.xfail(reason="Not implemented", raises=NotImplementedError)
-def test_preparser_content(p_index):
+@pytest.mark.xfail(reason="Not implemented", raises=Exception)
+def test_preparser_content(monkeypatch, p_index):
     p_index.make_import_list()
     assert_readlines_equals(p_index.readlines(), content_index.split("\n"))
 
@@ -106,10 +120,10 @@ def test_preparser_content(p_index):
         p_index.list_of_paths = ["exemple_userfiles/pages/page1.bpr"]
         p_index.make_import_list()
 
-    p_page1 = make_false_PreParser("exemple_userfiles/pages/page1.bpr", content_import_list, content_page1)
+    p_page1 = make_false_PreParser("exemple_userfiles/pages/page1.bpr", content_import_list, content_page1)(monkeypatch)
     assert p_page1.open().readlines() == ["Test page1"]
 
-    p_page2 = make_false_PreParser("exemple_userfiles/pages/page2.bpr", content_import_list, content_page2)
+    p_page2 = make_false_PreParser("exemple_userfiles/pages/page2.bpr", content_import_list, content_page2)(monkeypatch)
     assert p_page2.open().readlines() == ["Test page2"]
 
     try:
