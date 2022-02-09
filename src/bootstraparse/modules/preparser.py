@@ -21,11 +21,10 @@ class PreParser:
         """
         Initializes the PreParser object.
         Takes the following parameters:
-            path: the path of the file to be parsed
-            __env: the environment object
-            path_resolver: the path resolver object, if none is specified, a new one is created with the base path
-            list_of_paths: the list of files that have been imported in this branch of the import tree
-            dict_of_imports: Dictionary of all imports made to avoid duplicate file opening / pre-parsing
+        :param path: the path of the file to be parsed
+        :param __env: the environment object
+        :param list_of_paths: the list of files that have been imported in this branch of the import tree
+        :param dict_of_imports: Dictionary of all imports made to avoid duplicate file opening / pre-parsing
         """
         if list_of_paths is None:
             list_of_paths = []
@@ -46,6 +45,7 @@ class PreParser:
     def open(self):
         """
         Opens the file and returns a file object.
+        :return: the file object
         """
         self.file = open(self.relative_path_resolver(self.name), 'r')
         return self.file
@@ -53,6 +53,7 @@ class PreParser:
     def readlines(self):
         """
         Reads the file and returns a list of lines.
+        :return: a list of lines
         """
         if self.file is None:
             self.open()
@@ -63,6 +64,7 @@ class PreParser:
         Creates a list of all files to be imported.
         Makes sure that the files are not already imported through a previous import statement.
         Recursively build a list of PreParser object for each file to be imported.
+        :return: a list of PreParser objects
         """
         import_list = self.parse_import_list()
         for e, _ in import_list:
@@ -80,6 +82,7 @@ class PreParser:
     def parse_import_list(self):
         """
         Parses the import list of the file.
+        :return: a list of files to be imported
         """
         if self.saved_import_list:
             return self.saved_import_list
@@ -99,6 +102,7 @@ class PreParser:
     def export_with_imports(self):
         """
         Return the file object with all imports done
+        :return: a filelike object with all imports done
         """
         temp_file = StringIO()
         source_line_count = 0
@@ -113,6 +117,7 @@ class PreParser:
     def close(self):
         """
         Closes the file.
+        :return: None
         """
         if self.file:
             self.file.close()
@@ -127,6 +132,7 @@ class PreParser:
     def __repr__(self):
         """
         Returns a string representation of the PreParser object.
+        :return: a string representation of the PreParser object
         """
         return "PreParser(path={}, file={}, list_of_paths={}, dict_of_imports={})".format(
             self.path, self.file, self.list_of_paths, self.global_dict_of_imports)
@@ -134,6 +140,7 @@ class PreParser:
     def __str__(self):
         """
         Returns a string representation of the PreParser object.
+        :return: a string representation of the PreParser object
         """
         return self.__repr__()
 

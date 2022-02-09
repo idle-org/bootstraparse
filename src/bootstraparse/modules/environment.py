@@ -32,6 +32,7 @@ class Environment:
     def integrity_check(self):
         """
         Checks if all mandatory parameters are set.
+        :return: True if all mandatory parameters are set, False otherwise.
         """
         for value in self._wasInitialised.values():
             if value is False:
@@ -41,6 +42,8 @@ class Environment:
     def __getattr__(self, attribute):
         """
         Getter for all parameters.
+        :param attribute: The name of the parameter to get.
+        :return: The value of the parameter.
         """
         if attribute[0] == "_":
             super().__getattribute__(attribute)
@@ -54,6 +57,7 @@ class Environment:
     def __setattr__(self, attribute, value):
         """
         Setter for all parameters.
+        :param attribute: The name of the parameter to set.
         """
         if attribute[0] == "_":
             super().__setattr__(attribute, value)

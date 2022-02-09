@@ -13,6 +13,12 @@ __all__ = _ERRORS+[]
 def initlogging(filename=None, loglevel="ERROR", filemode='w', handler=None):
     """
     Initializes logging
+    :param filename: The name of the log file
+    :param loglevel: The level of logging
+    :type loglevel: str
+    :param filemode: The mode of the log file
+    :param handler: The handler to use
+    :return: None
     """
     loglevel = loglevel.upper()
     if loglevel not in ["ERROR", "INFO", "WARNING", "DEBUG", "CRITICAL"]:
@@ -33,6 +39,10 @@ def initlogging(filename=None, loglevel="ERROR", filemode='w', handler=None):
 def log_exception(exception, level="ERROR"):
     """
     Logs an exception
+    :param exception: The exception to log
+    :param level: The level of the exception
+    :type level: str
+    :return: None
     """
     level = level.lower()
     logging.__getattribute__(level)(traceback.format_exc())
@@ -50,6 +60,12 @@ def log_exception(exception, level="ERROR"):
 class ParsingError(Exception):
     """
     Exception class for parsing errors
+    :param message: The message to display
+    :type message: str
+    :param line: The line number of the error
+    :param column: The column number of the error
+    :param file: The name of the file
+    :return: None
     """
 
     def __init__(self, message=None, line=None, column=None, file=None):
@@ -68,6 +84,7 @@ class ParsingError(Exception):
     def __str__(self):
         """
         Returns a string representation of the ParsingError
+        :return: The string representation of the ParsingError
         """
         if self.line is not None and self.column is not None and self.file is not None:
             return "[{}] Line {}:{} {}".format(self.file, self.line, self.column, self.args[0])
