@@ -1,16 +1,16 @@
 # Module for pre-parsing user files in preparation for the parser
 
 import os
-import re
 import regex
+from io import StringIO
 
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 import rich
 
 # list of regexps
-_rgx_import_file = regex.compile(r'::( ?\< ?([\w\-\.\_]+) ?\>[ \s]*)+')
-_rgx_import_file_g = 2
+_rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-\.\_]+) ?\>[ \s]*)+')
+_rgx_import_file_g = "file_name"
 
 
 class PreParser:
@@ -41,6 +41,7 @@ class PreParser:
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
         self.file = None
+        self.saved_import_list = None
 
     def open(self):
         """
@@ -54,7 +55,7 @@ class PreParser:
         Reads the file and returns a list of lines.
         """
         if self.file is None:
-            return self.open().readlines()
+            self.open()
         return self.file.readlines()
 
     def make_import_list(self):
@@ -64,16 +65,15 @@ class PreParser:
         Recursively build a list of PreParser object for each file to be imported.
         """
         import_list = self.parse_import_list()
-        for e in import_list:
+        for e, _ in import_list:
             if e in self.list_of_paths:
                 raise RecursionError("Error: {} was imported earlier in {}".format(e, self.list_of_paths))
             if e in self.global_dict_of_imports:
                 pp = self.global_dict_of_imports[e]
             else:
-                # todo: get the path of the file and append it to the path given
                 pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
                 self.global_dict_of_imports[e] = pp
-                pp.parse_import_list()
+                pp.make_import_list()
             self.local_dict_of_imports[e] = pp
         return
 
@@ -81,24 +81,34 @@ class PreParser:
         """
         Parses the import list of the file.
         """
+        if self.saved_import_list:
+            return self.saved_import_list
         import_list = []
+        line_count = 0
 
         for line in self.readlines():
             results = regex.match(_rgx_import_file, line)
             if results:
-                import_list += results.captures(_rgx_import_file_g)
-        rich.inspect(import_list)
-
+                for e in results.captures(_rgx_import_file_g):
+                    import_list += [(e, line_count)]
+            line_count += 1
         # converts relative paths to absolute and returns a table
-        return [self.relative_path_resolver(p) for p in import_list]
+        self.saved_import_list = [(self.relative_path_resolver(p), l) for p, l in import_list]
+        return self.saved_import_list
 
     def export_with_imports(self):
         """
-        Return the file object as a series of lines and append all imports to the file.
+        Return the file object with all imports done
         """
-        # todo: export the file with all imports
-        lines = self.readlines()
-        return lines
+        temp_file = StringIO()
+        source_line_count = 0
+        import_list = self.parse_import_list()
+        rich.inspect(import_list)
+        for p, l in import_list:
+            print(os.path.exists(p))
+
+        # todo: test import in sub-folders
+        # todo: test same imports on multiple lines
 
     def close(self):
         """
@@ -133,3 +143,4 @@ if __name__ == "__main__":
     __env = environment.Environment()
     michel = PreParser(site_path, __env)
     michel.parse_import_list()
+    michel.export_with_imports()
