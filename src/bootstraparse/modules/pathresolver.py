@@ -1,5 +1,6 @@
 # Module for resolving relative path problems
 
+# import pathlib
 import os
 
 
@@ -10,7 +11,7 @@ class PathResolver:
     """
 
     def __init__(self, base_path):
-        self.base_path = os.path.normpath(os.path.dirname(base_path))
+        self.base_path = os.path.normpath(os.path.join(os.getcwd(), os.path.dirname(base_path)))
 
     def __call__(self, relative_path='.'):
         """
