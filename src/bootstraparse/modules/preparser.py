@@ -9,7 +9,7 @@ from bootstraparse.modules import environment
 import rich
 
 # list of regexps
-_rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-\.\_]+) ?\>[ \s]*)+')
+_rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
 _rgx_import_file_g = "file_name"
 
 
