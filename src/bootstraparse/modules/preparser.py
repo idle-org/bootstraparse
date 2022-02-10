@@ -18,11 +18,11 @@ class PreParser:
     """
     Takes a path and environment, executes all pre-parsing methods on the specified file.
     """
-    def __init__(self, path, __env, list_of_paths=None, dict_of_imports=None):
+    def __init__(self, file_path, __env, list_of_paths=None, dict_of_imports=None):
         """
         Initializes the PreParser object.
         Takes the following parameters:
-        :param path: the path of the file to be parsed
+        :param file_path: the path of the file to be parsed
         :param __env: the environment object
         :param list_of_paths: the list of files that have been imported in this branch of the import tree
         :param dict_of_imports: Dictionary of all imports made to avoid duplicate file opening / pre-parsing
@@ -33,10 +33,10 @@ class PreParser:
             dict_of_imports = {}
 
         self.__env = __env
-        self.path = path
-        self.name = os.path.basename(path)
-        self.base_path = os.path.dirname(path)
-        self.relative_path_resolver = pr.PathResolver(path)
+        self.path = file_path
+        self.name = os.path.basename(file_path)
+        self.base_path = os.path.dirname(file_path)
+        self.relative_path_resolver = pr.PathResolver(file_path)
         self.list_of_paths = list_of_paths + [self.relative_path_resolver(self.name)]
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
@@ -171,16 +171,16 @@ class PreParser:
         """
         return not self.__eq__(other)
 
-    def rich_tree(self, force=False):
+    def rich_tree(self, prefix="", suffix="", force=True):
         """
         Returns a rich representation of the PreParser object.
         :return: a rich representation of the PreParser object
         """
-        if self.tree_view or force:
+        if self.tree_view and not force:
             return self.tree_view
-        self.tree_view = Tree(self.name)
-        for path, _ in self.parse_import_list():
-            self.tree_view.add(self.global_dict_of_imports[path].rich_tree())
+        self.tree_view = Tree(prefix+self.name+suffix)
+        for p, l in self.parse_import_list():
+            self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True))
         return self.tree_view
 
 
