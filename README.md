@@ -4,4 +4,4 @@ Bootstraparse aims to be customisable in that regard, but its first iteration an
 
 Refer to the `example_userfiles` for an idea of what the parser expects you to feed it and `example_website` for the generated result.
 
-[![Python application](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml/badge.svg)](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml)
+[![Python application](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml)
