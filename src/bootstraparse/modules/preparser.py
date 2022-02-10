@@ -108,23 +108,16 @@ class PreParser:
         """
 
         self.make_import_list()
-
         temp_file = StringIO()
         source_line_count = 0
-        old_import_line = 0
         import_list = self.parse_import_list()
         source_lines = self.readlines()
         for import_path, import_line in import_list:
-            if import_line != old_import_line:
-                source_line_count += 1
+            source_lines[import_line] = ""
             temp_file.writelines(source_lines[source_line_count:import_line])
             source_line_count = import_line
             import_file = self.global_dict_of_imports[import_path].export_with_imports()
             temp_file.writelines(import_file.readlines())
-            old_import_line = import_line
-            temp_file.write("\n")
-        if source_line_count != 0:
-            source_line_count += 1
         temp_file.writelines(source_lines[source_line_count:])
         temp_file.seek(0)
         return temp_file
