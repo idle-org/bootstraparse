@@ -196,6 +196,7 @@ def test_preparser_content(filename, content):
     pp.make_import_list()
 
     assert pp.export_with_imports() == content  # nothing is implementes yet
+    # todo: test import in sub-folders
 
 
 # @pytest.mark.skip("Not implemented")
@@ -222,6 +223,9 @@ def test_rich_tree():
     Test the rich_tree function
     """
     test_file = temp_name("test_rich_tree.bpr")
-    make_new_file(test_file, "Test line 1\n::< test_rich_tree.bpr >\nTest line 3")
+    test_file_2 = temp_name("test_rich_tree_2.bpr")
+    make_new_file(test_file, "Test line 1\n::< test_rich_tree_2.bpr >\nTest line 3")
+    make_new_file(test_file_2, "Test line 1\nTest line 3")
     pp = preparser.PreParser(test_file, env)
+    pp.make_import_list()
     pp.rich_tree()

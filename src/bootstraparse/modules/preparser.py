@@ -7,6 +7,7 @@ from io import StringIO
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 import rich
+from rich.tree import Tree
 
 # list of regexps
 _rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
@@ -41,6 +42,7 @@ class PreParser:
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
         self.is_global_dict_of_imports_initialized = False
         self.saved_import_list = None
+        self.tree_view = None
 
     def readlines(self):
         """
@@ -120,12 +122,12 @@ class PreParser:
             import_file = self.global_dict_of_imports[import_path].export_with_imports()
             temp_file.writelines(import_file.readlines())
             old_import_line = import_line
+            temp_file.write("\n")
+        if source_line_count != 0:
+            source_line_count += 1
         temp_file.writelines(source_lines[source_line_count:])
         temp_file.seek(0)
         return temp_file
-
-        # todo: test import in sub-folders
-        # todo: test same imports on multiple lines
 
     def __repr__(self):
         """
@@ -169,12 +171,17 @@ class PreParser:
         """
         return not self.__eq__(other)
 
-    def rich_tree(self):
+    def rich_tree(self, force=False):
         """
         Returns a rich representation of the PreParser object.
         :return: a rich representation of the PreParser object
         """
-        pass
+        if self.tree_view or force:
+            return self.tree_view
+        self.tree_view = Tree(self.name)
+        for path, _ in self.parse_import_list():
+            self.tree_view.add(self.global_dict_of_imports[path].rich_tree())
+        return self.tree_view
 
 
 # This part is only used for testing
@@ -185,5 +192,9 @@ if __name__ == "__main__":  # pragma: no cover
     michel.parse_import_list()
     # michel.make_import_list()
     michel.export_with_imports()
-    with open('../../../example_userfiles/output/show_me_what_you_got.txt', 'w+') as file:
+    path = '../../../example_userfiles/output/show_me_what_you_got.txt'
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w+') as file:
         file.writelines(michel.export_with_imports().readlines())
+
+    rich.print(michel.rich_tree())
