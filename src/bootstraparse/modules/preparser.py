@@ -39,25 +39,15 @@ class PreParser:
         self.list_of_paths = list_of_paths + [self.relative_path_resolver]
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
-        self.file = None
         self.saved_import_list = None
-
-    def open(self):
-        """
-        Opens the file and returns a file object.
-        :return: the file object
-        """
-        self.file = open(self.relative_path_resolver(self.name), 'r')
-        return self.file
 
     def readlines(self):
         """
         Reads the file and returns a list of lines.
         :return: a list of lines
         """
-        if self.file is None:
-            return self.open().readlines()
-        return self.file.readlines()
+        with open(self.relative_path_resolver(self.name), 'r') as f:
+            return f.readlines()
 
     def make_import_list(self):
         """
@@ -115,28 +105,17 @@ class PreParser:
         # todo: test import in sub-folders
         # todo: test same imports on multiple lines
 
-    def close(self):
-        """
-        Closes the file.
-        :return: None
-        """
-        if self.file:
-            self.file.close()
-        self.file = None
-
-    def __del__(self):
-        """
-        Destructor.
-        """
-        self.close()
-
     def __repr__(self):
         """
         Returns a string representation of the PreParser object.
         :return: a string representation of the PreParser object
         """
-        return "PreParser(path={}, file={}, list_of_paths={}, dict_of_imports={})".format(
-            self.path, self.file, self.list_of_paths, self.global_dict_of_imports)
+        return "PreParser(path={}, name={}, base_path={}, " \
+               "relative_path_resolver={}, ist_of_paths={}, " \
+               "global_dict_of_imports={}, local_dict_of_imports={}" \
+               ")".format(self.path, self.name, self.base_path,
+                          self.relative_path_resolver, self.list_of_paths,
+                          self.global_dict_of_imports, self.local_dict_of_imports)
 
     def __str__(self):
         """
@@ -146,7 +125,8 @@ class PreParser:
         return self.__repr__()
 
 
-if __name__ == "__main__":
+# This part is only used for testing
+if __name__ == "__main__":  # pragma: no cover
     site_path = "../../../example_userfiles/index.bpr"
     __env = environment.Environment()
     michel = PreParser(site_path, __env)
