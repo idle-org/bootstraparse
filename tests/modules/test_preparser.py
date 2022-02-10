@@ -229,3 +229,4 @@ def test_rich_tree():
     pp = preparser.PreParser(test_file, env)
     pp.make_import_list()
     pp.rich_tree()
+    pp.rich_tree(force=False)
