@@ -39,6 +39,7 @@ class PreParser:
         self.list_of_paths = list_of_paths + [self.relative_path_resolver(self.name)]
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
+        self.is_global_dict_of_imports_initialized = False
         self.saved_import_list = None
 
     def readlines(self):
@@ -57,6 +58,8 @@ class PreParser:
         :return: the dictionary of all files to be imported (key: file name, value: PreParser object)
         """
         import_list = self.parse_import_list()
+        if self.is_global_dict_of_imports_initialized:
+            return self.local_dict_of_imports
 
         for e, l in import_list:
             if e in self.list_of_paths:
@@ -73,6 +76,7 @@ class PreParser:
                     # TODO: raise a custom exception or define a default behaviour
                     raise ImportError("The import {} in file {} line {} doesn't exist".format(e, self.name, l))
             self.local_dict_of_imports[e] = pp
+        self.is_global_dict_of_imports_initialized = True
         return self.local_dict_of_imports
 
     def parse_import_list(self):
@@ -100,12 +104,25 @@ class PreParser:
         Return the file object with all imports done
         :return: a filelike object with all imports done
         """
+
+        self.make_import_list()
+
         temp_file = StringIO()
         source_line_count = 0
+        old_import_line = 0
         import_list = self.parse_import_list()
-        rich.inspect(import_list)
-        for p, l in import_list:
-            print(os.path.exists(p))
+        source_lines = self.readlines()
+        for import_path, import_line in import_list:
+            if import_line != old_import_line:
+                source_line_count += 1
+            temp_file.writelines(source_lines[source_line_count:import_line])
+            source_line_count = import_line
+            import_file = self.global_dict_of_imports[import_path].export_with_imports()
+            temp_file.writelines(import_file.readlines())
+            old_import_line = import_line
+        temp_file.writelines(source_lines[source_line_count:])
+        temp_file.seek(0)
+        return temp_file
 
         # todo: test import in sub-folders
         # todo: test same imports on multiple lines
@@ -166,4 +183,7 @@ if __name__ == "__main__":  # pragma: no cover
     __env = environment.Environment()
     michel = PreParser(site_path, __env)
     michel.parse_import_list()
-    # michel.export_with_imports()
+    # michel.make_import_list()
+    michel.export_with_imports()
+    with open('../../../example_userfiles/output/show_me_what_you_got.txt', 'w+') as file:
+        file.writelines(michel.export_with_imports().readlines())
