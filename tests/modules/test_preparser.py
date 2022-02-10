@@ -1,53 +1,88 @@
 # Testing the preparser module
 import os
+import pathlib
+import tempfile
 
 import pytest
-import io
+# import rich
 
 from bootstraparse.modules import preparser
 from bootstraparse.modules import environment
 
+###############################################################################
+# Environement variables
+
 env = environment.Environment()
-
 _BASE_PATH_PREPARSER = "../../"
+_TEMP_DIRECTORY = tempfile.TemporaryDirectory()
 
 
-@pytest.mark.parametrize("path, line_found", [("example_userfiles/index.bpr", 1), ("example_userfiles/pages/page1.bpr", 12)])
-def test_preparser_init(path, line_found):
+def temp_name(file_name):
+    return str(pathlib.Path(_TEMP_DIRECTORY.name, file_name))
+
+
+_BASE_PATH_GIVEN = "example_userfiles"
+_BASE_PATH_ROOT = temp_name(_BASE_PATH_GIVEN)
+
+# ################################################################################
+# # Variables to test the preparser module
+content_index = """Test content line 1
+::< pages/page1.bpr >
+Test content line 3
+::< pages/page2.bpr >
+Test content line 5
+::< pages/page1.bpr >
+Test content line 7"""
+content_page1 = """Test page1\nTest page1-2\nTest page1-3"""
+content_page2 = """Test page2\n::< page1.bpr >"""
+content_page3 = """Test page3\n::< page3.bpr >"""
+content_index_import_list = [(temp_name("pages/page1.bpr"), 1),
+                             (temp_name("pages/page2.bpr"), 3),
+                             (temp_name("pages/page1.bpr"), 5)]
+
+content_page1_import_list = []
+content_page2_import_list = [(temp_name("page1.bpr"), 1)]
+
+final_content_index = """Test content line 1
+Test page1
+Test page1-2
+Test page1-3
+Test content line 3
+Test page2
+Test page1
+Test page1-2
+Test page1-3
+Test content line 5
+Test page1
+Test content line 7"""
+final_content_page1 = """Test page1\nTest page1-2\nTest page1-3"""
+final_content_page2 = """Test page2\nTest page1"""
+
+website_tree = {
+    "index.bpr": content_index,
+    "pages/page1.bpr": content_page1,
+    "pages/page2.bpr": content_page2
+}
+
+
+@pytest.fixture(autouse=True)
+def base_architecture():
+    for file_name in website_tree:
+        make_new_file(os.path.join(_BASE_PATH_GIVEN, file_name), website_tree[file_name])
+
+
+def test_base_architecture():
+    for e in [temp_name(os.path.join(_BASE_PATH_GIVEN, path)) for path in website_tree.keys()]:
+        assert os.path.isfile(e)
+
+
+def make_new_file(path, content="", mode="w+"):
     """
-    Test the preparser module initialization and all base functions
+    Make a new file
     """
-    pp = preparser.PreParser(path, env)
-    assert pp.path == path
-    pp.make_import_list()
-    pp.open()
-    pp.close()
-    pp.export_with_imports()
-    pp.readlines()
-    # pp.export_without_imports()
-
-    assert type(pp.__str__()) == str
-    assert type(pp.__repr__()) == str
-
-
-################################################################################
-# False functions to simulate a full import tree
-def false_file_open(text):
-    def _file_open():
-        return io.StringIO(text)
-    return _file_open
-
-
-def false_import_list(table):
-    def _import_list():
-        return table
-    return _import_list
-
-
-def false_readlines(text):
-    def _readlines():
-        return text
-    return _readlines
+    os.makedirs(os.path.dirname(os.path.join(_TEMP_DIRECTORY.name, path)), exist_ok=True)
+    with open(os.path.join(_TEMP_DIRECTORY.name, path), mode=mode) as f:
+        f.write(content)
 
 
 def assert_readlines_equals(lines1, lines2):
@@ -55,78 +90,138 @@ def assert_readlines_equals(lines1, lines2):
         assert line1.strip("\n") == line2.strip("\n")
 
 
-def make_false_PreParser(path, list_imports, content):
-    def _monkey_patched_PreParser(monkeypatch):
-        pp = preparser.PreParser(os.path.join(_BASE_PATH_PREPARSER, path), env)
-        monkeypatch.setattr(pp, "open", false_file_open(content))
-        monkeypatch.setattr(pp, "parse_import_list", false_import_list(list_imports))
-        # pp.open = false_file_open(content)
-        # pp.readlines = false_readlines(content.split("\n"))
-        # pp.parse_import_list = false_import_list(list_imports)
-        pp.make_import_list()
-        return pp
-    return _monkey_patched_PreParser
+@pytest.mark.parametrize("path, line_found", [
+    (temp_name("example_userfiles/index.bpr"), 1),
+    (temp_name("example_userfiles/pages/page1.bpr"), 12)
+])
+def test_preparser_init(path, line_found):
+    """
+    Test the preparser module initialization and all base functions
+    """
+    pp = preparser.PreParser(path, env)
+    # assert pp.path == path
+    # assert pp.name == os.path.basename(path)
+    assert pathlib.Path(pp.relative_path_resolver(".")) == pathlib.Path(os.path.dirname(path))
+    assert pp.list_of_paths == [path]
+    assert pp.global_dict_of_imports == {}
+    assert pp.saved_import_list is None
+    assert type(pp.__str__()) == str
+    assert type(pp.__repr__()) == str
 
 
-################################################################################
-# Variables to test the preparser module
-content_index = """Test content
-::< exemple_userfiles/pages/page1.bpr >
-Test content
-::< exemple_userfiles/pages/page2.bpr >
-Test content
-::< exemple_userfiles/pages/page1.bpr >
-Test content"""
-content_page1 = """Test page1"""
-content_page2 = """Test page2"""
-content_import_list = [("exemple_userfiles/pages/page1.bpr", 1),
-                       ("exemple_userfiles/pages/page2.bpr", 3),
-                       ("exemple_userfiles/pages/page1.bpr", 5)]
-
-final_content = """Test content
-Test page1
-Test content
-Test page2
-Test content
-Test page1
-Test content"""
+def test_readlines():
+    """
+    Test the open and close functions
+    """
+    open_close_file = temp_name("test_open_close.bpr")
+    make_new_file(open_close_file, "Test\nline")
+    pp = preparser.PreParser(open_close_file, env)
+    assert_readlines_equals(pp.readlines(), ["Test", "line"])
 
 
-@pytest.fixture
-def p_index(monkeypatch):
-    return make_false_PreParser("example_userfiles/index.bpr", content_import_list, content_index)(monkeypatch)
+@pytest.mark.parametrize("filename, content, expected", [
+    ("index.bpr", content_index, content_index_import_list),
+    ("page1.bpr", content_page1, content_page1_import_list),
+    ("page2.bpr", content_page2, content_page2_import_list),
+])
+def test_parse_import_list(filename, content, expected, capsys):
+    """
+    Test the parse_import_list function
+    """
+    test_file = temp_name(filename)
+    make_new_file(test_file, content)
+
+    pp = preparser.PreParser(test_file, env)
+    assert pp.parse_import_list() == expected
+    assert pp.saved_import_list == expected
+    assert pp.parse_import_list() == expected
 
 
-################################################################################
-# Test the preparser module
-@pytest.mark.xfail(reason="Not implemented", raises=NotImplementedError)
-def test_import_list():
-    p_index = preparser.PreParser("example_userfiles/index.bpr", env)
-    p_index.open = false_file_open(content_index)
-    try:
-        assert p_index.make_import_list() == content_import_list
-    except AssertionError:
-        p_index.parse_import_list = false_import_list(content_import_list)
-        raise NotImplementedError("Import list is not correct")
+def test_parse_equals():
+    """
+    Test the parse_equals function
+    """
+    test_file = temp_name("test_parse_equals.bpr")
+    make_new_file(test_file, "Test line 1\n::< test_parse_equals.bpr >\nTest line 3")
+    test_file_2 = temp_name("test_parse_equals_2.bpr")
+    make_new_file(test_file_2, "Test line 1\n::< file.bpr >\nTest line 3")
+
+    pp = preparser.PreParser(test_file, env)
+    pp2 = preparser.PreParser(test_file, env)
+    pp3 = preparser.PreParser(test_file_2, env)
+    pp3.parse_import_list()
+    pp3.name = pp.name
+    pp3.path = pp.path
+    pp3.base_path = pp.base_path
+
+    assert pp == pp2
+    assert not (pp != pp2)
+    assert pp != pp3
+    pp3.name = "test_parse_equals_2.bpr"
+    assert pp != pp3
+
+
+@pytest.mark.parametrize("filename, content", [
+    ("index.bpr", content_index),
+    ("pages/page1.bpr", content_page1),
+    ("pages/page2.bpr", content_page2),
+])
+def test_make_import_list(filename, content, capsys):
+    """
+    Test the make_import_list function
+    """
+    testfile = temp_name(os.path.join(_BASE_PATH_GIVEN, filename))
+
+    assert os.path.exists(testfile)
+    pp = preparser.PreParser(testfile, env)
+    pp.make_import_list()
+    # Creating a real file to compare with is not a good idea on the long run
+    # Will compare the dicts instead
+    assert pp.global_dict_of_imports.keys() == set([f for f, _ in pp.saved_import_list])
 
 
 @pytest.mark.xfail(reason="Not implemented", raises=Exception)
-def test_preparser_content(monkeypatch, p_index):
-    p_index.make_import_list()
-    assert_readlines_equals(p_index.readlines(), content_index.split("\n"))
+@pytest.mark.parametrize("filename, content", [
+    ("index.bpr", content_index),
+    ("pages/page1.bpr", content_page1),
+    ("pages/page2.bpr", content_page2),
+])
+def test_preparser_content(filename, content):
+    """
+    Test the preparser content
+    """
+    testfile = temp_name(os.path.join(_BASE_PATH_GIVEN, filename))
+    assert os.path.exists(testfile)
+    pp = preparser.PreParser(testfile, env)
+    pp.make_import_list()
 
-    # Test the recursion error
+    assert pp.export_with_imports() == content  # nothing is implementes yet
+
+
+# @pytest.mark.skip("Not implemented")
+def test_errors():
+    with pytest.raises(FileNotFoundError):
+        pp = preparser.PreParser("not_existing_file.bprr", env)
+        pp.readlines()
+
+    with pytest.raises(ImportError):
+        nofile = temp_name("real_file.bpr")
+        make_new_file(nofile, "::< not_existing_file.bpr >")
+        pp = preparser.PreParser(nofile, env)
+        pp.make_import_list()
+
     with pytest.raises(RecursionError):
-        p_index.list_of_paths = ["exemple_userfiles/pages/page1.bpr"]
-        p_index.make_import_list()
+        path = temp_name("test_recursion_error.bpr")
+        make_new_file(path, "::< test_recursion_error.bpr >")
+        pp = preparser.PreParser(path, env)
+        pp.make_import_list()
 
-    p_page1 = make_false_PreParser("exemple_userfiles/pages/page1.bpr", content_import_list, content_page1)(monkeypatch)
-    assert p_page1.open().readlines() == ["Test page1"]
 
-    p_page2 = make_false_PreParser("exemple_userfiles/pages/page2.bpr", content_import_list, content_page2)(monkeypatch)
-    assert p_page2.open().readlines() == ["Test page2"]
-
-    try:
-        assert_readlines_equals(p_index.export_with_imports(), final_content.split("\n"))
-    except AssertionError:
-        raise NotImplementedError("Export with imports is not correct")
+def test_rich_tree():
+    """
+    Test the rich_tree function
+    """
+    test_file = temp_name("test_rich_tree.bpr")
+    make_new_file(test_file, "Test line 1\n::< test_rich_tree.bpr >\nTest line 3")
+    pp = preparser.PreParser(test_file, env)
+    pp.rich_tree()
