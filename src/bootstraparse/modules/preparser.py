@@ -1,5 +1,5 @@
 # Module for pre-parsing user files in preparation for the parser
-
+import logging
 import os
 import regex
 from io import StringIO
@@ -36,7 +36,7 @@ class PreParser:
         self.name = os.path.basename(path)
         self.base_path = os.path.dirname(path)
         self.relative_path_resolver = pr.PathResolver(path)
-        self.list_of_paths = list_of_paths + [self.relative_path_resolver]
+        self.list_of_paths = list_of_paths + [self.relative_path_resolver(self.name)]
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
         self.saved_import_list = None
@@ -54,21 +54,26 @@ class PreParser:
         Creates a list of all files to be imported.
         Makes sure that the files are not already imported through a previous import statement.
         Recursively build a list of PreParser object for each file to be imported.
-        :return: a list of PreParser objects
+        :return: the dictionary of all files to be imported (key: file name, value: PreParser object)
         """
         import_list = self.parse_import_list()
-        for e, _ in import_list:
+
+        for e, l in import_list:
             if e in self.list_of_paths:
                 raise RecursionError("Error: {} was imported earlier in {}".format(e, self.list_of_paths))
             if e in self.global_dict_of_imports:
                 pp = self.global_dict_of_imports[e]
             else:
-                pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
-                self.global_dict_of_imports[e] = pp
-                pp.make_import_list()
+                try:
+                    pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
+                    self.global_dict_of_imports[e] = pp
+                    pp.make_import_list()
+                except FileNotFoundError:
+                    logging.error("The import {} in file {} line {} doesn't exist".format(e, self.name, l))
+                    # TODO: raise a custom exception or define a default behaviour
+                    raise ImportError("The import {} in file {} line {} doesn't exist".format(e, self.name, l))
             self.local_dict_of_imports[e] = pp
-        self.close()
-        return
+        return self.local_dict_of_imports
 
     def parse_import_list(self):
         """
@@ -123,6 +128,36 @@ class PreParser:
         :return: a string representation of the PreParser object
         """
         return self.__repr__()
+
+    def __eq__(self, other):
+        """
+        Checks if the PreParser object is equal to another PreParser object.
+        :param other: the other PreParser object
+        :return: True if the PreParser objects are equal, False otherwise
+        """
+        if self.path == other.path:
+            if self.name == other.name:
+                if self.base_path == other.base_path:
+                    for elt in self.parse_import_list():
+                        if elt not in other.parse_import_list():
+                            return False
+                    return True
+        return False
+
+    def __ne__(self, other):
+        """
+        Checks if the PreParser object is not equal to another PreParser object.
+        :param other: the other PreParser object
+        :return: True if the PreParser objects are not equal, False otherwise
+        """
+        return not self.__eq__(other)
+
+    def rich_tree(self):
+        """
+        Returns a rich representation of the PreParser object.
+        :return: a rich representation of the PreParser object
+        """
+        pass
 
 
 # This part is only used for testing
