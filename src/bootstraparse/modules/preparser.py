@@ -101,8 +101,8 @@ class PreParser:
 
     def export_with_imports(self):
         """
-        Return the file object with all imports done
-        :return: a filelike object with all imports done
+        Return the file object with all file imports done
+        :return: a filelike object with all file imports done
         """
 
         self.make_import_list()
@@ -123,6 +123,18 @@ class PreParser:
         temp_file.writelines(source_lines[source_line_count:])
         temp_file.seek(0)
         return temp_file
+
+    def parse_pictures(self):
+        """
+        Return the file object with all image imports done
+        :return: a filelike object with all image imports done
+        """
+
+    def parse_shortcuts(self):
+        """
+        Return the file object with all image imports done
+        :return: a filelike object with all image imports done
+        """
 
         # todo: test import in sub-folders
         # todo: test same imports on multiple lines
