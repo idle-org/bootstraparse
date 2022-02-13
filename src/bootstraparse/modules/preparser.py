@@ -11,7 +11,13 @@ from rich.tree import Tree
 
 # list of regexps
 _rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
-_rgx_import_file_g = "file_name"
+
+_rgx_shortcut_alias = r'@\[(?P<alias_name>[\w\-._/]+)\]'
+_rgx_shortcut_image = r'@{(?P<image_name>[\w\-._/]+)}'
+_rgx_shortcut_class = r'({(?P<class>[^}]+)})?'
+_rgx_shortcut_variable = r'(\[(?P<variables>[^\]]+)\])?'
+_rgx_alias = regex.compile(f'({_rgx_shortcut_alias}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
+_rgx_image = regex.compile(f'({_rgx_shortcut_image}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
 
 
 class PreParser:
@@ -94,7 +100,7 @@ class PreParser:
         for line in self.readlines():
             results = regex.match(_rgx_import_file, line)
             if results:
-                for e in results.captures(_rgx_import_file_g):
+                for e in results.captures('file_name'):
                     import_list += [(e, line_count)]
             line_count += 1
         # converts relative paths to absolute and returns a table
@@ -122,17 +128,43 @@ class PreParser:
         temp_file.seek(0)
         return temp_file
 
-    def parse_pictures(self):
+    def parse_shortcuts_and_images(self):
         """
-        Return the file object with all image imports done
-        :return: a filelike object with all image imports done
+        Parses through the output files from export_with_imports
+        and replaces shortcuts and images calls with appropriate html
+        :return: a table of occurrences and their lines
         """
+        line_count = 0
+        alias_list = []
+        image_list = []
+        for line in self.readlines():
+            results = regex.match(_rgx_alias, line)
+            if results:
+                for e in results.captures('alias_name', 'class','variables'):
+                    alias_list += [(e, line_count)]
+            line_count += 1
 
-    def parse_shortcuts(self):
+
+
+    def get_shortcut_from_config(self, shortcut):
         """
-        Return the file object with all image imports done
-        :return: a filelike object with all image imports done
+        Fetches shortcut paths from aliases.yaml
+        :return: the html to insert as a string
+        :param shortcut: the id of the shortcut to fetch
         """
+        if shortcut:
+            return '<h1>hello world</h1>'
+        return 'error'
+
+    def get_picture_from_config(self, shortcut):
+        """
+        Fetches picture paths from aliases.yaml
+        :return: the html to insert as a string
+        :param shortcut: the id of the picture to fetch
+        """
+        if shortcut:
+            return '<img src=""/>'
+        return 'error'
 
         # todo: test import in sub-folders
         # todo: test same imports on multiple lines
@@ -194,15 +226,20 @@ class PreParser:
 
 # This part is only used for testing
 if __name__ == "__main__":  # pragma: no cover
-    site_path = "../../../example_userfiles/index.bpr"
-    __env = environment.Environment()
-    michel = PreParser(site_path, __env)
-    michel.parse_import_list()
-    # michel.make_import_list()
-    michel.export_with_imports()
-    path = '../../../example_userfiles/output/show_me_what_you_got.txt'
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w+') as file:
-        file.writelines(michel.export_with_imports().readlines())
+    # site_path = "../../../example_userfiles/index.bpr"
+    # __env = environment.Environment()
+    # michel = PreParser(site_path, __env)
+    # michel.parse_import_list()
+    # # michel.make_import_list()
+    # michel.export_with_imports()
+    # path = '../../../example_userfiles/output/show_me_what_you_got.txt'
+    # os.makedirs(os.path.dirname(path), exist_ok=True)
+    # with open(path, 'w+') as file:
+    #     file.writelines(michel.export_with_imports().readlines())
+    #
+    # rich.print(michel.rich_tree())
+    string_to_match = r'@[bite]{id=2}[saucisse=13] @[chaussette] @[bermuda]{tomate=tomate}[12] @[pasteque]'
+    # rich.inspect(_rgx_alias.match(string_to_match).captures('alias_name', 'class', 'variables'))
+    for e in _rgx_alias.match(string_to_match).captures(1):
+        rich.inspect(e.captures('alias_name', 'class', 'variables'))
 
-    rich.print(michel.rich_tree())
