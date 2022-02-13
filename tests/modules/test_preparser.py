@@ -32,8 +32,9 @@ Test content line 3
 ::< pages/page2.bpr >
 Test content line 5
 ::< pages/page1.bpr >
-Test content line 7"""
-content_page1 = """Test page1\nTest page1-2\nTest page1-3"""
+Test content line 7
+"""
+content_page1 = """Test page1\nTest page1-2\nTest page1-3\n"""
 content_page2 = """Test page2\n::< page1.bpr >"""
 content_page3 = """Test page3\n::< page3.bpr >"""
 content_index_import_list = [(temp_name("pages/page1.bpr"), 1),
@@ -54,9 +55,12 @@ Test page1-2
 Test page1-3
 Test content line 5
 Test page1
-Test content line 7"""
-final_content_page1 = """Test page1\nTest page1-2\nTest page1-3"""
-final_content_page2 = """Test page2\nTest page1"""
+Test page1-2
+Test page1-3
+Test content line 7
+"""
+final_content_page1 = """Test page1\nTest page1-2\nTest page1-3\n"""
+final_content_page2 = """Test page2\nTest page1\nTest page1-2\nTest page1-3\n"""
 
 website_tree = {
     "index.bpr": content_index,
@@ -180,11 +184,10 @@ def test_make_import_list(filename, content, capsys):
     assert pp.global_dict_of_imports.keys() == set([f for f, _ in pp.saved_import_list])
 
 
-@pytest.mark.xfail(reason="Not implemented", raises=Exception)
 @pytest.mark.parametrize("filename, content", [
-    ("index.bpr", content_index),
-    ("pages/page1.bpr", content_page1),
-    ("pages/page2.bpr", content_page2),
+    ("index.bpr", final_content_index),
+    ("pages/page1.bpr", final_content_page1),
+    ("pages/page2.bpr", final_content_page2),
 ])
 def test_preparser_content(filename, content):
     """
@@ -195,7 +198,8 @@ def test_preparser_content(filename, content):
     pp = preparser.PreParser(testfile, env)
     pp.make_import_list()
 
-    assert pp.export_with_imports() == content  # nothing is implementes yet
+    assert pp.export_with_imports().read() == content  # nothing is implementes yet
+    # todo: test import in sub-folders
 
 
 # @pytest.mark.skip("Not implemented")
@@ -222,6 +226,10 @@ def test_rich_tree():
     Test the rich_tree function
     """
     test_file = temp_name("test_rich_tree.bpr")
-    make_new_file(test_file, "Test line 1\n::< test_rich_tree.bpr >\nTest line 3")
+    test_file_2 = temp_name("test_rich_tree_2.bpr")
+    make_new_file(test_file, "Test line 1\n::< test_rich_tree_2.bpr >\nTest line 3")
+    make_new_file(test_file_2, "Test line 1\nTest line 3")
     pp = preparser.PreParser(test_file, env)
+    pp.make_import_list()
     pp.rich_tree()
+    pp.rich_tree(force=False)

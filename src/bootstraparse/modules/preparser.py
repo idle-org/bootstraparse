@@ -7,6 +7,7 @@ from io import StringIO
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 import rich
+from rich.tree import Tree
 
 # list of regexps
 _rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
@@ -17,11 +18,11 @@ class PreParser:
     """
     Takes a path and environment, executes all pre-parsing methods on the specified file.
     """
-    def __init__(self, path, __env, list_of_paths=None, dict_of_imports=None):
+    def __init__(self, file_path, __env, list_of_paths=None, dict_of_imports=None):
         """
         Initializes the PreParser object.
         Takes the following parameters:
-        :param path: the path of the file to be parsed
+        :param file_path: the path of the file to be parsed
         :param __env: the environment object
         :param list_of_paths: the list of files that have been imported in this branch of the import tree
         :param dict_of_imports: Dictionary of all imports made to avoid duplicate file opening / pre-parsing
@@ -32,15 +33,16 @@ class PreParser:
             dict_of_imports = {}
 
         self.__env = __env
-        self.path = path
-        self.name = os.path.basename(path)
-        self.base_path = os.path.dirname(path)
-        self.relative_path_resolver = pr.PathResolver(path)
+        self.path = file_path
+        self.name = os.path.basename(file_path)
+        self.base_path = os.path.dirname(file_path)
+        self.relative_path_resolver = pr.PathResolver(file_path)
         self.list_of_paths = list_of_paths + [self.relative_path_resolver(self.name)]
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
         self.is_global_dict_of_imports_initialized = False
         self.saved_import_list = None
+        self.tree_view = None
 
     def readlines(self):
         """
@@ -106,20 +108,16 @@ class PreParser:
         """
 
         self.make_import_list()
-
         temp_file = StringIO()
         source_line_count = 0
-        old_import_line = 0
         import_list = self.parse_import_list()
         source_lines = self.readlines()
         for import_path, import_line in import_list:
-            if import_line != old_import_line:
-                source_line_count += 1
+            source_lines[import_line] = ""
             temp_file.writelines(source_lines[source_line_count:import_line])
             source_line_count = import_line
             import_file = self.global_dict_of_imports[import_path].export_with_imports()
             temp_file.writelines(import_file.readlines())
-            old_import_line = import_line
         temp_file.writelines(source_lines[source_line_count:])
         temp_file.seek(0)
         return temp_file
@@ -181,12 +179,17 @@ class PreParser:
         """
         return not self.__eq__(other)
 
-    def rich_tree(self):
+    def rich_tree(self, prefix="", suffix="", force=True):
         """
         Returns a rich representation of the PreParser object.
         :return: a rich representation of the PreParser object
         """
-        pass
+        if self.tree_view and not force:
+            return self.tree_view
+        self.tree_view = Tree(prefix+self.name+suffix)
+        for p, l in self.parse_import_list():
+            self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True))
+        return self.tree_view
 
 
 # This part is only used for testing
@@ -197,5 +200,9 @@ if __name__ == "__main__":  # pragma: no cover
     michel.parse_import_list()
     # michel.make_import_list()
     michel.export_with_imports()
-    with open('../../../example_userfiles/output/show_me_what_you_got.txt', 'w+') as file:
+    path = '../../../example_userfiles/output/show_me_what_you_got.txt'
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w+') as file:
         file.writelines(michel.export_with_imports().readlines())
+
+    rich.print(michel.rich_tree())
