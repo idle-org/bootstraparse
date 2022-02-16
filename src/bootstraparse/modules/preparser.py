@@ -145,7 +145,6 @@ class PreParser:
             line_count += 1
 
 
-
     def get_shortcut_from_config(self, shortcut):
         """
         Fetches shortcut paths from aliases.yaml
