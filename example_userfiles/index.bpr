@@ -6,7 +6,7 @@
 **bold**
  1. Lists
 
-[link]("http://test.icule") {style="underline=None;"}
+[link]("http://test.icule") {style="underline: None;"}
 
 # Header # {style='height=44px'}
 ## Header 2 ##
@@ -42,8 +42,7 @@ header~~
 
 @[custom_permutation]{class="bouyou"}[number=44]
 
-@[tab/b&w]
-{class="sjskq" zjak}
+@[tab/b&w]{class="sjskq" zjak}
 
 filler
 ::< whatever.bpr > < whatever2.bpr > (import file whatever.bpr)
