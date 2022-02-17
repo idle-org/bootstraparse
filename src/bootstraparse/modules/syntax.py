@@ -1,21 +1,38 @@
 # Dedicated module for the syntax of all the parsing
-
 import pyparsing as pp
 import rich
 
+pps = pp.Suppress
 
-image_parser = '@{' + pp.common.identifier('image_name') + '}'
-expression_parser = pp.Word(pp.alphanums + r'=+_\'",')
-class_parser = '{' + expression_parser('html_insert') + '}'
-value_parser = pp.Word(pp.alphanums + r'\'"')
-assignation = pp.Group(pp.common.identifier('var_name') + '=' + value_parser('var_value'))
-var_parser = '[' + pp.Group(assignation + pp.ZeroOrMore(pp.Suppress(r',') + assignation))('vars') + ']'
-final_parser = image_parser + class_parser + var_parser
-test_string = r'@{custom_pict}{class="watabuya"}[number=2, _important=22, touze=12]'
+# base elements
+value = pps('"') + pp.Word(pp.alphanums + r'.') + pps('"') ^ pps("'") + pp.Word(pp.alphanums + r'.') + pps("'") ^ pp.common.fnumber
+assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))
 
-saucisse = final_parser.parse_string(test_string)
-# rich.inspect(final_parser.parse_string(test_string))
-rich.inspect(saucisse.vars)
+# composite elements
+var = '[' + pp.Group(assignation + pp.ZeroOrMore(pp.Suppress(r',') + assignation))('vars') + ']'
 
-for e in saucisse.vars:
-    print(e.var_name + ' equals ' + e.var_value)
+# specific elements
+image_element = '@{' + pp.common.identifier('image_name') + '}'
+alias_element = '@[' + pp.common.identifier('image_name') + ']'
+expression = pp.Word(pp.alphanums + r'=+-_\'",;: ')
+html_insert = '{' + expression('html_insert') + '}'
+
+
+# preparer elements
+image = image_element + html_insert + var
+alias = alias_element + html_insert + var
+
+# syntax elements
+
+# #
+
+# temp tests
+if __name__ == '__main__':
+    test_string = r'@[custom_pict]{class="watabuya"}[number="2", _important=22, touze=12]'
+
+    saucisse = alias.parse_string(test_string)
+    # rich.inspect(final.parse_string(test_string))
+    rich.inspect(saucisse.vars)
+
+    for e in saucisse.vars:
+        print(f'{e.var_name} equals "{e.var_value}"')
