@@ -24,7 +24,7 @@ def create_config():
     """
     Returns globalConfig as an object from parser_config.yml settings.
     """
-    return config.GlobalConfig(b_path("configs/"))
+    return config.ConfigLoader(b_path("configs/"))
 
 
 def create_crawler():

@@ -8,6 +8,7 @@ import tempfile
 temp_folder = tempfile.TemporaryDirectory()
 configs = {
     "app/configs/parser_config.yaml": '{"parser": {"name": "test_parser", "type": "test_parser"}}',
+    "app/configs/aliases.yaml": '{"parser": {"name": "test_parser", "type": "test_parser"}}',
     "user/config/aliases.yaml": '{"aliases": {"test_alias": "test_parser"}}',
     "user/config/glossary.yaml": '{"glossary": {"test_glossary": "test_parser"}}',
     "user/config/custom_template.yaml": '{"custom_template": {"test_template": "test_parser"}}',
@@ -37,9 +38,20 @@ def test_config_load():
         assert usr_c["aliases2"] is not None
     assert usr_c.__repr__()
 
+def test_add_to_config():
+    usr_c = config.ConfigLoader(user_conf)
+    usr_c.add_folder(app_conf)
+    from_empty = config.ConfigLoader()
+    from_list = config.ConfigLoader([user_conf, app_conf])
+    assert from_list["aliases"] == {"aliases": {"test_alias": "test_parser"},
+                                    "parser": {"name": "test_parser", "type": "test_parser"}}
+    assert from_list["parser_config"] == {"parser": {"name": "test_parser", "type": "test_parser"}}
 
-def test_children():
-    usr_c = config.UserConfig(user_conf)
-    site_c = config.GlobalConfig(app_conf)
-    assert usr_c["glossary"] == {"glossary": {"test_glossary": "test_parser"}}
-    assert site_c["parser_config"] == {"parser": {"name": "test_parser", "type": "test_parser"}}
+    with pytest.raises(FileNotFoundError):
+        assert from_empty["aliases"]
+    from_empty.add_folder(user_conf)
+    assert from_empty["aliases"] == {"aliases": {"test_alias": "test_parser"}}
+
+    from_empty.load_from_file(os.path.join(app_conf, "aliases.yaml"))
+    assert from_empty["aliases"] == {"aliases": {"test_alias": "test_parser"},
+                                    "parser": {"name": "test_parser", "type": "test_parser"}}
