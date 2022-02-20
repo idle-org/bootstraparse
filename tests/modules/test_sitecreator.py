@@ -1,5 +1,4 @@
 import bootstraparse.modules.sitecreator as sitecreator
-import pytest
 
 
 def test_create_site():
