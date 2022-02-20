@@ -24,10 +24,9 @@ alias = alias_element + html_insert + var
 
 # syntax elements
 
-# #
-
-# temp tests
-if __name__ == '__main__':
+###############################################################################
+# Temporary tests
+if __name__ == '__main__':  # pragma: no cover
     test_string = r'@[custom_pict]{class="watabuya"}[number="2", _important=22, touze=12]'
 
     saucisse = alias.parse_string(test_string)
