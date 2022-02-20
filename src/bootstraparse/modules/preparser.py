@@ -6,6 +6,7 @@ from io import StringIO
 
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
+
 import rich
 from rich.tree import Tree
 
@@ -150,9 +151,8 @@ class PreParser:
         :return: the html to insert as a string
         :param shortcut: the id of the shortcut to fetch
         """
-        if shortcut:
-            return '<h1>hello world</h1>'
-        return 'error'
+        # return self.__env.config[""(shortcut)
+        return f'<h1>{shortcut}</h1>'
 
     def get_picture_from_config(self, shortcut):
         """
@@ -160,9 +160,7 @@ class PreParser:
         :return: the html to insert as a string
         :param shortcut: the id of the picture to fetch
         """
-        if shortcut:
-            return '<img src=""/>'
-        return 'error'
+        return f'<img src="{shortcut}"/>'
 
         # todo: test import in sub-folders
         # todo: test same imports on multiple lines
@@ -189,8 +187,8 @@ class PreParser:
     def __eq__(self, other):
         """
         Checks if the PreParser object is equal to another PreParser object.
-        :param other: the other PreParser object
         :return: True if the PreParser objects are equal, False otherwise
+        :param other: the other PreParser object
         """
         if self.path == other.path:
             if self.name == other.name:
@@ -204,8 +202,8 @@ class PreParser:
     def __ne__(self, other):
         """
         Checks if the PreParser object is not equal to another PreParser object.
-        :param other: the other PreParser object
         :return: True if the PreParser objects are not equal, False otherwise
+        :param other: the other PreParser object
         """
         return not self.__eq__(other)
 
@@ -238,5 +236,5 @@ if __name__ == "__main__":  # pragma: no cover
     # rich.print(michel.rich_tree())
     string_to_match = r'@[bite]{id=2}[saucisse=13] @[chaussette] @[bermuda]{tomate=tomate}[12] @[pasteque]'
     # rich.inspect(_rgx_alias.match(string_to_match).captures('alias_name', 'class', 'variables'))
-    for e in _rgx_alias.match(string_to_match).captures(1):
-        rich.inspect(e.captures('alias_name', 'class', 'variables'))
+    for ex in _rgx_alias.match(string_to_match).captures(1):
+        rich.inspect(ex.captures('alias_name', 'class', 'variables'))

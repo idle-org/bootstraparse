@@ -38,6 +38,7 @@ def test_config_load():
         assert usr_c["aliases2"] is not None
     assert usr_c.__repr__()
 
+
 def test_add_to_config():
     usr_c = config.ConfigLoader(user_conf)
     usr_c.add_folder(app_conf)
@@ -54,4 +55,4 @@ def test_add_to_config():
 
     from_empty.load_from_file(os.path.join(app_conf, "aliases.yaml"))
     assert from_empty["aliases"] == {"aliases": {"test_alias": "test_parser"},
-                                    "parser": {"name": "test_parser", "type": "test_parser"}}
+                                     "parser": {"name": "test_parser", "type": "test_parser"}}

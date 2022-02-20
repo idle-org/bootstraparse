@@ -10,7 +10,7 @@ from bootstraparse.modules import preparser
 from bootstraparse.modules import environment
 
 ###############################################################################
-# Environement variables
+# Environment variables
 
 env = environment.Environment()
 _BASE_PATH_PREPARSER = "../../"
@@ -67,6 +67,11 @@ website_tree = {
     "pages/page1.bpr": content_page1,
     "pages/page2.bpr": content_page2
 }
+
+get_from_config = '''
+@{shortcut}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]
+@[picture]{class="picture", type=2, name="picture"}[type=33, name="picture"]
+'''
 
 
 @pytest.fixture(autouse=True)
@@ -198,7 +203,7 @@ def test_preparser_content(filename, content):
     pp = preparser.PreParser(testfile, env)
     pp.make_import_list()
 
-    assert pp.export_with_imports().read() == content  # nothing is implementes yet
+    assert pp.export_with_imports().read() == content  # nothing is implemented yet
     # todo: test import in sub-folders
 
 
@@ -233,3 +238,24 @@ def test_rich_tree():
     pp.make_import_list()
     pp.rich_tree()
     pp.rich_tree(force=False)
+
+
+def test_get_shortcut_from_config():
+    from_config = temp_name("test_get_shortcut_from_config.bpr")
+    make_new_file(from_config, get_from_config)
+
+    pp = preparser.PreParser(from_config, env)
+    pp.make_import_list()
+    assert pp.get_shortcut_from_config("any_shortcut") == "<h1>any_shortcut</h1>"
+    assert pp.get_picture_from_config("any_picture") == '<img src="any_picture"/>'
+
+
+@pytest.mark.xfail(reason="Not implemented")
+def test_replace():
+    replace_file = temp_name("test_preparse.bpr")
+    make_new_file(replace_file, get_from_config)
+    pp = preparser.PreParser(replace_file, env)
+
+    pp.make_import_list()
+    image_f = pp.parse_shortcuts_and_images()
+    assert image_f.read() == """\n<h1>test_preparse</h1>\n<img src='test_preparse.bpr'/>\n"""
