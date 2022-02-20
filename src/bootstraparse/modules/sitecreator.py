@@ -86,7 +86,7 @@ def begin_parsing(p_env):
     pass
 
 
-def begin_export():
+def begin_export(p_env):
     """
     Replaces all parsed values with their attributed
     correspondences as per the template_manager

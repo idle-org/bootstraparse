@@ -140,10 +140,9 @@ class PreParser:
         for line in self.readlines():
             results = regex.match(_rgx_alias, line)
             if results:
-                for e in results.captures('alias_name', 'class','variables'):
+                for e in results.captures('alias_name', 'class', 'variables'):
                     alias_list += [(e, line_count)]
             line_count += 1
-
 
     def get_shortcut_from_config(self, shortcut):
         """
@@ -241,4 +240,3 @@ if __name__ == "__main__":  # pragma: no cover
     # rich.inspect(_rgx_alias.match(string_to_match).captures('alias_name', 'class', 'variables'))
     for e in _rgx_alias.match(string_to_match).captures(1):
         rich.inspect(e.captures('alias_name', 'class', 'variables'))
-
