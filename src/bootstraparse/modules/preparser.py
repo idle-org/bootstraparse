@@ -6,6 +6,7 @@ from io import StringIO
 
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
+from bootstraparse.modules import syntax
 
 import rich
 from rich.tree import Tree
@@ -13,12 +14,12 @@ from rich.tree import Tree
 # list of regexps
 _rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
 
-_rgx_shortcut_alias = r'@\[(?P<alias_name>[\w\-._/]+)\]'
-_rgx_shortcut_image = r'@{(?P<image_name>[\w\-._/]+)}'
-_rgx_shortcut_class = r'({(?P<class>[^}]+)})?'
-_rgx_shortcut_variable = r'(\[(?P<variables>[^\]]+)\])?'
-_rgx_alias = regex.compile(f'({_rgx_shortcut_alias}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
-_rgx_image = regex.compile(f'({_rgx_shortcut_image}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
+# _rgx_shortcut_alias = r'@\[(?P<alias_name>[\w\-._/]+)\]'
+# _rgx_shortcut_image = r'@{(?P<image_name>[\w\-._/]+)}'
+# _rgx_shortcut_class = r'({(?P<class>[^}]+)})?'
+# _rgx_shortcut_variable = r'(\[(?P<variables>[^\]]+)\])?'
+# _rgx_alias = regex.compile(f'({_rgx_shortcut_alias}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
+# _rgx_image = regex.compile(f'({_rgx_shortcut_image}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
 
 
 class PreParser:
@@ -136,16 +137,21 @@ class PreParser:
         :return: a table of occurrences and their lines
         """
         line_count = 0
-        alias_list = []
-        image_list = []
+        temp_file = StringIO()
         for line in self.readlines():
-            results = regex.match(_rgx_alias, line)
+            results = syntax.alias.parse_string(line)
             if results:
-                for e in results.captures('alias_name', 'class', 'variables'):
-                    alias_list += [(e, line_count)]
+                temp_file.writelines(self.get_alias_from_config(results.alias_name))
+            else:
+                results = syntax.inage.parse_string(line)
+                if results:
+                    temp_file.writelines(self.get_picture_from_config(results.image_name))
+                else:
+                    temp_file.writelines(line)
             line_count += 1
+            
 
-    def get_shortcut_from_config(self, shortcut):
+    def get_alias_from_config(self, shortcut):
         """
         Fetches shortcut paths from aliases.yaml
         :return: the html to insert as a string

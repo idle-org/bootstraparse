@@ -13,7 +13,7 @@ var = '[' + pp.Group(assignation + pp.ZeroOrMore(pp.Suppress(r',') + assignation
 
 # specific elements
 image_element = '@{' + pp.common.identifier('image_name') + '}'
-alias_element = '@[' + pp.common.identifier('image_name') + ']'
+alias_element = '@[' + pp.common.identifier('alias_name') + ']'
 expression = pp.Word(pp.alphanums + r'=+-_\'",;: ')
 html_insert = '{' + expression('html_insert') + '}'
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':  # pragma: no cover
 
     saucisse = alias.parse_string(test_string)
     # rich.inspect(final.parse_string(test_string))
-    rich.inspect(saucisse.vars)
+    rich.inspect(saucisse)
 
     for e in saucisse.vars:
         print(f'{e.var_name} equals "{e.var_value}"')
