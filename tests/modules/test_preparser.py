@@ -203,7 +203,7 @@ def test_preparser_content(filename, content):
     pp = preparser.PreParser(testfile, env)
     pp.make_import_list()
 
-    assert pp.export_with_imports().read() == content  # nothing is implemented yet
+    assert pp.export_with_imports().read() == content
     # todo: test import in sub-folders
 
 
@@ -246,7 +246,7 @@ def test_get_shortcut_from_config():
 
     pp = preparser.PreParser(from_config, env)
     pp.make_import_list()
-    assert pp.get_shortcut_from_config("any_shortcut") == "<h1>any_shortcut</h1>"
+    assert pp.get_alias_from_config("any_shortcut") == "<h1>any_shortcut</h1>"
     assert pp.get_picture_from_config("any_picture") == '<img src="any_picture"/>'
 
 

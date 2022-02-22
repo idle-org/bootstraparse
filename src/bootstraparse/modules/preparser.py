@@ -51,7 +51,6 @@ class PreParser:
         self.list_of_paths = list_of_paths + [self.relative_path_resolver(self.name)]
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
-        self.is_global_dict_of_imports_initialized = False
         self.saved_import_list = None
 
         # The tree view of the import tree (if saved)
@@ -64,6 +63,11 @@ class PreParser:
 
         # File you are supposed to read from
         self.current_origin_for_read = None
+
+        # State of operations
+        self.is_global_dict_of_imports_initialized = False
+        self.imports_done = False
+        self.replacements_done = False
 
     def make_temporary_files(self):
         """
@@ -171,6 +175,13 @@ class PreParser:
         """
 
         self.make_import_list()
+
+        # If the imports are already done, reset the cursor position and return the file
+        # We could also decide to duplicate the file instead of resetting the cursor
+        if self.imports_done:
+            self.file_with_all_imports.seek(0)
+            return self.file_with_all_imports
+
         temp_file = self.file_with_all_imports
         source_line_count = 0
         import_list = self.parse_import_list()
@@ -183,6 +194,7 @@ class PreParser:
             temp_file.writelines(import_file.readlines())
         temp_file.writelines(source_lines[source_line_count:])
         temp_file.seek(0)
+        self.imports_done = True
         return temp_file
 
     def parse_shortcuts_and_images(self):
@@ -204,6 +216,8 @@ class PreParser:
                 else:
                     temp_file.writelines(line)
             line_count += 1
+        self.replacements_done = True
+        return temp_file
 
     def get_alias_from_config(self, shortcut):
         """
@@ -287,8 +301,6 @@ if __name__ == "__main__":  # pragma: no cover
     __env.config = config.ConfigLoader(config_path)
     t_pp = PreParser(site_path, __env)
     t_pp.parse_import_list()
-
-
 
     t_pp.make_import_list()
     out = t_pp.export_with_imports()
