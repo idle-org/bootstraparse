@@ -36,6 +36,20 @@ def initlogging(filename=None, loglevel="ERROR", filemode='w', handler=None):
         logging.basicConfig(level=logging.__getattribute__(loglevel), handlers=handler)
 
 
+def log_message(message, level="ERROR"):
+    """
+    Logs a message
+    :param message: The message to log
+    :param level: The level of the message
+    :type level: str
+    :return: None
+    """
+    level = level.lower()
+    logging.__getattribute__(level)(message)
+    if level in ["critical"]:
+        print("An unrecoverable error occurred, please check the log file for more information.")
+
+
 def log_exception(exception, level="ERROR"):
     """
     Logs an exception
