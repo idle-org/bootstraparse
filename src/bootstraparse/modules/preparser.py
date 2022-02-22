@@ -40,25 +40,80 @@ class PreParser:
         if dict_of_imports is None:
             dict_of_imports = {}
 
+        # Set the environment & path
         self.__env = __env
         self.path = file_path
         self.name = os.path.basename(file_path)
         self.base_path = os.path.dirname(file_path)
         self.relative_path_resolver = pr.PathResolver(file_path)
+
+        # Set the variables for imports
         self.list_of_paths = list_of_paths + [self.relative_path_resolver(self.name)]
         self.global_dict_of_imports = dict_of_imports
         self.local_dict_of_imports = {}  # Dictionary of all local imports made to avoid duplicate file opening ?
         self.is_global_dict_of_imports_initialized = False
         self.saved_import_list = None
+
+        # The tree view of the import tree (if saved)
         self.tree_view = None
+
+        # Temporary files, or streams
+        self.file_with_all_imports = None
+        self.file_with_all_replacements = None
+        self.make_temporary_files()
+
+        # File you are supposed to read from
+        self.current_origin_for_read = None
+
+    def make_temporary_files(self):
+        """
+        Creates temporary files for the import list and the replacement.
+        :return: None
+        """
+        self.file_with_all_imports = StringIO()
+        self.file_with_all_replacements = StringIO()
+
+    def do_imports(self):
+        """
+        Execute all actions needed to do the imports and setup for the next step
+        """
+        # TODO: Implement this
+        # Do all imports
+        # parse_import_list()
+        # make_import_list()
+        # export_with_imports()
+        # self.current_origin_for_read = self.file_with_all_imports
+        # return self.current_origin_for_read
+        pass
+
+    def do_replacements(self):
+        """
+        Execute all actions needed to do the replacements.
+        """
+        # TODO: Implement this
+        # Do all replacements
+        #
+        # self.current_origin_for_read = self.file_with_all_replacements
+        # return self.current_origin_for_read
+        pass
 
     def readlines(self):
         """
-        Reads the file and returns a list of lines.
-        :return: a list of lines
+        Reads the original file and returns a list of lines.
+        :return: A list of lines
         """
         with open(self.relative_path_resolver(self.name), 'r') as f:
             return f.readlines()
+
+    def get_all_lines(self):
+        """
+        Get the lines from the file on the step you are in
+        :return: A list of lines
+        """
+        if self.current_origin_for_read is None:
+            return self.readlines()
+        else:
+            return self.current_origin_for_read.readlines()
 
     def make_import_list(self):
         """
@@ -116,7 +171,7 @@ class PreParser:
         """
 
         self.make_import_list()
-        temp_file = StringIO()
+        temp_file = self.file_with_all_imports
         source_line_count = 0
         import_list = self.parse_import_list()
         source_lines = self.readlines()
@@ -137,7 +192,7 @@ class PreParser:
         :return: a table of occurrences and their lines
         """
         line_count = 0
-        temp_file = StringIO()
+        temp_file = self.file_with_all_replacements
         for line in self.readlines():
             results = syntax.alias.parse_string(line)
             if results:
@@ -149,7 +204,6 @@ class PreParser:
                 else:
                     temp_file.writelines(line)
             line_count += 1
-            
 
     def get_alias_from_config(self, shortcut):
         """
@@ -157,7 +211,7 @@ class PreParser:
         :return: the html to insert as a string
         :param shortcut: the id of the shortcut to fetch
         """
-        # return self.__env.config[""(shortcut)
+        # return self.__env.config["aliases"][shortcut]
         return f'<h1>{shortcut}</h1>'
 
     def get_picture_from_config(self, shortcut):
@@ -166,10 +220,8 @@ class PreParser:
         :return: the html to insert as a string
         :param shortcut: the id of the picture to fetch
         """
+        # return self.__env.config["images"][shortcut]
         return f'<img src="{shortcut}"/>'
-
-        # todo: test import in sub-folders
-        # todo: test same imports on multiple lines
 
     def __repr__(self):
         """
@@ -228,19 +280,24 @@ class PreParser:
 
 # This part is only used for testing
 if __name__ == "__main__":  # pragma: no cover
-    # site_path = "../../../example_userfiles/index.bpr"
-    # __env = environment.Environment()
-    # michel = PreParser(site_path, __env)
-    # michel.parse_import_list()
-    # # michel.make_import_list()
-    # michel.export_with_imports()
+    from bootstraparse.modules import config
+    site_path = "../../../example_userfiles/index.bpr"
+    config_path = "../../../example_userfiles/config/"
+    __env = environment.Environment()
+    __env.config = config.ConfigLoader(config_path)
+    t_pp = PreParser(site_path, __env)
+    t_pp.parse_import_list()
+
+
+
+    t_pp.make_import_list()
+    out = t_pp.export_with_imports()
     # path = '../../../example_userfiles/output/show_me_what_you_got.txt'
     # os.makedirs(os.path.dirname(path), exist_ok=True)
     # with open(path, 'w+') as file:
-    #     file.writelines(michel.export_with_imports().readlines())
+    #     file.writelines(pp.export_with_imports().readlines())
     #
+
     # rich.print(michel.rich_tree())
     string_to_match = r'@[bite]{id=2}[saucisse=13] @[chaussette] @[bermuda]{tomate=tomate}[12] @[pasteque]'
-    # rich.inspect(_rgx_alias.match(string_to_match).captures('alias_name', 'class', 'variables'))
-    for ex in _rgx_alias.match(string_to_match).captures(1):
-        rich.inspect(ex.captures('alias_name', 'class', 'variables'))
+    rich.print(out.readlines())
