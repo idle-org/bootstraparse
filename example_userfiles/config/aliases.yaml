@@ -1,5 +1,10 @@
-rest:
-  url: "https://example.org/primenumbers/v1"
-  port: 
-    default: 8443
-    custom: 2883
+shortcuts:
+  copyright: Copyright (c) 2020 by Idle-Corp, all rights reserved.
+  website_url: https://idle-corp.com
+  website_name: Idle-Corp
+  cc_license: CC-BY-SA-4.0
+  replace: Test with {} and {}
+
+images:
+  logo: ressources/images/logo.png
+  favicon: ressources/images/favicon.png
