@@ -207,7 +207,69 @@ def test_preparser_content(filename, content):
     # todo: test import in sub-folders
 
 
-# @pytest.mark.skip("Not implemented")
+@pytest.mark.xfail(reason="Not implemented")
+def test_do_imports():
+    """
+    Test the full export function
+    """
+    testfile = temp_name("index.bpr")
+    assert os.path.exists(testfile)
+    pp = preparser.PreParser(testfile, env)
+    f = pp.do_imports()
+    assert f.read() == final_content_index
+
+
+@pytest.mark.xfail(reason="Not implemented")
+def test_do_replacements():
+    """
+    Test the full replacement function
+    """
+    testfile = temp_name("index.bpr")
+    assert os.path.exists(testfile)
+    pp = preparser.PreParser(testfile, env)
+    f = pp.do_replacements()
+    assert f.read() == final_content_index
+
+
+@pytest.mark.xfail(reason="Not implemented")
+def test_get_all_lines():
+    """
+    Test the line reader
+    """
+    testfile = temp_name("index.bpr")
+    assert os.path.exists(testfile)
+    pp = preparser.PreParser(testfile, env)
+    assert pp.get_all_lines() == content_index.split("\n")
+    pp.do_imports()
+    pp.file_with_all_imports, temp = 12, pp.file_with_all_imports  # To test we are getting the right file
+    assert pp.get_all_lines() == 12
+    pp.file_with_all_imports = temp
+    pp.do_replacements()
+    pp.file_with_all_replacements, temp = 123, pp.file_with_all_replacements  # To test we are getting the right file
+    assert pp.get_all_lines() == 123
+    pp.file_with_all_replacements = temp
+
+
+@pytest.mark.xfail(reason="Not implemented")
+def test_new_temporary_files():
+    """
+    Test the reset of the files
+    """
+    testfile = temp_name("index.bpr")
+    assert os.path.exists(testfile)
+    pp = preparser.PreParser(testfile, env)
+    pp.do_imports()
+    pp.do_replacements()
+    pp.new_temporary_files()
+    assert pp.readlines() == content_index
+    assert pp.get_all_lines() == content_index
+    assert pp.file_with_all_imports.read() == ""
+    assert pp.file_with_all_replacements.read() == ""
+    pp.do_imports()
+    pp.do_replacements()
+    assert pp.get_all_lines() == final_content_index
+
+
 def test_errors():
     with pytest.raises(FileNotFoundError):
         pp = preparser.PreParser("not_existing_file.bprr", env)

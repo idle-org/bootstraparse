@@ -76,6 +76,16 @@ class PreParser:
         """
         self.file_with_all_imports = StringIO()
         self.file_with_all_replacements = StringIO()
+        self.imports_done = False
+        self.replacements_done = False
+
+    def new_temporary_files(self):
+        """
+        Make new temporary files, if the old one are not referenced,
+        the garbage collector will delete them.
+        :return: None
+        """
+        self.make_temporary_files()
 
     def do_imports(self):
         """
