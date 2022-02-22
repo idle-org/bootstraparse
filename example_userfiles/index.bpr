@@ -42,7 +42,8 @@ header~~
 
 @[custom_permutation]{class="bouyou"}[number=44]
 
-@[tab/b&w]{class="sjskq" zjak}
+
+Oneline import @[tab_bnw]{class="sojek"} with three imports @[tab_color] @{image}{class="sojek dark" color="red"}[number=2]
 
 filler
 ::< whatever.bpr > < whatever2.bpr > (import file whatever.bpr)
