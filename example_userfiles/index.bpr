@@ -31,9 +31,9 @@ header~~
 
 
 @{custom_pict}
-@{sch/ht}
+@{sch}[ht]
 @{vuln}[1]
-@{vuln/2}
+@{vuln}[1,2]
 
 @{custom_pict}{class="watabuya"}[number=2, _important=22]
 @{custom_pict/wat}
