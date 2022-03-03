@@ -7,6 +7,7 @@ from io import StringIO
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 from bootstraparse.modules import syntax
+from bootstraparse.modules import error_mngr as em
 
 import rich
 from rich.tree import Tree
@@ -284,8 +285,8 @@ class PreParser:
     def __ne__(self, other):
         """
         Checks if the PreParser object is not equal to another PreParser object.
-        :return: True if the PreParser objects are not equal, False otherwise
         :param other: the other PreParser object
+        :return: True if the PreParser objects are not equal, False otherwise
         """
         return not self.__eq__(other)
 
