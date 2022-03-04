@@ -5,7 +5,7 @@ import rich
 pps = pp.Suppress
 
 
-# semantic group types
+# Semantic group types
 class SemanticType:
     """
     Allows us to access basic operations and identify each token parsed.
@@ -30,7 +30,7 @@ class AliasToken(SemanticType):
 
 
 class ImageToken(SemanticType):
-    label = "images"
+    label = "image"
 
 
 def of_type(token_class):
@@ -47,32 +47,29 @@ def of_type(token_class):
 
 # create_image_token = of_type(ImageToken)
 # create_image_token()
-
-
-
-# base elements
+# Base elements
 quotes = pp.Word(r""""'""")
 value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quotes) ^
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
 
-# composite elements
+# Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
 
-# specific elements
+# Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
 expression = pp.Word(pp.alphanums + r'=+-_\'",;: ')
 html_insert = '{' + expression('html_insert') + '}'
 
-# optional elements
+# Optional elements
 optional = (pp.Opt(html_insert) + pp.Opt(var))("optional")
 
-# preparser elements
+# Preparser elements
 image = image_element + optional
 alias = alias_element + optional
 
-# syntax elements
+# Syntax elements
 line_to_replace = image.add_parse_action(of_type(ImageToken)) ^ alias.add_parse_action(of_type(AliasToken))
 
 ###############################################################################
