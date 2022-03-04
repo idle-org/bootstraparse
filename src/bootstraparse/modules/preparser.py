@@ -97,7 +97,7 @@ class PreParser:
         # parse_import_list()
         # make_import_list()
         # export_with_imports()
-        # self.current_origin_for_read = self.file_with_all_imports
+        self.current_origin_for_read = self.file_with_all_imports
         # return self.current_origin_for_read
         pass
 
@@ -108,7 +108,7 @@ class PreParser:
         # TODO: Implement this
         # Do all replacements
         #
-        # self.current_origin_for_read = self.file_with_all_replacements
+        self.current_origin_for_read = self.file_with_all_replacements
         # return self.current_origin_for_read
         pass
 
@@ -214,21 +214,22 @@ class PreParser:
         and replaces shortcuts and images calls with appropriate html
         :return: a table of occurrences and their lines
         """
-        line_count = 0
-        temp_file = self.file_with_all_replacements
-        for line in self.readlines():
-            results = syntax.alias.parse_string(line)
-            if results:
-                temp_file.writelines(self.get_alias_from_config(results.alias_name))
-            else:
-                results = syntax.inage.parse_string(line)
-                if results:
-                    temp_file.writelines(self.get_picture_from_config(results.image_name))
-                else:
-                    temp_file.writelines(line)
-            line_count += 1
-        self.replacements_done = True
-        return temp_file
+        pass
+        # line_count = 0
+        # temp_file = self.file_with_all_replacements
+        # for line in self.readlines():
+        #     results = syntax.alias.parse_string(line)
+        #     if results:
+        #         temp_file.writelines(self.get_alias_from_config(results.alias_name))
+        #     else:
+        #         results = syntax.inage.parse_string(line)
+        #         if results:
+        #             temp_file.writelines(self.get_picture_from_config(results.image_name))
+        #         else:
+        #             temp_file.writelines(line)
+        #     line_count += 1
+        # self.replacements_done = True
+        # return temp_file
 
     def get_alias_from_config(self, shortcut):
         """

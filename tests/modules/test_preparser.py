@@ -2,6 +2,7 @@
 import os
 import pathlib
 import tempfile
+from io import StringIO
 
 import pytest
 # import rich
@@ -97,6 +98,7 @@ def make_new_file(path, content="", mode="w+"):
 def assert_readlines_equals(lines1, lines2):
     for line1, line2 in zip(lines1, lines2):
         assert line1.strip("\n") == line2.strip("\n")
+    return True
 
 
 @pytest.mark.parametrize("path, line_found", [
@@ -239,15 +241,20 @@ def test_get_all_lines():
     testfile = temp_name("index.bpr")
     assert os.path.exists(testfile)
     pp = preparser.PreParser(testfile, env)
-    assert pp.get_all_lines() == content_index.split("\n")
+    assert_readlines_equals(pp.get_all_lines(), content_index.split("\n"))
+
+    # To test we are getting the right file
+    pp.file_with_all_imports, temp = StringIO("12"), pp.file_with_all_imports
     pp.do_imports()
-    pp.file_with_all_imports, temp = 12, pp.file_with_all_imports  # To test we are getting the right file
-    assert pp.get_all_lines() == 12
+    assert pp.get_all_lines() == ['12']
     pp.file_with_all_imports = temp
+
+    # To test we are getting the right file
+    pp.file_with_all_replacements, temp = StringIO("123"), pp.file_with_all_replacements
     pp.do_replacements()
-    pp.file_with_all_replacements, temp = 123, pp.file_with_all_replacements  # To test we are getting the right file
-    assert pp.get_all_lines() == 123
+    assert pp.get_all_lines() == ["123"]
     pp.file_with_all_replacements = temp
+    assert pp.readlines() != pp.get_all_lines()
 
 
 @pytest.mark.xfail(reason="Not implemented")
