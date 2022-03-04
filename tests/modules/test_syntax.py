@@ -2,13 +2,11 @@ import pyparsing
 import pytest
 import bootstraparse.modules.syntax as sy
 
-
 # Dictionnary of all label and assotiated token used in the language
 list_of_token_types = {
     "alias": sy.AliasToken,
     "image": sy.ImageToken,
 }
-
 
 # Dictionnary of all lexical elements and a list of matching strings
 expressions_to_match = {
@@ -18,23 +16,34 @@ expressions_to_match = {
     "assignation": ["a=1", "a=1.33", "tr2='hu'"],
 
     # Composite elements
-    "var": ['[a,b,c]', '[a=12,22,"c","d,ERE,r,3"]'],
+    "var": ['["a"]',
+            '[a=12]',
+            '[a=12, b=13]',
+            '[12,"a",1.1,a=12, b=13, c=14]',
+            ],
 
     # Specific elements
-    "image_element": ["image(a,b,c)"],
-    "alias_element": ["alias(a,b,c)"],
+    "image_element": ["@{image}", "@{image123_456}"],
+    "alias_element": ["@[alias]", "@[alias123_456]"],
     "expression": ["a+b+c"],
-    "html_insert": ["html(a,b,c)"],
+    "html_insert": ['{zeaioep=12, 22=3, "=5}', "{zeaioep=12, 22=3, 4=5, 6='7'}"],
 
     # Optional elements
     "optional": ["a=1", "a=1.33", "tr2='hu'"],
 
     # Preparser elements
-    "image": ["image(a,b,c)"],
-    "alias": ["alias(a,b,c)"],
+    "image": ["@{image}{test=22}[a=12,22,c,d,ERE,r,3]", "@{image123_456}{a=12,22,c,d,ERE,r,3}",
+              "@{image123_456}[a=12,22,c,d,ERE,r,3]"],
+    "alias": ["@[alias]{test=22}[a=12,22,c,d,ERE,r,3]", "@[alias123_456]{a=12,22,c,d,ERE,r,3}",
+              "@[alias123_456]{a=12,22,c,d,ERE,r,3]"],
 
     # Syntax elements
-    "line_to_replace": ["a=1", "a=1.33", "tr2='hu'"],
+    "line_to_replace": ["@{image}",
+                        "@{image}{testé}",
+                        "@{image}{test=22}",
+                        "@{image}{test=22}[a=12,22,c,d,ERE,r,3]",
+                        "@[alias]{test=22}[a=12,22,c,d,ERE,r,3]",
+                        ],
 }
 
 
@@ -68,7 +77,8 @@ def test_of_type_creator(token_class):
     """
     fcr = sy.of_type(token_class)
     tnk = fcr(None, None, None)
-    assert isinstance(tnk, token_class)
+    # noinspection PyTypeChecker
+    assert isinstance(tnk, token_class)  # pylint: disable=unidiomatic-typecheck
     assert tnk.label == token_class.label
 
 
@@ -107,7 +117,6 @@ def find_expression_from_str(expression_str):
     return sy.__getattribute__(expression_str)  # pylint: disable=no-member
 
 
-@pytest.mark.xfail(reason="Not implemented yet")
 @pytest.mark.parametrize("expression,to_parse", expressions_to_match.items())
 def test_expression_matching(expression, to_parse):
     """
@@ -117,7 +126,7 @@ def test_expression_matching(expression, to_parse):
     :type expression: str
     :type to_parse: list
     """
+    expr = find_expression_from_str(expression)
+    assert isinstance(expr, pyparsing.ParserElement)
     for string in to_parse:
-        expr = find_expression_from_str(expression)
-        assert isinstance(expr, pyparsing.ParserElement)
         assert expr.parse_string(string) is not None
