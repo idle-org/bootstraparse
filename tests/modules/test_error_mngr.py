@@ -62,6 +62,7 @@ class TestLogging(TestCase):
         self.assertEqual(captured.records[0].levelname, "CRITICAL")
         self.assertEqual(captured.records[0].msg, "test message")
 
+
 def test_exception__str__():
     """
     Test the __str__ method of the exception, to make sure it is working
