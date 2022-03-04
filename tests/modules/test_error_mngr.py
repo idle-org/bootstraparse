@@ -48,6 +48,19 @@ class TestLogging(TestCase):
                     error_mngr.log_exception(exception, level="CRITICAL")
             self.assertGreaterEqual(len(captured.records), 1)
 
+    def test_log_message(self):
+        with self.assertLogs() as captured:
+            error_mngr.log_message("test message", level="INFO")
+        self.assertEqual(len(captured.records), 1)
+        self.assertEqual(captured.records[0].levelname, "INFO")
+        self.assertEqual(captured.records[0].msg, "test message")
+
+    def test_log_message_critical(self):
+        with self.assertLogs() as captured:
+            error_mngr.log_message("test message", level="CRITICAL")
+        self.assertEqual(len(captured.records), 1)
+        self.assertEqual(captured.records[0].levelname, "CRITICAL")
+        self.assertEqual(captured.records[0].msg, "test message")
 
 def test_exception__str__():
     """
