@@ -257,7 +257,6 @@ def test_get_all_lines():
     assert pp.readlines() != pp.get_all_lines()
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_new_temporary_files():
     """
     Test the reset of the files
@@ -268,13 +267,13 @@ def test_new_temporary_files():
     pp.do_imports()
     pp.do_replacements()
     pp.new_temporary_files()
-    assert pp.readlines() == content_index
-    assert pp.get_all_lines() == content_index
+    assert_readlines_equals(pp.readlines(), content_index.split("\n"))
+    assert_readlines_equals(pp.get_all_lines(), content_index.split("\n"))
     assert pp.file_with_all_imports.read() == ""
     assert pp.file_with_all_replacements.read() == ""
     pp.do_imports()
     pp.do_replacements()
-    assert pp.get_all_lines() == final_content_index
+    assert_readlines_equals(pp.get_all_lines(), final_content_index)
 
 
 def test_errors():
@@ -315,8 +314,8 @@ def test_get_shortcut_from_config():
 
     pp = preparser.PreParser(from_config, env)
     pp.make_import_list()
-    assert pp.get_alias_from_config("any_shortcut") == "<h1>any_shortcut</h1>"
-    assert pp.get_image_from_config("any_picture") == '<img src="any_picture"/>'
+    assert pp.get_alias_from_config("any_shortcut", None) == "<h1>any_shortcut</h1>"
+    assert pp.get_image_from_config("any_picture", None) == '<img src="any_picture"/>'
 
 
 @pytest.mark.xfail(reason="Not implemented")
@@ -326,5 +325,8 @@ def test_replace():
     pp = preparser.PreParser(replace_file, env)
 
     pp.make_import_list()
+    pp.export_with_imports()
+    # pp.parse_import_list()
+    # pp.make_import_list()
     image_f = pp.parse_shortcuts_and_images()
-    assert image_f.read() == """\n<h1>test_preparse</h1>\n<img src='test_preparse.bpr'/>\n"""
+    assert image_f.read() == """\n<img src="shortcut"/>\n<h1>picture</h1>\n"""

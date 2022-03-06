@@ -220,6 +220,9 @@ class PreParser:
                 elif match.label == 'alias':
                     temp_text = self.get_alias_from_config(match.content.alias_name, match.content.optional)
                 self.file_with_all_replacements.write(temp_text)
+            self.file_with_all_replacements.write("\n")
+        self.file_with_all_replacements.seek(0)
+        return self.file_with_all_replacements
 
     def get_alias_from_config(self, shortcut, optional):
         """
