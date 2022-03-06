@@ -79,5 +79,5 @@ if __name__ == '__main__':  # pragma: no cover
     test_string = r"""@{custom_pict}{class='123watabuya'}[number="2", _important=22, touze=12]"""
 
     saucisse = line_to_replace.parse_string(test_string)
-    rich.inspect(saucisse[0].content)
+    rich.inspect(saucisse[0])
     line_to_replace.create_diagram("../../../tests/diagram.html")
