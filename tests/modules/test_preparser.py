@@ -316,7 +316,7 @@ def test_get_shortcut_from_config():
     pp = preparser.PreParser(from_config, env)
     pp.make_import_list()
     assert pp.get_alias_from_config("any_shortcut") == "<h1>any_shortcut</h1>"
-    assert pp.get_picture_from_config("any_picture") == '<img src="any_picture"/>'
+    assert pp.get_image_from_config("any_picture") == '<img src="any_picture"/>'
 
 
 @pytest.mark.xfail(reason="Not implemented")
