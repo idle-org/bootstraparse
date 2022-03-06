@@ -33,6 +33,10 @@ class ImageToken(SemanticType):
     label = "image"
 
 
+class TextToken(SemanticType):
+    label = "text"
+
+
 def of_type(token_class):
     """
     Function creating a custom function for generating the given Token type.
@@ -52,6 +56,7 @@ quotes = pp.Word(r""""'""")
 value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quotes) ^
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
+anything = pp.Regex('.*?')
 
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
@@ -63,21 +68,24 @@ expression = pp.Word(pp.alphanums + r'=+-_\'",;: ')
 html_insert = '{' + expression('html_insert') + '}'
 
 # Optional elements
-optional = (pp.Opt(html_insert) + pp.Opt(var))("optional")
+optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 
 # Preparser elements
 image = image_element + optional
 alias = alias_element + optional
 
 # Syntax elements
-line_to_replace = image.add_parse_action(of_type(ImageToken)) ^ alias.add_parse_action(of_type(AliasToken))
+line_to_replace = pp.OneOrMore(pp.SkipTo(image ^ alias)('text').add_parse_action(of_type(TextToken)) ^
+                               image.add_parse_action(of_type(ImageToken)) ^
+                               alias.add_parse_action(of_type(AliasToken)))\
+                  ^ pp.SkipTo(pp.lineEnd)('text').add_parse_action(of_type(TextToken))
 
 ###############################################################################
 # Temporary tests
 if __name__ == '__main__':  # pragma: no cover
     pp.autoname_elements()
-    test_string = r"""@{custom_pict}{class='123watabuya'}[number="2", _important=22, touze=12]"""
+    test_string = r"""@{custom_pict}"""
 
     saucisse = line_to_replace.parse_string(test_string)
-    rich.inspect(saucisse[0])
+    rich.inspect(saucisse[0].content.optional)
     line_to_replace.create_diagram("../../../tests/diagram.html")
