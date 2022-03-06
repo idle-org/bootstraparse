@@ -14,13 +14,7 @@ from rich.tree import Tree
 
 # list of regexps
 _rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
-
-# _rgx_shortcut_alias = r'@\[(?P<alias_name>[\w\-._/]+)\]'
-# _rgx_shortcut_image = r'@{(?P<image_name>[\w\-._/]+)}'
-# _rgx_shortcut_class = r'({(?P<class>[^}]+)})?'
-# _rgx_shortcut_variable = r'(\[(?P<variables>[^\]]+)\])?'
-# _rgx_alias = regex.compile(f'({_rgx_shortcut_alias}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
-# _rgx_image = regex.compile(f'({_rgx_shortcut_image}{_rgx_shortcut_class}{_rgx_shortcut_variable} ?)+')
+# TODO: put this in syntax.py
 
 
 class PreParser:
@@ -184,7 +178,6 @@ class PreParser:
         Return the file object with all file imports done
         :return: a filelike object with all file imports done
         """
-
         self.make_import_list()
 
         # If the imports are already done, reset the cursor position and return the file
@@ -214,37 +207,36 @@ class PreParser:
         and replaces shortcuts and images calls with appropriate html
         :return: a table of occurrences and their lines
         """
-        pass
-        # line_count = 0
-        # temp_file = self.file_with_all_replacements
-        # for line in self.readlines():
-        #     results = syntax.alias.parse_string(line)
-        #     if results:
-        #         temp_file.writelines(self.get_alias_from_config(results.alias_name))
-        #     else:
-        #         results = syntax.inage.parse_string(line)
-        #         if results:
-        #             temp_file.writelines(self.get_picture_from_config(results.image_name))
-        #         else:
-        #             temp_file.writelines(line)
-        #     line_count += 1
-        # self.replacements_done = True
-        # return temp_file
+        # TODO: deal with optionals
+        temp_file = self.file_with_all_imports
+        temp_text = ''
+        for line in temp_file.readlines():
+            line_match = syntax.line_to_replace.parse_string(line)
+            for match in line_match:
+                if match.label == 'text':
+                    temp_text = match.content.text
+                elif match.label == 'image':
+                    temp_text = self.get_image_from_config(match.content.image_name, match.content.optional)
+                elif match.label == 'alias':
+                    temp_text = self.get_alias_from_config(match.content.alias_name, match.content.optional)
+                self.file_with_all_replacements.write(temp_text)
 
-    def get_alias_from_config(self, shortcut):
+    def get_alias_from_config(self, shortcut, optional):
         """
         Fetches shortcut paths from aliases.yaml
         :return: the html to insert as a string
-        :param shortcut: the id of the shortcut to fetch
+        :param shortcut: id of the shortcut to fetch
+        :param optional: optional parameters along with alias
         """
         # return self.__env.config["aliases"][shortcut]
         return f'<h1>{shortcut}</h1>'
 
-    def get_picture_from_config(self, shortcut):
+    def get_image_from_config(self, shortcut, optional):
         """
-        Fetches picture paths from aliases.yaml
-        :return: the html to insert as a string
+        Fetches image paths from aliases.yaml
+        :return: html to insert as a string
         :param shortcut: the id of the picture to fetch
+        :param optional: optional parameters along with image
         """
         # return self.__env.config["images"][shortcut]
         return f'<img src="{shortcut}"/>'
