@@ -37,6 +37,30 @@ class TextToken(SemanticType):
     label = "text"
 
 
+class EnhancedToken(SemanticType):
+    label = "enhanced text"
+
+
+class EtEmToken(SemanticType):
+    label = "em text"
+
+
+class EtStrongToken(SemanticType):
+    label = "strong text"
+
+
+class EtUnderlineToken(SemanticType):
+    label = "underline text"
+
+
+class EtStrikethroughToken(SemanticType):
+    label = "strikethrough text"
+
+
+class EtCustomSpanToken(SemanticType):
+    label = "custom span text"
+
+
 def of_type(token_class):
     """
     Function creating a custom function for generating the given Token type.
@@ -56,10 +80,22 @@ quotes = pp.Word(r""""'""")
 value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quotes) ^
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
-anything = pp.Regex('.*?')
+text = pp.OneOrMore(pp.Word(pp.alphanums))
 
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
+
+# Enhanced text
+enhanced_text = pp.Forward()
+et_em = ('*' + enhanced_text + '*')('em')
+et_strong = ('**' + enhanced_text + '**')('strong')
+et_underline = ('__' + enhanced_text + '__')('underline')
+et_strikethrough = ('~~' + enhanced_text + '~~')('strikethrough')
+custom_span = '(#' + pp.Word(pp.nums) + ')'
+et_custom_span = (custom_span + enhanced_text + pp.match_previous_literal(custom_span))('custom_span')
+# enhanced_text <<=
+# (et_strong ^ et_em ^ et_underline ^ et_strikethrough ^ et_custom_span ^ text) + pp.Optional(enhanced_text)
+
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
@@ -84,8 +120,9 @@ line_to_replace = pp.OneOrMore(pp.SkipTo(image ^ alias)('text').add_parse_action
 # Temporary tests
 if __name__ == '__main__':  # pragma: no cover
     pp.autoname_elements()
-    test_string = r"""@{custom_pict}"""
+    test_string = r"""
+                    text ***str_text* em_text** text
+                   """
 
-    saucisse = line_to_replace.parse_string(test_string)
-    rich.inspect(saucisse[0].content.optional)
-    line_to_replace.create_diagram("../../../tests/diagram.html")
+    saucisse = enhanced_text.parse_string(test_string)
+    rich.inspect(saucisse)
