@@ -155,4 +155,4 @@ cython_debug/
 
 example_userfiles/output/
 example_userfiles/output/*
-tests/diagram.html
+dev_outputs/*
