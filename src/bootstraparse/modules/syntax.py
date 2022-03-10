@@ -1,4 +1,6 @@
 # Dedicated module for the syntax of all the parsing
+import os
+
 import pyparsing as pp
 import rich
 
@@ -121,16 +123,16 @@ var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_va
 
 # Enhanced text
 enhanced_text = pp.Forward()
-et_em = (pps('*') + enhanced_text + pps('*'))('em').add_parse_action(of_type(EtEmToken))
-et_strong = (pps('**') + enhanced_text + pps('**'))('strong').add_parse_action(of_type(EtStrongToken))
-et_underline = (pps('__') + enhanced_text + pps('__'))('underline').add_parse_action(of_type(EtUnderlineToken))
-et_strikethrough = (pps('~~') + enhanced_text + pps('~~'))('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
+et_em = (('*') + enhanced_text + ('*'))('em').add_parse_action(of_type(EtEmToken))
+et_strong = (('**') + enhanced_text + ('**'))('strong').add_parse_action(of_type(EtStrongToken))
+et_underline = (('__') + enhanced_text + ('__'))('underline').add_parse_action(of_type(EtUnderlineToken))
+et_strikethrough = (('~~') + enhanced_text + ('~~'))('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
 custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('span_tag')
 et_custom_span = \
     (custom_span + enhanced_text + pp.match_previous_literal(custom_span))('custom_span')\
     .add_parse_action(of_type(EtCustomSpanToken))
 enhanced_text <<= (text | et_strong | et_em | et_underline | et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
-
+enhanced_text.enablePackrat()
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
@@ -155,6 +157,18 @@ line_to_replace = pp.OneOrMore(pp.SkipTo(image ^ alias)('text').add_parse_action
 # Temporary tests
 if __name__ == '__main__':  # pragma: no cover
     pp.autoname_elements()
+
+    def find_color(new_time, old_time):
+        pct = percent(new_time, old_time)
+        if pct < 80:
+            return "red"
+        elif pct > 130:
+            return "green"
+        return "yellow"
+
+    def percent(new_time, old_time):
+        return round((old_time/new_time) * 100, 2)
+
     list_strings = [
         "Normal text",
         "Normal text *em text*",
@@ -165,10 +179,43 @@ if __name__ == '__main__':  # pragma: no cover
         "**Strong text __underline__** normal text",
         "Normal text **strong text *em text*** *em text **strong text*** normal text",
     ]
+    nominal_t = {"Normal text": 0.005791999999999992,
+                 "Normal text *em text*": 0.017378599999999966,
+                 "Normal text **strong text**": 0.021291599999999966,
+                 "Normal text __underline text__": 0.016918500000000003,
+                 "Normal text ~~strikethrough text~~": 0.016525699999999977,
+                 "Normal text (#123) custom span text(#123)": 0.04130879999999998,
+                 "**Strong text __underline__** normal text": 0.05399810000000005,
+                 "Normal text **strong text *em text*** *em text **strong text*** normal text": 0.35971580000000003,
+                 "mega_string": 4.5726051000000005,
+                 }
+    if not os.path.exists('../../../dev_outputs/'):
+        os.mkdir('../../../dev_outputs/')
     enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
-    for string in list_strings:
+
+    import timeit
+    base_time = {}
+    for string, time in nominal_t.items():
+        if string == "mega_string":
+            continue
         print('Input string:', string)
+        n_time = timeit.timeit("enhanced_text.parseString(string)", number=100, globals=globals())
+        base_time[string] = n_time
         output = enhanced_text.parseString(string)
         # rich.inspect(output)
-        print('Output string:', readable_markup(output))
+        color = find_color(n_time, time)
+        perc = percent(n_time, time)
+        rich.print(f'[{color}]Output string: {readable_markup(output)} in {n_time:.2}s vs {time:.2} ({perc} %)[/{color}]')
         print()
+
+    mega_string = ' '.join(list_strings)
+
+    time = timeit.timeit("enhanced_text.parseString(mega_string)", number=5, globals=globals())
+    color = find_color(time, nominal_t['mega_string'])
+    perc = percent(time, nominal_t['mega_string'])
+    rich.print(f'[{color}]Mega time: {time} vs {nominal_t["mega_string"]} ({perc})% [/{color}]')
+    base_time['mega_string'] = time
+
+    print('Base time:')
+    for string, time in base_time.items():
+        print(f'                 "{string}": {time},')
