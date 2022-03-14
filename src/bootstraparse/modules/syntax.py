@@ -31,6 +31,10 @@ class SemanticType:
         return False
 
 
+class UnimplementedToken(SemanticType):
+    label = "unimplemented"
+
+
 class AliasToken(SemanticType):
     label = "alias"
 
