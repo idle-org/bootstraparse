@@ -3,13 +3,13 @@ import pytest
 
 import bootstraparse.modules.syntax as sy
 
-# Dictionnary of all label and assotiated token used in the language
+# Dictionary of all label and associated token used in the language
 list_of_token_types = {
     "alias": sy.AliasToken,
     "image": sy.ImageToken,
 }
 
-# Dictionnary of all lexical elements and a list of matching strings
+# Dictionary of all lexical elements and a list of matching strings
 expressions_to_match = {
     # Base elements
     "quotes": ["'hi, there'", "'hi, there'"],
@@ -27,12 +27,12 @@ expressions_to_match = {
     "image_element": ["@{image}", "@{image123_456}"],
     "alias_element": ["@[alias]", "@[alias123_456]"],
     "expression": ["a+b+c"],
-    "html_insert": ['{zeaioep=12, 22=3, "=5}', "{zeaioep=12, 22=3, 4=5, 6='7'}"],
+    "html_insert": ['{test=12, 22=3, "=5}', "{testing=12, 22=3, 4=5, 6='7'}"],
 
     # Optional elements
     "optional": ["a=1", "a=1.33", "tr2='hu'"],
 
-    # Preparser elements
+    # Pre_parser elements
     "image": ["@{image}{test=22}[a=12,22,c,d,ERE,r,3]", "@{image123_456}{a=12,22,c,d,ERE,r,3}",
               "@{image123_456}[a=12,22,c,d,ERE,r,3]"],
     "alias": ["@[alias]{test=22}[a=12,22,c,d,ERE,r,3]", "@[alias123_456]{a=12,22,c,d,ERE,r,3}",
@@ -40,7 +40,7 @@ expressions_to_match = {
 
     # Syntax elements
     "line_to_replace": ["@{image}",
-                        "@{image}{testé}",
+                        "@{image}{é=12}",
                         "@{image}{test=22}",
                         "@{image}{test=22}[a=12,22,c,d,ERE,r,3]",
                         "@[alias]{test=22}[a=12,22,c,d,ERE,r,3]",
@@ -49,7 +49,7 @@ expressions_to_match = {
 }
 
 dict_advanced_syntax_input_and_expected_output = {
-    # Enhanced text
+    # Enhanced text # TODO : Test optional inline args
     "et_em": [
         ("*", (sy.EtEmToken("*"), )),
     ],
@@ -65,26 +65,48 @@ dict_advanced_syntax_input_and_expected_output = {
     "et_custom_span": [
         ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
     ],
+
+    # Enhanced Text
     "enhanced_text": [
         ("*test*", (sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"))),
         ("**test**", (sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"))),
         ("__test__", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"))),
         ("~~test~~", (sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
         ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
-        ("*test*test*", (sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"))),
-        ("**test**test**", (sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"))),
-        ("__test__test__", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"))),
-        ("~~test~~test~~", (sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
-        ("(#12345)test(#12345)", (sy.EtCustomSpanToken("#12345"), sy.TextToken("test"), sy.EtCustomSpanToken("#12345"))),
-        ("__test(#12)test**test__test~~", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtCustomSpanToken("#12"), sy.TextToken("test"),
+        ("*test*test*", (sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"), sy.TextToken("test"),
+                         sy.EtEmToken("*"))),
+        ("**test**test**", (sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"), sy.TextToken("test"),
+                            sy.EtEmToken("**"))),
+        ("__test__test__", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"),
+                            sy.TextToken("test"), sy.EtUnderlineToken("__"))),
+        ("~~test~~test~~", (sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"),
+                            sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
+        ("(#12345)test(#12345)", (sy.EtCustomSpanToken("#12345"), sy.TextToken("test"),
+                                  sy.EtCustomSpanToken("#12345"))),
+        ("__test(#12)test**test__test~~", (sy.EtUnderlineToken("__"), sy.TextToken("test"),
+                                           sy.EtCustomSpanToken("#12"), sy.TextToken("test"),
          sy.EtEmToken("**"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
         ("12. List", (sy.TextToken("12."), sy.TextToken(" List"))),
-        # ("<<div", (sy.EtDivOpenToken("<<"), sy.TextToken("div"))),
-        # ("div>>", (sy.TextToken("div"), sy.EtDivCloseToken(">>"))),
-        #
-
     ],
 
+    # Divs
+    "et_div": [
+        ("<<div", (sy.UnimplementedToken("<<"), sy.TextToken("div"))),
+        ("div>>", (sy.TextToken("div"), sy.UnimplementedToken(">>"))),
+    ],
+
+    # Elements
+    "il_link": [
+        ("[text_link]('text://www.website.com/link.html')",
+         sy.UnimplementedToken("[text_link]('text://www.website.com/link.html')"))
+    ],
+
+    "one_olist": [
+        ("12. Text", (sy.TextToken("12."), sy.TextToken(" Text"))),
+    ],
+    "one_ulist": [
+        ("- Text", (sy.TextToken("- "), sy.TextToken("Text"))),
+    ],
 }
 
 
@@ -123,7 +145,7 @@ def test_of_type_creator(token_class):
     assert tnk.label == token_class.label
 
 
-def strings_in_Token(token, string_list):
+def strings_in_token(token, string_list):
     token_str = str(token)
     for string in string_list:
         if string not in token_str:
@@ -137,12 +159,12 @@ def test_semantic_type():
     """
     st = sy.SemanticType("test")
     assert st.label is None
-    assert strings_in_Token(st, ["test", "None"])
-    assert strings_in_Token(repr(st), ["test", "None"])
+    assert strings_in_token(st, ["test", "None"])
+    assert strings_in_token(repr(st), ["test", "None"])
     st = sy.SemanticType([1, 2, 3])
     assert st.label is None
     st.label = "test"
-    assert strings_in_Token(st, ["[1, 2, 3]", "test"])
+    assert strings_in_token(st, ["[1, 2, 3]", "test"])
 
 
 def find_expression_from_str(expression_str):
@@ -176,7 +198,7 @@ def test_expression_matching(expression, to_parse):
 @pytest.mark.parametrize("expression, tokens", dict_advanced_syntax_input_and_expected_output.items())
 def test_advanced_expression_and_token_creation(expression, tokens):
     """
-    Test that the advanced syntax is correctly parsed and returs the correct tokens.
+    Test that the advanced syntax is correctly parsed and returns the correct tokens.
     :param expression: The expression to test.
     :param tokens: The expected tokens.
     :type expression: str
@@ -191,3 +213,4 @@ def test_advanced_expression_and_token_creation(expression, tokens):
         # assert result is not None
         # for token, expected_token in zip(result, expected_tokens):
         #     assert token == expected_token
+    assert False
