@@ -109,12 +109,14 @@ def _add_tag(tag, content):
 
 # create_image_token = of_type(ImageToken)
 # create_image_token()
+
 # Base elements
 quotes = pp.Word(r""""'""")
 value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quotes) ^
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
+http_characters = pp.Word(pp.alphanums + r'=+-_\/\\.:;!?%#@&*()[]{}~` ')
 
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
@@ -131,11 +133,22 @@ et_custom_span = \
     .add_parse_action(of_type(EtCustomSpanToken))
 enhanced_text <<= (text | et_strong | et_em | et_underline | et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
 
+# Multiline elements
+div_start = '~~' + text
+div_end = text + '~~'
+
+# Inline elements
+il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'
+
+# Oneline elements
+one_header = '#' + text + '#'  # 1 per hX or copy paste six times?
+one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text
+one_ulist = pp.line_start + '-' + text
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
-expression = pp.Word(pp.alphanums + r'=+-_\'",;: ')
+expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
 html_insert = '{' + expression('html_insert') + '}'
 
 # Optional elements
@@ -164,11 +177,29 @@ if __name__ == '__main__':  # pragma: no cover
         "Normal text (#123) custom span text(#123)",
         "**Strong text __underline__** normal text",
         "Normal text **strong text *em text*** *em text **strong text*** normal text",
+        "~~div",
+        "div~~",
+        "[link text]('http://test.icule')",
+        "# header #",
+        "1. ordered list",
+        "- unordered list",
     ]
+
+    # div_start.parse_string(list_strings[8])
+    # div_end.parse_string(list_strings[9])
+    # il_link.parse_string(list_strings[10])
+    # one_header.parse_string(list_strings[11])
+    # one_olist.parse_string(list_strings[12])
+    # one_ulist.parse_string(list_strings[13])
+
     enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
-    for string in list_strings:
-        print('Input string:', string)
-        output = enhanced_text.parseString(string)
-        # rich.inspect(output)
-        print('Output string:', readable_markup(output))
-        print()
+    # for string in list_strings:
+    #     print('Input string:', string)
+    #     output = enhanced_text.parseString(string)
+    #     # rich.inspect(output)
+    #     print('Output string:', readable_markup(output))
+    #     print()
+
+    # mega_string = (' '.join(list_strings) + ' ')*2
+    # print(mega_string)
+    # output = enhanced_text.parse_string(mega_string)
