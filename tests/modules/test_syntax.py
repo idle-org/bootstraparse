@@ -1,5 +1,6 @@
 import pyparsing
 import pytest
+
 import bootstraparse.modules.syntax as sy
 
 # Dictionnary of all label and assotiated token used in the language
@@ -44,6 +45,46 @@ expressions_to_match = {
                         "@{image}{test=22}[a=12,22,c,d,ERE,r,3]",
                         "@[alias]{test=22}[a=12,22,c,d,ERE,r,3]",
                         ],
+
+}
+
+dict_advanced_syntax_input_and_expected_output = {
+    # Enhanced text
+    "et_em": [
+        ("*", (sy.EtEmToken("*"), )),
+    ],
+    "et_strong": [
+        ("**", sy.EtEmToken("**"), ),
+    ],
+    "et_underline": [
+        ("__", (sy.EtUnderlineToken("__"), )),
+    ],
+    "et_strikethrough": [
+        ("~~", (sy.EtStrikethroughToken("~~"), )),
+    ],
+    "et_custom_span": [
+        ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
+    ],
+    "enhanced_text": [
+        ("*test*", (sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"))),
+        ("**test**", (sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"))),
+        ("__test__", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"))),
+        ("~~test~~", (sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
+        ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
+        ("*test*test*", (sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"))),
+        ("**test**test**", (sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"))),
+        ("__test__test__", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"))),
+        ("~~test~~test~~", (sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
+        ("(#12345)test(#12345)", (sy.EtCustomSpanToken("#12345"), sy.TextToken("test"), sy.EtCustomSpanToken("#12345"))),
+        ("__test(#12)test**test__test~~", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtCustomSpanToken("#12"), sy.TextToken("test"),
+         sy.EtEmToken("**"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
+        ("12. List", (sy.TextToken("12."), sy.TextToken(" List"))),
+        # ("<<div", (sy.EtDivOpenToken("<<"), sy.TextToken("div"))),
+        # ("div>>", (sy.TextToken("div"), sy.EtDivCloseToken(">>"))),
+        #
+
+    ],
+
 }
 
 
@@ -130,3 +171,23 @@ def test_expression_matching(expression, to_parse):
     assert isinstance(expr, pyparsing.ParserElement)
     for string in to_parse:
         assert expr.parse_string(string) is not None
+
+
+@pytest.mark.parametrize("expression, tokens", dict_advanced_syntax_input_and_expected_output.items())
+def test_advanced_expression_and_token_creation(expression, tokens):
+    """
+    Test that the advanced syntax is correctly parsed and returs the correct tokens.
+    :param expression: The expression to test.
+    :param tokens: The expected tokens.
+    :type expression: str
+    :type tokens: list
+    """
+    expr = find_expression_from_str(expression)
+
+    assert isinstance(expr, pyparsing.ParserElement)
+    for string_to_test, expected_tokens in tokens:
+        result = expr.parse_string(string_to_test)
+        print(result)
+        # assert result is not None
+        # for token, expected_token in zip(result, expected_tokens):
+        #     assert token == expected_token
