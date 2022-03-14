@@ -65,48 +65,60 @@ dict_advanced_syntax_input_and_expected_output = {
     "et_custom_span": [
         ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
     ],
-
-    # Enhanced Text
-    "enhanced_text": [
-        ("*test*", (sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"))),
-        ("**test**", (sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"))),
-        ("__test__", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"))),
-        ("~~test~~", (sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
-        ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
-        ("*test*test*", (sy.EtEmToken("*"), sy.TextToken("test"), sy.EtEmToken("*"), sy.TextToken("test"),
-                         sy.EtEmToken("*"))),
-        ("**test**test**", (sy.EtEmToken("**"), sy.TextToken("test"), sy.EtEmToken("**"), sy.TextToken("test"),
-                            sy.EtEmToken("**"))),
-        ("__test__test__", (sy.EtUnderlineToken("__"), sy.TextToken("test"), sy.EtUnderlineToken("__"),
-                            sy.TextToken("test"), sy.EtUnderlineToken("__"))),
-        ("~~test~~test~~", (sy.EtStrikethroughToken("~~"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"),
-                            sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
-        ("(#12345)test(#12345)", (sy.EtCustomSpanToken("#12345"), sy.TextToken("test"),
-                                  sy.EtCustomSpanToken("#12345"))),
-        ("__test(#12)test**test__test~~", (sy.EtUnderlineToken("__"), sy.TextToken("test"),
-                                           sy.EtCustomSpanToken("#12"), sy.TextToken("test"),
-         sy.EtEmToken("**"), sy.TextToken("test"), sy.EtStrikethroughToken("~~"))),
-        ("12. List", (sy.TextToken("12."), sy.TextToken(" List"))),
-    ],
-
-    # Divs
-    "et_div": [
-        ("<<div", (sy.UnimplementedToken("<<"), sy.TextToken("div"))),
-        ("div>>", (sy.TextToken("div"), sy.UnimplementedToken(">>"))),
-    ],
-
-    # Elements
     "il_link": [
         ("[text_link]('text://www.website.com/link.html')",
          sy.UnimplementedToken("[text_link]('text://www.website.com/link.html')"))
     ],
 
+    # Enhanced Text
+    "enhanced_text": [
+        ("*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]))),
+        ("**test**", (sy.EtEmToken(["**"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]))),
+        ("__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]))),
+        ("~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]))),
+        ("(#12345)", (sy.EtCustomSpanToken(["#12345"]), )),
+        ("*test*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]), sy.TextToken(["test"]),
+                         sy.EtEmToken(["*"]))),
+        ("**test**test**", (sy.EtEmToken(["**"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]), sy.TextToken(["test"]),
+                            sy.EtEmToken(["**"]), )),
+        ("__test__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
+                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
+        ("~~test~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
+                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]), )),
+        ("(#12345)test(#12345)", (sy.EtCustomSpanToken(["#12345"]), sy.TextToken(["test"]),
+                                  sy.EtCustomSpanToken(["#12345"]), )),
+        ("__test(#12)test**test__test~~", (sy.EtUnderlineToken("__"), sy.TextToken(["test"]),
+                                           sy.EtCustomSpanToken(["#12"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]),
+                                           sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
+                                           sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
+        ("12. List", (sy.EtUlistToken(["12."]), sy.TextToken([" List"]), )),
+
+    ],
+
+    # Divs
+    "et_div": [
+        ("<<div", (sy.UnimplementedToken("<<div"), )),
+        ("div>>", (sy.TextToken("div"), sy.UnimplementedToken(">>"))),
+    ],
+
+    # Elements
     "one_olist": [
-        ("12. Text", (sy.TextToken("12."), sy.TextToken(" Text"))),
+        ("12. Text", (sy.TextToken(["12.", sy.TextToken(["Text"])]), )),
     ],
     "one_ulist": [
-        ("- Text", (sy.TextToken("- "), sy.TextToken("Text"))),
+        ("- Text", [sy.EtUlistToken(["-", sy.TextToken(["Text"])]), ]),
     ],
+
+    # Headers
+    "one_header": [
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1"]), )),
+        ("## Text2 ##", (sy.HeaderToken(["##", "Text2"]), )),
+        ("### Text3 ###", (sy.HeaderToken(["###", "Text3"]), )),
+        ("#### Text4 ####", (sy.HeaderToken(["####", "Text4"]), )),
+        ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5"]), )),
+        ("###### Text6 ######", (sy.HeaderToken(["######", "Text6"]), )),
+    ],
+    # Tables
 }
 
 
@@ -195,6 +207,7 @@ def test_expression_matching(expression, to_parse):
         assert expr.parse_string(string) is not None
 
 
+@pytest.mark.xfail(reason="Not implemented yet.")
 @pytest.mark.parametrize("expression, tokens", dict_advanced_syntax_input_and_expected_output.items())
 def test_advanced_expression_and_token_creation(expression, tokens):
     """
@@ -209,8 +222,7 @@ def test_advanced_expression_and_token_creation(expression, tokens):
     assert isinstance(expr, pyparsing.ParserElement)
     for string_to_test, expected_tokens in tokens:
         result = expr.parse_string(string_to_test)
-        print(result)
-        # assert result is not None
-        # for token, expected_token in zip(result, expected_tokens):
-        #     assert token == expected_token
-    assert False
+        print("Found:", result, "Expected:", expected_tokens)
+        assert result is not None
+        for token, expected_token in zip(result, expected_tokens):
+            assert token == expected_token

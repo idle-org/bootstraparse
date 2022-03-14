@@ -78,6 +78,38 @@ class EtUlistToken(SemanticType):
     label = "text:ulist"
 
 
+class HeaderToken(SemanticType):
+    label = "header"
+
+
+class IdentifierToken(SemanticType):
+    label = "identifier"
+
+
+class HyperlinkToken(SemanticType):
+    label = "hyperlink"
+
+
+class TableToken(SemanticType):
+    label = "table"
+
+
+class TableRowToken(SemanticType):
+    label = "table:row"
+
+
+class TableHeaderToken(SemanticType):
+    label = "table:header"
+
+
+class TableCellToken(SemanticType):
+    label = "table:cell"
+
+
+class TableSeparatorToken(SemanticType):
+    label = "table:separator"
+
+
 def of_type(token_class):
     """
     Function creating a custom function for generating the given Token type.
@@ -138,8 +170,17 @@ http_characters = pp.Word(pp.alphanums + r'=+-_\/\\.:;!?%#@&*()[]{}~` ')
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
 
-# Enhanced text # TODO: Add all markups so that they can be parsed
-enhanced_text = pp.Forward()
+
+# Specific elements
+image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
+alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
+expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
+html_insert = '{' + expression('html_insert') + '}'
+
+# Optional elements
+optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
+
+# Enhanced text elements # TODO: Add all markups so that they can be parsed, they no longer need to be linked
 # et_em = ('*' + enhanced_text + '*')('em').add_parse_action(of_type(EtEmToken))
 # et_strong = ('**' + enhanced_text + '**')('strong').add_parse_action(of_type(EtStrongToken))
 # et_underline = ('__' + enhanced_text + '__')('underline').add_parse_action(of_type(EtUnderlineToken))
@@ -151,27 +192,26 @@ enhanced_text = pp.Forward()
 # enhanced_text <<= (text | et_strong | et_em | et_underline | et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
 
 # Multiline elements
-div_start = '~~' + text  # TODO : It's not a text, rather a keyword and add ("name") et .add_parse_action(of_type(TextToken))
+div_start = '~~' + text  # TODO : It's not a text, rather a keyword and add ("name") and .add_parse_action(of_type(TextToken))
 div_end = text + '~~'
 
 # Inline elements
 il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'  # Todo: change the quotes to quoted_string, get rid of text which was a placeholder
 
 # Oneline elements
-one_header = '#' + text + '#'  # 1 per hX or copy paste six times?  # TODO: add a header level to the token and get rid of the text which was a placeholder
+one_header = ('#' + text + pps('#')).add_parse_action(of_type(HeaderToken))  # 1 per hX or copy paste six times?  # TODO: add a header level to the token and get rid of the text which was a placeholder
 one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken))
 one_ulist = pp.line_start + ('-' + text).add_parse_action(of_type(EtUlistToken))  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) and get rid of the text which was a placeholder
 
-# Specific elements
-image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
-alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
-expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
-html_insert = '{' + expression('html_insert') + '}'
+# Final elements
+enhanced_text = text  # TODO: It's actually text or et_em or et_strong etc..., either recursive or repeated
 
-# Optional elements
-optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 
+##############################################################################
 # Pre_parser elements
+##############################################################################
+
+# Composite elements
 image = image_element + optional
 alias = alias_element + optional
 
@@ -228,41 +268,23 @@ if __name__ == '__main__':  # pragma: no cover
     #     print('Output string:', readable_markup(output))
     #     print()
 
-    nominal_t = {"Normal text": 0.005791999999999992,
-                 "Normal text *em text*": 0.017378599999999966,
-                 "Normal text **strong text**": 0.021291599999999966,
-                 "Normal text __underline text__": 0.016918500000000003,
-                 "Normal text ~~strikethrough text~~": 0.016525699999999977,
-                 "Normal text (#123) custom span text(#123)": 0.04130879999999998,
-                 "**Strong text __underline__** normal text": 0.05399810000000005,
-                 "Normal text **strong text *em text*** *em text **strong text*** normal text": 0.35971580000000003,
-                 "mega_string": 4.5726051000000005,
-                 }
     if not os.path.exists('../../../dev_outputs/'):
         os.mkdir('../../../dev_outputs/')
     enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
 
     import timeit
     base_time = {}
-    for string, time in nominal_t.items():
-        if string == "mega_string":
-            continue
+    for string in list_strings:
         print('Input string:', string)
         n_time = timeit.timeit("enhanced_text.parseString(string)", number=100, globals=globals())
         base_time[string] = n_time
         output = enhanced_text.parseString(string)
         # rich.inspect(output)
-        color = find_color(n_time, time)
-        perc = percent(n_time, time)
-        rich.print(f'[{color}]Output string: {readable_markup(output)} in {n_time:.2}s vs {time:.2} ({perc} %)[/{color}]')
+        rich.print(f'[] Output string: {readable_markup(output)} in {n_time:.2}s)')
         print()
 
-    mega_string = ' '.join(list_strings)
-
     time = timeit.timeit("enhanced_text.parseString(mega_string)", number=5, globals=globals())
-    color = find_color(time, nominal_t['mega_string'])
-    perc = percent(time, nominal_t['mega_string'])
-    rich.print(f'[{color}]Mega time: {time} vs {nominal_t["mega_string"]} ({perc})% [/{color}]')
+    rich.print(f'[]Mega time: {time}')
     base_time['mega_string'] = time
 
     print('Base time:')
