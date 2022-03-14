@@ -3,3 +3,6 @@ rich~=11.0.0
 regex~=2022.1.18
 pyparse~=1.1.7
 pyparsing[diagrams]~=3.0.7
+
+bootstraparse~=0.1
+pytest~=6.2.5
