@@ -20,14 +20,17 @@ class SemanticType:
         if type(self.content) == str:
             return f'{self.label}[{self.content}]'
         else:
-            return f'{self.label}[{self.content}]'
+            return f'{self.label}{self.content}'
 
     def __repr__(self):
         return str(self)
 
     def __eq__(self, other):
         if type(other) == type(self):
-            return self.content == other.content
+            for e1, e2 in zip(self.content, other.content):
+                if e1 != e2:
+                    return False
+            return True
         return False
 
 
@@ -69,6 +72,10 @@ class EtStrikethroughToken(SemanticType):
 
 class EtCustomSpanToken(SemanticType):
     label = "text:custom_span"
+
+
+class EtUlistToken(SemanticType):
+    label = "text:ulist"
 
 
 def of_type(token_class):
@@ -132,7 +139,7 @@ http_characters = pp.Word(pp.alphanums + r'=+-_\/\\.:;!?%#@&*()[]{}~` ')
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
 
 # Enhanced text # TODO: Add all markups so that they can be parsed
-enhanced_text = None
+enhanced_text = pp.Forward()
 # et_em = ('*' + enhanced_text + '*')('em').add_parse_action(of_type(EtEmToken))
 # et_strong = ('**' + enhanced_text + '**')('strong').add_parse_action(of_type(EtStrongToken))
 # et_underline = ('__' + enhanced_text + '__')('underline').add_parse_action(of_type(EtUnderlineToken))
@@ -148,12 +155,12 @@ div_start = '~~' + text  # TODO : It's not a text, rather a keyword and add ("na
 div_end = text + '~~'
 
 # Inline elements
-il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'  # Todo: change the quotes to quotedstring, get rid of text which was a placeholder
+il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'  # Todo: change the quotes to quoted_string, get rid of text which was a placeholder
 
 # Oneline elements
 one_header = '#' + text + '#'  # 1 per hX or copy paste six times?  # TODO: add a header level to the token and get rid of the text which was a placeholder
 one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken))
-one_ulist = pp.line_start + '-' + text  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) and get rid of the text which was a placeholder
+one_ulist = pp.line_start + ('-' + text).add_parse_action(of_type(EtUlistToken))  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) and get rid of the text which was a placeholder
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
@@ -164,7 +171,7 @@ html_insert = '{' + expression('html_insert') + '}'
 # Optional elements
 optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 
-# Preparser elements
+# Pre_parser elements
 image = image_element + optional
 alias = alias_element + optional
 
