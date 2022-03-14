@@ -25,6 +25,11 @@ class SemanticType:
     def __repr__(self):
         return str(self)
 
+    def __eq__(self, other):
+        if type(other) == type(self):
+            return self.content == other.content
+        return False
+
 
 class AliasToken(SemanticType):
     label = "alias"
@@ -122,30 +127,29 @@ http_characters = pp.Word(pp.alphanums + r'=+-_\/\\.:;!?%#@&*()[]{}~` ')
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
 
-# Enhanced text
-enhanced_text = pp.Forward()
-et_em = ('*' + enhanced_text + '*')('em').add_parse_action(of_type(EtEmToken))
-et_strong = ('**' + enhanced_text + '**')('strong').add_parse_action(of_type(EtStrongToken))
-et_underline = ('__' + enhanced_text + '__')('underline').add_parse_action(of_type(EtUnderlineToken))
-et_strikethrough = ('~~' + enhanced_text + '~~')('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
-custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('span_tag')
-et_custom_span = \
-    (custom_span + enhanced_text + pp.match_previous_literal(custom_span))('custom_span')\
-    .add_parse_action(of_type(EtCustomSpanToken))
-enhanced_text <<= (text | et_strong | et_em | et_underline | et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
-enhanced_text.enablePackrat()
+# Enhanced text # TODO: Add all markups so that they can be parsed
+enhanced_text = None
+# et_em = ('*' + enhanced_text + '*')('em').add_parse_action(of_type(EtEmToken))
+# et_strong = ('**' + enhanced_text + '**')('strong').add_parse_action(of_type(EtStrongToken))
+# et_underline = ('__' + enhanced_text + '__')('underline').add_parse_action(of_type(EtUnderlineToken))
+# et_strikethrough = ('~~' + enhanced_text + '~~')('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
+# custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('span_tag')
+# et_custom_span = \
+#     (custom_span + enhanced_text + pp.match_previous_literal(custom_span))('custom_span')\
+#     .add_parse_action(of_type(EtCustomSpanToken))
+# enhanced_text <<= (text | et_strong | et_em | et_underline | et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
 
 # Multiline elements
-div_start = '~~' + text
+div_start = '~~' + text  # TODO : It's not a text, rather a keyword and add ("name") et .add_parse_action(of_type(TextToken))
 div_end = text + '~~'
 
 # Inline elements
-il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'
+il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'  # Todo: change the quotes to quotedstring, get rid of text which was a placeholder
 
 # Oneline elements
-one_header = '#' + text + '#'  # 1 per hX or copy paste six times?
-one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text
-one_ulist = pp.line_start + '-' + text
+one_header = '#' + text + '#'  # 1 per hX or copy paste six times?  # TODO: add a header level to the token and get rid of the text which was a placeholder
+one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken))
+one_ulist = pp.line_start + '-' + text  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) and get rid of the text which was a placeholder
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
@@ -205,7 +209,7 @@ if __name__ == '__main__':  # pragma: no cover
     # one_olist.parse_string(list_strings[12])
     # one_ulist.parse_string(list_strings[13])
 
-    enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
+    # enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
     # for string in list_strings:
     #     print('Input string:', string)
     #     output = enhanced_text.parseString(string)
