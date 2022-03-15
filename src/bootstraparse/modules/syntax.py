@@ -211,10 +211,10 @@ se = se_end | se_start  # Structural element # TODO Check nomenclature
 il_link = pp.Literal('[') + ... + pp.Literal('](') + pp.QuotedString("'\"", esc_char='\\') + ')'
 
 # Oneline elements
-# TODO: one_header should match any number of '#'
-one_header = (pp.Literal('#') + ... + pps(pp.Literal('#'))).add_parse_action(of_type(HeaderToken))
+# TODO: one_header should match any number of '#' I suggest either a div_element=Word("#") or a div_element=OneOrMore(pp.Literal('#')) with a pp.match_previous_literal(dive=_element) # noqa E501 (line too long)
+one_header = (pp.Literal('#') + ... + pps(" "+'#')).add_parse_action(of_type(HeaderToken))
 
-# TODO: Don't use "^" (longest match wins) use "|" (first match wins) # TODO: add a ("name") ?
+# TODO: Don't use "^" (longest match wins) use "|" (first match wins) # TODO: add a ("name") ? # TODO: Suppress the "."
 one_olist = pp.line_start + \
             ((pp.Word(pp.nums) ^ pp.Word('#')) + '.' + ... + pp.line_end).add_parse_action(of_type(EtOlistToken))
 
