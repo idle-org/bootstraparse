@@ -98,16 +98,8 @@ class TableRowToken(SemanticType):
     label = "table:row"
 
 
-class TableHeaderToken(SemanticType):
-    label = "table:header"
-
-
 class TableCellToken(SemanticType):
     label = "table:cell"
-
-
-class TableSeparatorToken(SemanticType):
-    label = "table:separator"
 
 
 class TableSeparatorToken(SemanticType):
@@ -185,6 +177,7 @@ structural_elements = (pp.Word('div') ^ pp.Word('article') ^ pp.Word('aside') ^ 
 # Optional elements
 optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 
+# TODO : Everywhere : Avoid text at all costs since it is not a valid token, make a new token for it or use pp.SkipTo or (...)
 # Enhanced text elements # TODO: Add all markups so that they can be parsed, they no longer need to be linked
 # et_em = ('*' + enhanced_text + '*')('em').add_parse_action(of_type(EtEmToken))
 # et_strong = ('**' + enhanced_text + '**')('strong').add_parse_action(of_type(EtStrongToken))
@@ -194,11 +187,12 @@ optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 # et_custom_span = \
 #     (custom_span + enhanced_text + pp.match_previous_literal(custom_span))('custom_span')\
 #     .add_parse_action(of_type(EtCustomSpanToken))
-# enhanced_text <<= (text | et_strong | et_em | et_underline | et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
+# enhanced_text <== (text | et_strong | et_em | et_underline |
+# et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
 
 # Multiline elements
-se_start = '~~' + structural_elements
-se_end = text + '~~'
+se_start = '~~' + structural_elements  # TODO : It's not a text, rather a keyword and add ("name") and .add_parse_action(of_type(TextToken))
+se_end = text + '~~' # TODO : Idem
 
 # Inline elements
 il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'

@@ -3,13 +3,13 @@ import pytest
 
 import bootstraparse.modules.syntax as sy
 
-# Dictionary of all label and associated token used in the language
+# Dictionary of all label and associated token used in the Pre_parser
 list_of_token_types = {
     "alias": sy.AliasToken,
     "image": sy.ImageToken,
 }
 
-# Dictionary of all lexical elements and a list of matching strings
+# Dictionary of all lexical elements and a list of matching strings for the Pre_parser
 expressions_to_match = {
     # Base elements
     "quotes": ["'hi, there'", "'hi, there'"],
@@ -48,30 +48,39 @@ expressions_to_match = {
 
 }
 
+# Testing the parser lexical elements
 dict_advanced_syntax_input_and_expected_output = {
     # Enhanced text # TODO : Test optional inline args
     "et_em": [
+        # Single em element, should only match the first "*"
         ("*", (sy.EtEmToken("*"), )),
     ],
     "et_strong": [
+        # Single strong element, should only match the first "**"
         ("**", sy.EtEmToken("**"), ),
     ],
     "et_underline": [
+        # Single underline element, should only match the first "__"
         ("__", (sy.EtUnderlineToken("__"), )),
     ],
     "et_strikethrough": [
+        # Single strikethrough element, should only match the first "~~"
         ("~~", (sy.EtStrikethroughToken("~~"), )),
     ],
     "et_custom_span": [
+        # Single custom span element, should only match the first "(#number)"
         ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
     ],
     "il_link": [
+        # Single link element, should only match the first "[link_name](link)"
+        # TODO: Text tokens ? or Link token and hypelink token ?
         ("[text_link]('text://www.website.com/link.html')",
-         sy.UnimplementedToken("[text_link]('text://www.website.com/link.html')"))
+         sy.HyperlinkToken("[text_link]('text://www.website.com/link.html')"))
     ],
 
     # Enhanced Text
     "enhanced_text": [
+        # Matches a line of text, with or without inline elements
         ("*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]))),
         ("**test**", (sy.EtEmToken(["**"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]))),
         ("__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]))),
@@ -92,25 +101,35 @@ dict_advanced_syntax_input_and_expected_output = {
                                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
                                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
         ("12. List", (sy.EtUlistToken(["12."]), sy.TextToken([" List"]), )),
-
+        ("Test text with a link [link_name](link)", (sy.TextToken(["Test text with a link "]),
+                                                     sy.HyperlinkToken(["link_name", "link"]), )),
+        ("Test text with a link [link_name](link) and a *bold* text", (sy.TextToken(["Test text with a link "]),
+                                                                       sy.HyperlinkToken(["link_name", "link"]),
+                                                                       sy.TextToken([" and a "]), sy.EtEmToken(["*"]),
+                                                                       sy.TextToken(["bold"]), sy.EtEmToken(["*"]), )),
     ],
 
     # Divs
     "et_div": [
-        ("<<div", (sy.UnimplementedToken("<<div"), )),
-        ("div>>", (sy.TextToken("div"), sy.UnimplementedToken(">>"))),
+        # Matches a div element, must be at the beginning of the line, the closing div can be with arguments
+        # TODO: Implement a specific div token
+        ("<<div", (sy.UnimplementedToken(["<<", "div"]), )),
+        ("div>>", (sy.UnimplementedToken(["div", ">>"]))),
     ],
 
     # Elements
     "one_olist": [
+        # Matches a one-level ordered list element, must be at the beginning of the line
         ("12. Text", (sy.TextToken(["12.", sy.TextToken(["Text"])]), )),
     ],
     "one_ulist": [
+        # Matches a one-level unordered list element, must be at the beginning of the line
         ("- Text", [sy.EtUlistToken(["-", sy.TextToken(["Text"])]), ]),
     ],
 
     # Headers
     "one_header": [
+        # Matches a one-level header element, must be at the beginning of the line # TODO: Split into different tokens ?
         ("# Text1 #", (sy.HeaderToken(["#", "Text1"]), )),
         ("## Text2 ##", (sy.HeaderToken(["##", "Text2"]), )),
         ("### Text3 ###", (sy.HeaderToken(["###", "Text3"]), )),
@@ -119,6 +138,20 @@ dict_advanced_syntax_input_and_expected_output = {
         ("###### Text6 ######", (sy.HeaderToken(["######", "Text6"]), )),
     ],
     # Tables
+    "table_row": [
+        # Matches a table element, must be at the beginning of the line # TODO: add TableCellToken?
+        ("| Text1 | Text2 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|"]), )),
+        ("| Text1 | Text2 | Text3 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|", "Text3", "|"]), )),
+        ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
+        ("|2 Text1 |3 Text2 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|"]), )),
+        ("|2 Text1 |3 Text2 |4 Text3 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|4", "Text3", "|"]), )),
+    ],
+    "table_separator": [
+        # Matches a table element, must be at the beginning of the line # TODO: Tokens ?
+        ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]), )),
+        ("|---|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|", "---", "|"]), )),
+        ("|:--|-:-|--:|--:|", (sy.TableSeparatorToken(["|", ":--", "|", "-:-", "|", "--:", "|", "--:", "|"]), )),
+    ],
 }
 
 
