@@ -75,7 +75,11 @@ class EtCustomSpanToken(SemanticType):
 
 
 class EtUlistToken(SemanticType):
-    label = "text:ulist"
+    label = "list:ulist"
+
+
+class EtOlistToken(SemanticType):
+    label = "list:olist"
 
 
 class HeaderToken(SemanticType):
@@ -176,7 +180,7 @@ html_insert = '{' + expression('html_insert') + '}'
 # Optional elements
 optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 
-# TODO : Everywhere : Avoid text at all costs since it is not a valid token, make a new token for it or use pp.SkipTo or (...)
+# TODO : Everywhere : Avoid text at all costs since it is not a valid token, make a new token for it or use pp.SkipTo or (...) # noqa E501 (line too long)
 # Enhanced text elements # TODO: Add all markups so that they can be parsed, they no longer need to be linked
 # et_em = ('*' + enhanced_text + '*')('em').add_parse_action(of_type(EtEmToken))
 # et_strong = ('**' + enhanced_text + '**')('strong').add_parse_action(of_type(EtStrongToken))
@@ -190,16 +194,16 @@ optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 # et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
 
 # Multiline elements
-div_start = '~~' + text  # TODO : It's not a text, rather a keyword and add ("name") and .add_parse_action(of_type(TextToken))
-div_end = text + '~~' # TODO : Idem
+div_start = '~~' + text  # TODO : It's not a text, rather a keyword and add ("name") and .add_parse_action(of_type(TextToken)) # noqa E501 (line too long)
+div_end = text + '~~'  # TODO : Idem
 
 # Inline elements
-il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'  # Todo: change the quotes to quoted_string, get rid of text which was a placeholder
+il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'  # Todo: change the quotes to quoted_string, get rid of text which was a placeholder # noqa E501 (line too long)
 
 # Oneline elements
-one_header = ('#' + text + pps('#')).add_parse_action(of_type(HeaderToken))  # 1 per hX or copy paste six times?  # TODO: add a header level to the token and get rid of the text which was a placeholder
-one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken))
-one_ulist = pp.line_start + ('-' + text).add_parse_action(of_type(EtUlistToken))  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) and get rid of the text which was a placeholder
+one_header = ('#' + text + pps('#')).add_parse_action(of_type(HeaderToken))  # 1 per hX or copy paste six times?  # TODO: add a header level to the token and get rid of the text which was a placeholder # noqa E501 (line too long)
+one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) # noqa E501 (line too long)
+one_ulist = pp.line_start + ('-' + text).add_parse_action(of_type(EtUlistToken))  # TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) and get rid of the text which was a placeholder # noqa E501 (line too long)
 
 # Final elements
 enhanced_text = text  # TODO: It's actually text or et_em or et_strong etc..., either recursive or repeated
