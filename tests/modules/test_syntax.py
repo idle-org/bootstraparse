@@ -73,7 +73,7 @@ dict_advanced_syntax_input_and_expected_output = {
     ],
     "il_link": [
         # Single link element, should only match the first "[link_name](link)"
-        # TODO: Text tokens ? or Link token and hypelink token ?
+        # TODO: Text tokens ? or Link token and hyperlink token ?
         ("[text_link]('text://www.website.com/link.html')",
          sy.HyperlinkToken("[text_link]('text://www.website.com/link.html')"))
     ],
@@ -115,27 +115,36 @@ dict_advanced_syntax_input_and_expected_output = {
         # TODO: Implement a specific div token
         ("<<div", (sy.UnimplementedToken(["<<", "div"]), )),
         ("div>>", (sy.UnimplementedToken(["div", ">>"]))),
+        # TODO: Add a specific optional token for the arguments
+        ("div>> [class='blue', 123#]{var='test', number=11}", (sy.UnimplementedToken(["div", ">>", sy.UnimplementedToken(["[", "class='blue'", ",", "123#", "]"]), sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"])]))), # noqa E501 (line too long)
     ],
 
     # Elements
     "one_olist": [
         # Matches a one-level ordered list element, must be at the beginning of the line
-        ("12. Text", (sy.TextToken(["12.", sy.TextToken(["Text"])]), )),
+        # Drop the "." from the match
+        ("12. Text", (sy.EtOlistToken(["12", sy.TextToken(["Text"])]), )),
     ],
     "one_ulist": [
         # Matches a one-level unordered list element, must be at the beginning of the line
-        ("- Text", [sy.EtUlistToken(["-", sy.TextToken(["Text"])]), ]),
+        # Drop the "-" from the match
+        ("- Text", [sy.EtUlistToken([sy.TextToken(["Text"])]), ]),
     ],
 
     # Headers
     "one_header": [
-        # Matches a one-level header element, must be at the beginning of the line # TODO: Split into different tokens ?
+        # Matches a one-level header element, must be at the beginning of the line
         ("# Text1 #", (sy.HeaderToken(["#", "Text1"]), )),
         ("## Text2 ##", (sy.HeaderToken(["##", "Text2"]), )),
         ("### Text3 ###", (sy.HeaderToken(["###", "Text3"]), )),
         ("#### Text4 ####", (sy.HeaderToken(["####", "Text4"]), )),
         ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5"]), )),
         ("###### Text6 ######", (sy.HeaderToken(["######", "Text6"]), )),
+        ("## Text2 ## {var='test', number=11}", (sy.HeaderToken(["##", "Text2"]),
+                                                 sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))),
+        ("### Text3 ### [class='blue', 123#]{var='test', number=11}", (sy.HeaderToken(["###", "Text3"]),
+                                                                       sy.UnimplementedToken(["[", "class='blue'", ",", "123#", "]"]), # noqa E501 (line too long)
+                                                                       sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))), # noqa E501 (line too long)
     ],
     # Tables
     "table_row": [
@@ -145,12 +154,22 @@ dict_advanced_syntax_input_and_expected_output = {
         ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
         ("|2 Text1 |3 Text2 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|"]), )),
         ("|2 Text1 |3 Text2 |4 Text3 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|4", "Text3", "|"]), )),
+        ("|3 Text1 | Text2 | {var='test', number=11}", (sy.TableRowToken(["|3", "Text1", "|", "Text2", "|"]), sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))), # noqa E501 (line too long)
     ],
     "table_separator": [
         # Matches a table element, must be at the beginning of the line # TODO: Tokens ?
         ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]), )),
         ("|---|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|", "---", "|"]), )),
         ("|:--|-:-|--:|--:|", (sy.TableSeparatorToken(["|", ":--", "|", "-:-", "|", "--:", "|", "--:", "|"]), )),
+    ],
+    "line": [
+        # Match any line parsed by the parser (can match header, list table etc...) this is the main syntax element
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1"]), )),
+        ("Text *bold __underline__ still bold*", (sy.TextToken(["Text ", sy.EtStrongToken(["bold", " ", sy.EtUnderlineToken(["underline"]), " still bold"])]), )),  # noqa E501 (line too long)
+        ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
+        ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]), )),
+        ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]), )),
+        ("div>>", (sy.UnimplementedToken(["div", ">>"]), )),
     ],
 }
 
