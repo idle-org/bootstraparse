@@ -78,12 +78,20 @@ class EtUlistToken(SemanticType):
     label = "text:ulist"
 
 
+class EtOlistToken(SemanticType):
+    label = "text:olist"
+
+
 class HeaderToken(SemanticType):
     label = "header"
 
 
-class StructuralElementToken(SemanticType):
-    label = "structural element"
+class StructuralElementStartToken(SemanticType):
+    label = "se:start"
+
+
+class StructuralElementEndToken(SemanticType):
+    label = "se:end"
 
 
 class HyperlinkToken(SemanticType):
@@ -172,12 +180,14 @@ image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
 expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
 html_insert = '{' + expression('html_insert') + '}'
-structural_elements = (pp.Word('div') ^ pp.Word('article') ^ pp.Word('aside') ^ pp.Word('section'))('structural_element')
+structural_elements = \
+    (pp.Word('div') ^ pp.Word('article') ^ pp.Word('aside') ^ pp.Word('section'))('structural_element')
 
 # Optional elements
 optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 
-# TODO : Everywhere : Avoid text at all costs since it is not a valid token, make a new token for it or use pp.SkipTo or (...)
+# TODO :
+#  Everywhere : Avoid text at all costs since it is not a valid token, make a new token for it or use pp.SkipTo or (...)
 # Enhanced text elements # TODO: Add all markups so that they can be parsed, they no longer need to be linked
 # et_em = ('*' + enhanced_text + '*')('em').add_parse_action(of_type(EtEmToken))
 # et_strong = ('**' + enhanced_text + '**')('strong').add_parse_action(of_type(EtStrongToken))
@@ -191,21 +201,21 @@ optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 # et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
 
 # Multiline elements
-se_start = '~~' + structural_elements  # TODO : It's not a text, rather a keyword and add ("name") and .add_parse_action(of_type(TextToken))
-se_end = text + '~~' # TODO : Idem
+se_start = ('~~' + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
+se_end = (structural_elements + '~~').add_parse_action(of_type(StructuralElementEndToken))
 
 # Inline elements
-il_link = '[' + text + ']' + '(' + quotes + http_characters + pp.match_previous_literal(quotes) + ')'
-# Todo: change the quotes to quoted_string and get rid of the text which was a placeholder
+il_link = '[' + ... + ']' + '(' + pp.quoted_string(http_characters, esc_character='\\') + ')'
 
 # Oneline elements
-one_header = ('#' + text + pps('#')).add_parse_action(of_type(HeaderToken))
-# 1 per hX or copy paste six times?
-# TODO: add a header level to the token and get rid of the text which was a placeholder
-one_olist = pp.line_start + (pp.Word(pp.nums) ^ pp.Word('#')) + '.' + text
-# TODO: add a ("name") and add .add_parse_action(of_type(TextToken))
-one_ulist = pp.line_start + ('-' + text).add_parse_action(of_type(EtUlistToken))
-# TODO: add a ("name") and add .add_parse_action(of_type(TextToken)) and get rid of the text which was a placeholder
+one_header = ('#' + ... + pps('#')).add_parse_action(of_type(HeaderToken)).addParseAction(of_type(HeaderToken))
+# TODO: add a header level to the token
+one_olist = pp.line_start + \
+            ((pp.Word(pp.nums) ^ pp.Word('#')) + '.' + ... + pp.line_end).add_parse_action(of_type(EtOlistToken))
+# TODO: add a ("name")
+one_ulist = pp.line_start + \
+            ('-' + ... + pp.line_end).add_parse_action(of_type(EtUlistToken))
+# TODO: add a ("name")
 
 # Final elements
 enhanced_text = text  # TODO: It's actually text or et_em or et_strong etc..., either recursive or repeated
