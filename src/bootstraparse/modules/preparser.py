@@ -7,7 +7,7 @@ from io import StringIO
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 from bootstraparse.modules import syntax
-from bootstraparse.modules import error_mngr as em
+from bootstraparse.modules import error_mngr as em # noqa # pylint: disable=unused-import
 
 import rich
 from rich.tree import Tree
