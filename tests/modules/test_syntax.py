@@ -100,7 +100,7 @@ dict_advanced_syntax_input_and_expected_output = {
                                            sy.EtCustomSpanToken(["#12"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]),
                                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
                                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
-        ("12. List", (sy.EtUlistToken(["12."]), sy.TextToken([" List"]), )),
+        ("12. List of elements", (sy.EtUlistToken(["12", "List of elements"]), )),
         ("Test text with a link [link_name](link)", (sy.TextToken(["Test text with a link "]),
                                                      sy.HyperlinkToken(["link_name", "link"]), )),
         ("Test text with a link [link_name](link) and a *bold* text", (sy.TextToken(["Test text with a link "]),
@@ -109,8 +109,16 @@ dict_advanced_syntax_input_and_expected_output = {
                                                                        sy.TextToken(["bold"]), sy.EtEmToken(["*"]), )),
     ],
 
-    # Divs
-    "et_div": [
+
+    # Structural Elements
+    "se_start": [
+        # Matches a start of a structural element
+        ("<<div", (sy.StructuralElementStartToken("div"), )),
+    ],
+    "se_end": [
+        ("div>>", (sy.StructuralElementEndToken("div"), )),
+    ],
+    "se": [
         # Matches a div element, must be at the beginning of the line, the closing div can be with arguments
         # TODO: Implement a specific div token
         ("<<div", (sy.UnimplementedToken(["<<", "div"]), )),
@@ -123,12 +131,12 @@ dict_advanced_syntax_input_and_expected_output = {
     "one_olist": [
         # Matches a one-level ordered list element, must be at the beginning of the line
         # Drop the "." from the match
-        ("12. Text", (sy.EtOlistToken(["12", sy.TextToken(["Text"])]), )),
+        ("12. Text", (sy.EtOlistToken(["12", "Text"]), )),
     ],
     "one_ulist": [
         # Matches a one-level unordered list element, must be at the beginning of the line
         # Drop the "-" from the match
-        ("- Text", [sy.EtUlistToken([sy.TextToken(["Text"])]), ]),
+        ("- Text", [sy.EtUlistToken(["-", "Text"])]),
     ],
 
     # Headers
@@ -148,7 +156,7 @@ dict_advanced_syntax_input_and_expected_output = {
     ],
     # Tables
     "table_row": [
-        # Matches a table element, must be at the beginning of the line # TODO: add TableCellToken?
+        # Matches a table element, must be at the beginning of the line
         ("| Text1 | Text2 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|"]), )),
         ("| Text1 | Text2 | Text3 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|", "Text3", "|"]), )),
         ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
@@ -259,7 +267,7 @@ def test_expression_matching(expression, to_parse):
         assert expr.parse_string(string) is not None
 
 
-@pytest.mark.xfail(reason="Not implemented yet.")
+# @pytest.mark.xfail(reason="Not implemented yet.")
 @pytest.mark.parametrize("expression, tokens", dict_advanced_syntax_input_and_expected_output.items())
 def test_advanced_expression_and_token_creation(expression, tokens):
     """

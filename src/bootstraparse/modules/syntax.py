@@ -169,7 +169,7 @@ value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quote
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
-http_characters = pp.Word(pp.alphanums + r'=+-_\/\\.:;!?%#@&*()[]{}~` ')
+http_characters = pp.Word(pp.alphanums + r'=+-_\/\\.:;!?%#@&*()[]{}~` ')  # Todo : Check common.url that can match any common url structure # noqa E501 # pylint: disable=line-too-long
 
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
@@ -181,10 +181,11 @@ alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element
 expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
 html_insert = '{' + expression('html_insert') + '}'
 structural_elements = \
-    (pp.Word('div') ^ pp.Word('article') ^ pp.Word('aside') ^ pp.Word('section'))('structural_element')
+    (pp.Word('div') ^ pp.Word('article') ^ pp.Word('aside') ^ pp.Word('section'))('structural_element') # TODO : Fixit: Word is "make a word with any of the characters in the string" whereas Literal is "make a word with a specific string" # noqa E501 (line too long)
+
 
 # Optional elements
-optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
+optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional") # TODO : Make an optional token ? and maybe a htmlInsertToken and a varToken # noqa E501 (line too long)
 
 # TODO :
 #  Everywhere : Avoid text at all costs since it is not a valid token, make a new token for it or use pp.SkipTo or (...)
@@ -201,21 +202,25 @@ optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional")
 # et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
 
 # Multiline elements
+# TODO: We decided for << instead of ~~ because it is easier to parse
 se_start = ('~~' + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
 se_end = (structural_elements + '~~').add_parse_action(of_type(StructuralElementEndToken))
+se = se_end | se_start  # Structural element # TODO Check nomenclature
 
 # Inline elements
-il_link = '[' + ... + ']' + '(' + pp.quoted_string(http_characters, esc_character='\\') + ')'
+il_link = pp.Literal('[') + ... + pp.Literal('](') + pp.QuotedString("'\"", esc_char='\\') + ')'
 
 # Oneline elements
-one_header = ('#' + ... + pps('#')).add_parse_action(of_type(HeaderToken)).addParseAction(of_type(HeaderToken))
-# TODO: add a header level to the token
+# TODO: one_header should match any number of '#'
+one_header = (pp.Literal('#') + ... + pps(pp.Literal('#'))).add_parse_action(of_type(HeaderToken))
+
+# TODO: Don't use "^" (longest match wins) use "|" (first match wins) # TODO: add a ("name") ?
 one_olist = pp.line_start + \
             ((pp.Word(pp.nums) ^ pp.Word('#')) + '.' + ... + pp.line_end).add_parse_action(of_type(EtOlistToken))
-# TODO: add a ("name")
+
+# TODO: add a ("name") ?
 one_ulist = pp.line_start + \
-            ('-' + ... + pp.line_end).add_parse_action(of_type(EtUlistToken))
-# TODO: add a ("name")
+            (pp.Literal('-') + ... + pp.line_end).add_parse_action(of_type(EtUlistToken))
 
 # Final elements
 enhanced_text = text  # TODO: It's actually text or et_em or et_strong etc..., either recursive or repeated
@@ -241,17 +246,6 @@ line_to_replace = pp.OneOrMore(pp.SkipTo(image ^ alias)('text').add_parse_action
 if __name__ == '__main__':  # pragma: no cover
     pp.autoname_elements()
 
-    def find_color(new_time, old_time):
-        pct = percent(new_time, old_time)
-        if pct < 80:
-            return "red"
-        elif pct > 130:
-            return "green"
-        return "yellow"
-
-    def percent(new_time, old_time):
-        return round((old_time/new_time) * 100, 2)
-
     list_strings = [
         "Normal text",
         "Normal text *em text*",
@@ -261,8 +255,8 @@ if __name__ == '__main__':  # pragma: no cover
         "Normal text (#123) custom span text(#123)",
         "**Strong text __underline__** normal text",
         "Normal text **strong text *em text*** *em text **strong text*** normal text",
-        "~~div",
-        "div~~",
+        "<<div",
+        "div>>",
         "[link text]('http://test.icule')",
         "# header #",
         "1. ordered list",
