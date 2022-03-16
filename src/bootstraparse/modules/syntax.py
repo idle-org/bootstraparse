@@ -168,7 +168,7 @@ value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quote
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
-http_characters = pp.common.url
+url_characters = pp.common.url
 
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
@@ -213,7 +213,7 @@ se_end = (structural_elements + '>>').add_parse_action(of_type(StructuralElement
 se = se_end | se_start  # Structural element
 
 # Inline elements
-il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + http_characters + pp.match_previous_literal(quotes) + ')'
+il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + url_characters + pp.match_previous_literal(quotes) + ')'
 
 # Oneline elements
 one_header = (
