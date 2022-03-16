@@ -118,6 +118,10 @@ class TableSeparatorToken(SemanticType):
     label = "table:separator"
 
 
+class OptionalToken(SemanticType):
+    label = "optional"
+
+
 def of_type(token_class):
     """
     Function creating a custom function for generating the given Token type.
@@ -186,7 +190,9 @@ display_element = pp.OneOrMore(pp.Literal('!'))
 
 
 # Optional elements
-optional = (pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var"))("optional") # TODO : Make an optional token ? and maybe a htmlInsertToken and a varToken # noqa E501 (line too long)
+optional = (
+        pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var")
+)("optional").add_parse_action(of_type(OptionalToken))
 
 
 # Enhanced text elements
