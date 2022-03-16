@@ -230,7 +230,7 @@ one_ulist = pp.line_start + (
 ).add_parse_action(of_type(EtUlistToken))
 
 # Final elements
-enhanced_text = text  # TODO: It's actually text or et_em or et_strong etc..., either recursive or repeated
+enhanced_text = pp.OneOrMore(et_em | et_strikethrough | et_strong | et_underline | et_custom_span | text)
 
 
 ##############################################################################
