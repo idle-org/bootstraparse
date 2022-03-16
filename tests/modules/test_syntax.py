@@ -3,6 +3,9 @@ import pytest
 
 import bootstraparse.modules.syntax as sy
 
+##############################################################################################################
+# PRE-PARSER
+##############################################################################################################
 # Dictionary of all label and associated token used in the Pre_parser
 list_of_token_types = {
     "alias": sy.AliasToken,
@@ -47,6 +50,10 @@ expressions_to_match = {
                         ],
 
 }
+
+##############################################################################################################
+# PARSER
+##############################################################################################################
 
 # Testing the parser lexical elements
 dict_advanced_syntax_input_and_expected_output = {
@@ -127,7 +134,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ("div>> [class='blue', 123#]{var='test', number=11}", (sy.UnimplementedToken(["div", ">>", sy.UnimplementedToken(["[", "class='blue'", ",", "123#", "]"]), sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"])]))), # noqa E501 (line too long)
     ],
 
-    # Elements
+    # List Elements
     "one_olist": [
         # Matches a one-level ordered list element, must be at the beginning of the line
         # Drop the "." from the match
@@ -180,6 +187,53 @@ dict_advanced_syntax_input_and_expected_output = {
         ("div>>", (sy.UnimplementedToken(["div", ">>"]), )),
     ],
 }
+
+list_add_tag_input_and_expected_output = [
+    # Test cases for the add_tag function
+    # Input:
+    (sy.TextToken(["Text"]), "Text"),
+    (sy.EtEmToken(["*"]), "<text:em = '*' />"),
+    (sy.EtStrongToken(["**"]), "<text:strong = '**' />"),
+    (sy.EtUnderlineToken(["__"]), "<text:underline = '__' />"),
+    (sy.EtStrikethroughToken(["~~"]), "<text:strikethrough = '~~' />"),
+    (sy.StructuralElementStartToken(["div"]), "<se:start = 'div' />"),
+    (sy.StructuralElementEndToken(["div"]), "<se:end = 'div' />"),
+    (sy.EtCustomSpanToken(["(#12)"]), "<text:custom_span = '(#12)' />"),
+    (sy.HeaderToken(["#", "Text"]), "<header = '#,Text' />"),
+]
+
+
+list_of_text_input_and_readable_output = [
+    # Header
+    ("# Text1 #", "one_header", "<header: '#,Text1' />"),
+    ("## Text2 ##", "one_header", "<header: '##,Text2' />"),
+
+    # Text
+    ("*Italic*", "et_em", "<em: *>Italic</em :*>"),
+    ("__Underline__", "et_underline", "<underline: __>Underline</underline :__>"),
+    ("**Bold**", "et_strong", "<strong: **>Bold</strong :**>"),
+    ("~~Strikethrough~~", "et_strikethrough", "<strikethrough: ~~>Strikethrough</strikethrough :~~>"),
+    ("Text *bold __underline__ still bold*", "enhanced_text", "<em: *><strong: **><underline: __><strikethrough: ~~>Text bold underline still bold</strikethrough :~~></underline :__></strong :**></em :*>"),  # noqa E501 (line too long)
+    ("[link]('http://www.google.com')", "il_link", "<link: [link](http://www.google.com)>"),
+
+    # Structural elements
+    ("<<div", "se", "<div: <<div>"),
+    ("div>>", "se", "<div: div>>>"),
+
+    # Lists
+    ("- Text", "et_ulist", "<ulist: '-,Text' />"),
+    ("12. Text", "et_olist", "<olist: '12,Text' />"),
+    ("# Text", "et_olist", "<olist: '#,Text' />"),
+
+    # Tables
+    ("| Text1 | Text2 |", "table", "<table: | Text1 | Text2 |>"),
+    ("| Text1 |3 Text2 |", "table", "<table: | Text1 |3 Text2 |>"),
+    ("|---|---|", "table_separator", "<table_separator: |---|---|>"),
+    ("|:--|-:-|--:|--:|", "table_separator", "<table_separator: |:--|-:-|--:|--:|>"),
+
+    # Other Mostly for testing and coverage
+    ("'", "quotes", "'"),
+]
 
 
 @pytest.mark.parametrize("token_name,token_class", list_of_token_types.items())
@@ -286,3 +340,39 @@ def test_advanced_expression_and_token_creation(expression, tokens):
         assert result is not None
         for token, expected_token in zip(result, expected_tokens):
             assert token == expected_token
+
+
+########################################################################################################################
+# TEXT OUTPUT
+########################################################################################################################
+# Test the add tag function
+
+@pytest.mark.parametrize("token, expected_output", list_add_tag_input_and_expected_output)
+def test__add_tag(token, expected_output):
+    """
+    Test that the add_tag function works correctly.
+    :param token: The token to test.
+    :param expected_output: The expected output.
+    :type token: sy.SemanticType
+    :type expected_output: str
+    """
+    assert sy._add_tag(token) == expected_output
+
+
+# Test text functions
+@pytest.mark.parametrize("token_list, parsing_expression, expected", list_of_text_input_and_readable_output)
+def test_readable_markup(token_list, parsing_expression, expected):
+    """
+    Test that the readable markup is correctly generated.
+    :param token_list: The list of tokens.
+    :param parsing_expression: The parsing expression.
+    :param expected: The expected readable markup.
+    :type token_list: str
+    :type parsing_expression: str
+    :type expected: str
+    """
+    expr = find_expression_from_str(parsing_expression)
+    assert isinstance(expr, pyparsing.ParserElement)
+    result = expr.parse_string(token_list)
+    assert result is not None
+    assert sy.readable_markup(result) == expected
