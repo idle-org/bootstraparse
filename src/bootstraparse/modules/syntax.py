@@ -207,10 +207,9 @@ il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + http_characters + 
 # Oneline elements
 # TODO: one_header should match any number of '#' I suggest either a div_element=Word("#") or a div_element=OneOrMore(pp.Literal('#')) with a pp.match_previous_literal(dive=_element) # noqa E501 (line too long)
 one_header = (pp.Literal('#') + ... + pps('#')).add_parse_action(of_type(HeaderToken))
-
-# TODO: Don't use "^" (longest match wins) use "|" (first match wins) # TODO: add a ("name") ? # TODO: Suppress the "."
-one_olist = pp.line_start + \
-            ((pp.Word(pp.nums) ^ pp.Word('#')) + '.' + ... + pp.line_end).add_parse_action(of_type(EtOlistToken))
+one_olist = pp.line_start + (
+        pp.Literal('#') + pps('.') + ...('olist_text') + pp.line_end
+).add_parse_action(of_type(EtOlistToken))
 
 # TODO: add a ("name") ?
 one_ulist = pp.line_start + \
