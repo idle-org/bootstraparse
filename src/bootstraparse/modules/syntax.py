@@ -168,7 +168,7 @@ value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quote
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
-http_characters = pp.Word(pp.common.url)
+http_characters = pp.common.url
 
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
@@ -196,10 +196,10 @@ optional = (
 
 
 # Enhanced text elements
-et_em = ('*' + ... + '*')('em').add_parse_action(of_type(EtEmToken))
-et_strong = ('**' + ... + '**')('strong').add_parse_action(of_type(EtStrongToken))
-et_underline = ('__' + ... + '__')('underline').add_parse_action(of_type(EtUnderlineToken))
-et_strikethrough = ('~~' + ... + '~~')('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
+et_em = (pp.Literal('*') + ... + '*')('em').add_parse_action(of_type(EtEmToken))
+et_strong = (pp.Literal('**') + ... + '**')('strong').add_parse_action(of_type(EtStrongToken))
+et_underline = (pp.Literal('__') + ... + '__')('underline').add_parse_action(of_type(EtUnderlineToken))
+et_strikethrough = (pp.Literal('~~') + ... + '~~')('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
 custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('span_tag')
 et_custom_span = (
         custom_span + ... + pp.match_previous_literal(custom_span)
