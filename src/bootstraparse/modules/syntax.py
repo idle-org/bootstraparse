@@ -242,10 +242,11 @@ image = image_element + optional
 alias = alias_element + optional
 
 # Syntax elements
-line_to_replace = pp.OneOrMore(pp.SkipTo(image ^ alias)('text').add_parse_action(of_type(TextToken)) ^
-                               image.add_parse_action(of_type(ImageToken)) ^
-                               alias.add_parse_action(of_type(AliasToken)))\
-                  ^ pp.SkipTo(pp.lineEnd)('text').add_parse_action(of_type(TextToken))
+line_to_replace = pp.OneOrMore(
+    pp.SkipTo(image ^ alias)('text').add_parse_action(of_type(TextToken))
+    ^ image.add_parse_action(of_type(ImageToken))
+    ^ alias.add_parse_action(of_type(AliasToken))
+) ^ pp.SkipTo(pp.lineEnd)('text').add_parse_action(of_type(TextToken))
 
 ##############################################################################
 # Temporary tests
