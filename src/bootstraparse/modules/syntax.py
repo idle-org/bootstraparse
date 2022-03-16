@@ -202,7 +202,7 @@ se_end = (structural_elements + '>>').add_parse_action(of_type(StructuralElement
 se = se_end | se_start  # Structural element # TODO Check nomenclature
 
 # Inline elements
-il_link = pp.Literal('[') + ... + pp.Literal('](') + pp.QuotedString("'\"", esc_char='\\') + ')'
+il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + http_characters + pp.match_previous_literal(quotes) + ')'
 
 # Oneline elements
 # TODO: one_header should match any number of '#' I suggest either a div_element=Word("#") or a div_element=OneOrMore(pp.Literal('#')) with a pp.match_previous_literal(dive=_element) # noqa E501 (line too long)
