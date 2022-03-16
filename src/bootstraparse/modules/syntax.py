@@ -196,13 +196,13 @@ optional = (
 
 
 # Enhanced text elements
-et_em = (pp.Literal('*') + ... + '*')('em').add_parse_action(of_type(EtEmToken))
-et_strong = (pp.Literal('**') + ... + '**')('strong').add_parse_action(of_type(EtStrongToken))
-et_underline = (pp.Literal('__') + ... + '__')('underline').add_parse_action(of_type(EtUnderlineToken))
-et_strikethrough = (pp.Literal('~~') + ... + '~~')('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
+et_em = (pp.Literal('*') + pp.SkipTo('*'))('em').add_parse_action(of_type(EtEmToken))
+et_strong = (pp.Literal('**') + pp.SkipTo('**'))('strong').add_parse_action(of_type(EtStrongToken))
+et_underline = (pp.Literal('__') + pp.SkipTo('__'))('underline').add_parse_action(of_type(EtUnderlineToken))
+et_strikethrough = (pp.Literal('~~') + pp.SkipTo('~~'))('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
 custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('span_tag')
 et_custom_span = (
-        custom_span + ... + pp.match_previous_literal(custom_span)
+        custom_span + pp.SkipTo(pp.match_previous_literal(custom_span))
 )('custom_span').add_parse_action(of_type(EtCustomSpanToken))
 # enhanced_text <== (text | et_strong | et_em | et_underline |
 # et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
@@ -217,16 +217,16 @@ il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + url_characters + p
 
 # Oneline elements
 one_header = (
-        header_element + ... + pp.match_previous_literal(header_element)
+        header_element + pp.SkipTo(pp.match_previous_literal(header_element))
 ).add_parse_action(of_type(HeaderToken))
 one_display = (
-        display_element + ... + pp.match_previous_literal(display_element)
+        display_element + pp.SkipTo(pp.match_previous_literal(display_element))
 ).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
-        pp.Literal('#') + pps('.') + ...('olist_text') + pp.line_end
+        pp.Literal('#') + pps('.') + pp.SkipTo(pp.line_end)('olist_text')
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
-        pp.Literal('-') + ...('ulist_text') + pp.line_end
+        pp.Literal('-') + pp.SkipTo(pp.line_end)('ulist_text')
 ).add_parse_action(of_type(EtUlistToken))
 
 # Final elements
