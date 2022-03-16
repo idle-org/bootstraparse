@@ -210,7 +210,7 @@ et_custom_span = (
 # Multiline elements
 se_start = ('<<' + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
 se_end = (structural_elements + '>>').add_parse_action(of_type(StructuralElementEndToken))
-se = se_end | se_start  # Structural element # TODO Check nomenclature
+se = se_end | se_start  # Structural element
 
 # Inline elements
 il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + http_characters + pp.match_previous_literal(quotes) + ')'
