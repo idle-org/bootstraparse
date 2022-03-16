@@ -86,6 +86,10 @@ class HeaderToken(SemanticType):
     label = "header"
 
 
+class DisplayToken(SemanticType):
+    label = "display"
+
+
 class StructuralElementStartToken(SemanticType):
     label = "se:start"
 
@@ -178,6 +182,7 @@ structural_elements = (
         pp.CaselessLiteral('section')
 )('structural_element')
 header_element = pp.OneOrMore(pp.Literal('#'))
+display_element = pp.OneOrMore(pp.Literal('!'))
 
 
 # Optional elements
@@ -209,6 +214,9 @@ il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + http_characters + 
 one_header = (
         header_element + ... + pp.match_previous_literal(header_element)
 ).add_parse_action(of_type(HeaderToken))
+one_display = (
+        display_element + ... + pp.match_previous_literal(display_element)
+).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
         pp.Literal('#') + pps('.') + ...('olist_text') + pp.line_end
 ).add_parse_action(of_type(EtOlistToken))
