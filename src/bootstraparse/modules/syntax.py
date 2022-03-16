@@ -177,6 +177,7 @@ structural_elements = (
         pp.CaselessLiteral('aside') |
         pp.CaselessLiteral('section')
 )('structural_element')
+header_element = pp.OneOrMore(pp.Literal('#'))
 
 
 # Optional elements
@@ -205,8 +206,9 @@ se = se_end | se_start  # Structural element # TODO Check nomenclature
 il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + http_characters + pp.match_previous_literal(quotes) + ')'
 
 # Oneline elements
-# TODO: one_header should match any number of '#' I suggest either a div_element=Word("#") or a div_element=OneOrMore(pp.Literal('#')) with a pp.match_previous_literal(dive=_element) # noqa E501 (line too long)
-one_header = (pp.Literal('#') + ... + pps('#')).add_parse_action(of_type(HeaderToken))
+one_header = (
+        header_element + ... + pp.match_previous_literal(header_element)
+).add_parse_action(of_type(HeaderToken))
 one_olist = pp.line_start + (
         pp.Literal('#') + pps('.') + ...('olist_text') + pp.line_end
 ).add_parse_action(of_type(EtOlistToken))
