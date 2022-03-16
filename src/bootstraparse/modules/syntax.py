@@ -137,31 +137,22 @@ def readable_markup(list_of_tokens):
     for token in list_of_tokens:
         if type(token) == str:
             readable_string += token
-        elif token.label == 'text:em':
-            readable_string += _add_tag('em', readable_markup(token.content))
-        elif token.label == 'text:strong':
-            readable_string += _add_tag('b', readable_markup(token.content))
-        elif token.label == 'text:underline':
-            readable_string += _add_tag('u', readable_markup(token.content))
-        elif token.label == 'text:strikethrough':
-            readable_string += _add_tag('st', readable_markup(token.content))
-        elif token.label == 'text:custom_span':
-            readable_string += _add_tag('#', readable_markup(token.content))
-        elif token.label == 'text':
-            readable_string += ' ' + ' '.join(token.content)
         else:
-            raise Exception('Unknown token type' + token.label)
-    return readable_string[1:]
+            readable_string += _add_tag(token)
+    return readable_string
 
 
-def _add_tag(tag, content):
-    if content:
-        return f' <{tag}>{content}</{tag}>'
-    return ''
+def _add_tag(token):
+    """
+    Function used for testing and readability purposes. Replaces matched markup with html-like tags.
+    :param token: matched markup token in analysed text.
+    :return: returns readable string.
+    """
+    if token.label == 'text':
+        return token.content[0]
+    if token.content:
+        return "<{} = '{}' />".format(token.label, ",".join(token.content))
 
-
-# create_image_token = of_type(ImageToken)
-# create_image_token()
 
 # Base elements
 quotes = pp.Word(r""""'""")
@@ -216,7 +207,7 @@ il_link = pp.Literal('[') + ... + pp.Literal('](') + pp.QuotedString("'\"", esc_
 
 # Oneline elements
 # TODO: one_header should match any number of '#' I suggest either a div_element=Word("#") or a div_element=OneOrMore(pp.Literal('#')) with a pp.match_previous_literal(dive=_element) # noqa E501 (line too long)
-one_header = (pp.Literal('#') + ... + pps(" "+'#')).add_parse_action(of_type(HeaderToken))
+one_header = (pp.Literal('#') + ... + pps('#')).add_parse_action(of_type(HeaderToken))
 
 # TODO: Don't use "^" (longest match wins) use "|" (first match wins) # TODO: add a ("name") ? # TODO: Suppress the "."
 one_olist = pp.line_start + \
