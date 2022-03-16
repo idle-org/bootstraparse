@@ -185,8 +185,8 @@ structural_elements = (
         pp.CaselessLiteral('aside') |
         pp.CaselessLiteral('section')
 )('structural_element')
-header_element = pp.OneOrMore(pp.Literal('#'))
-display_element = pp.OneOrMore(pp.Literal('!'))
+header_element = pp.Word('#')
+display_element = pp.Word('!')
 
 
 # Optional elements
