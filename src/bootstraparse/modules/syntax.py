@@ -169,7 +169,7 @@ value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quote
          pp.common.fnumber)("value")
 assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
-http_characters = pp.Word(pp.alphanums + r'=+-_\/\\.:;!?%#@&*()[]{}~` ')  # Todo : Check common.url that can match any common url structure # noqa E501 # pylint: disable=line-too-long
+http_characters = pp.Word(pp.common.url)
 
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
@@ -180,8 +180,12 @@ image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
 expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
 html_insert = '{' + expression('html_insert') + '}'
-structural_elements = \
-    (pp.Word('div') ^ pp.Word('article') ^ pp.Word('aside') ^ pp.Word('section'))('structural_element') # TODO : Fixit: Word is "make a word with any of the characters in the string" whereas Literal is "make a word with a specific string" # noqa E501 (line too long)
+structural_elements = (
+        pp.CaselessLiteral('div') |
+        pp.CaselessLiteral('article') |
+        pp.CaselessLiteral('aside') |
+        pp.CaselessLiteral('section')
+)('structural_element')
 
 
 # Optional elements
