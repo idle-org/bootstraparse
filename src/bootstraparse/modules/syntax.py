@@ -210,10 +210,9 @@ one_header = (pp.Literal('#') + ... + pps('#')).add_parse_action(of_type(HeaderT
 one_olist = pp.line_start + (
         pp.Literal('#') + pps('.') + ...('olist_text') + pp.line_end
 ).add_parse_action(of_type(EtOlistToken))
-
-# TODO: add a ("name") ?
-one_ulist = pp.line_start + \
-            (pp.Literal('-') + ... + pp.line_end).add_parse_action(of_type(EtUlistToken))
+one_ulist = pp.line_start + (
+        pp.Literal('-') + ...('ulist_text') + pp.line_end
+).add_parse_action(of_type(EtUlistToken))
 
 # Final elements
 enhanced_text = text  # TODO: It's actually text or et_em or et_strong etc..., either recursive or repeated
