@@ -200,15 +200,24 @@ et_em = pp.Literal('*')('em').add_parse_action(of_type(EtEmToken))
 et_strong = pp.Literal('**')('strong').add_parse_action(of_type(EtStrongToken))
 et_underline = pp.Literal('__')('underline').add_parse_action(of_type(EtUnderlineToken))
 et_strikethrough = pp.Literal('~~')('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
-et_custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('custom_span')
+et_custom_span = (
+        pps('(#') + pp.Word(pp.nums)('span_id') + pps(')')
+).set_name('custom_span').add_parse_action(of_type(EtCustomSpanToken))
+markup = et_strong | et_em | et_strikethrough | et_underline | et_custom_span
 
 # Multiline elements
-se_start = ('<<' + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
-se_end = (structural_elements + '>>').add_parse_action(of_type(StructuralElementEndToken))
+se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
+se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken))
 se = se_end | se_start  # Structural element
 
 # Inline elements
-il_link = pp.Literal('[') + ... + pp.Literal('](') + quotes + url_characters + pp.match_previous_literal(quotes) + ')'
+# [link text]('http://test.icule')
+il_link = pp.common.url
+# il_link = (
+#         pp.Literal('[') + pp.SkipTo('](')('text') + '](' +
+#         quotes + url_characters('url') + pp.match_previous_literal(quotes)
+#         + ')'
+# ).add_parse_action(of_type(HyperlinkToken))
 
 # Oneline elements
 one_header = (
@@ -225,7 +234,10 @@ one_ulist = pp.line_start + (
 ).add_parse_action(of_type(EtUlistToken))
 
 # Final elements
-enhanced_text = pp.OneOrMore(et_em | et_strikethrough | et_strong | et_underline | et_custom_span | text)
+enhanced_text = pp.OneOrMore(markup + text)
+#     pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup |
+#     pp.SkipTo(pp.line_end)("text").add_parse_action(of_type(TextToken))
+# )
 
 
 ##############################################################################
@@ -250,55 +262,11 @@ if __name__ == '__main__':  # pragma: no cover
     pp.autoname_elements()
 
     list_strings = [
-        "Normal text",
-        "Normal text *em text*",
-        "Normal text **strong text**",
-        "Normal text __underline text__",
-        "Normal text ~~strikethrough text~~",
-        "Normal text (#123) custom span text(#123)",
-        "**Strong text __underline__** normal text",
-        "Normal text **strong text *em text*** *em text **strong text*** normal text",
-        "<<div",
-        "div>>",
-        "[link text]('http://test.icule')",
-        "# header #",
-        "1. ordered list",
-        "- unordered list",
+        "'http://test.icule'",
     ]
-    # div_start.parse_string(list_strings[8])
-    # div_end.parse_string(list_strings[9])
-    # il_link.parse_string(list_strings[10])
-    # one_header.parse_string(list_strings[11])
-    # one_olist.parse_string(list_strings[12])
-    # one_ulist.parse_string(list_strings[13])
 
-    # enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
-    # for string in list_strings:
-    #     print('Input string:', string)
-    #     output = enhanced_text.parseString(string)
-    #     # rich.inspect(output)
-    #     print('Output string:', readable_markup(output))
-    #     print()
+    rich.inspect(il_link.parse_string(list_strings[0]))
 
     if not os.path.exists('../../../dev_outputs/'):
         os.mkdir('../../../dev_outputs/')
     enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
-
-    import timeit
-    base_time = {}
-    for string in list_strings:
-        print('Input string:', string)
-        n_time = timeit.timeit("enhanced_text.parseString(string)", number=100, globals=globals())
-        base_time[string] = n_time
-        output = enhanced_text.parseString(string)
-        # rich.inspect(output)
-        rich.print(f'[] Output string: {readable_markup(output)} in {n_time:.2}s)')
-        print()
-
-    time = timeit.timeit("enhanced_text.parseString(mega_string)", number=5, globals=globals())
-    rich.print(f'[]Mega time: {time}')
-    base_time['mega_string'] = time
-
-    print('Base time:')
-    for string, time in base_time.items():
-        print(f'                 "{string}": {time},')

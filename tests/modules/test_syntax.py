@@ -56,31 +56,31 @@ expressions_to_match = {
 ##############################################################################################################
 
 # Testing the parser lexical elements
+# test_advanced_expression_and_token_creation
 dict_advanced_syntax_input_and_expected_output = {
     # Enhanced text # TODO : Test optional inline args
     "et_em": [
         # Single em element, should only match the first "*"
-        ("*", (sy.EtEmToken("*"), )),
+        ("*", (sy.EtEmToken(["*"]), )),
     ],
     "et_strong": [
         # Single strong element, should only match the first "**"
-        ("**", sy.EtStrongToken("**"), ),
+        ("**", (sy.EtStrongToken(["**"]), )),
     ],
     "et_underline": [
         # Single underline element, should only match the first "__"
-        ("__", (sy.EtUnderlineToken("__"), )),
+        ("__", (sy.EtUnderlineToken(["__"]), )),
     ],
     "et_strikethrough": [
         # Single strikethrough element, should only match the first "~~"
-        ("~~", (sy.EtStrikethroughToken("~~"), )),
+        ("~~", (sy.EtStrikethroughToken(["~~"]), )),
     ],
     "et_custom_span": [
         # Single custom span element, should only match the first "(#number)"
-        ("(#12345)", (sy.EtCustomSpanToken("#12345"), )),
+        ("(#12345)", (sy.EtCustomSpanToken(["12345"]), )),
     ],
     "il_link": [
         # Single link element, should only match the first "[link_name](link)"
-        # TODO: Text tokens ? or Link token and hyperlink token ?
         ("[text_link]('text://www.website.com/link.html')",
          sy.HyperlinkToken("[text_link]('text://www.website.com/link.html')"))
     ],
@@ -92,7 +92,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ("**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]))),
         ("__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]))),
         ("~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]))),
-        ("(#12345)", (sy.EtCustomSpanToken(["#12345"]), )),
+        ("(#12345)", (sy.EtCustomSpanToken(["12345"]), )),
         ("*test*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]), sy.TextToken(["test"]),
                          sy.EtEmToken(["*"]))),
         ("**test**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]), sy.TextToken(["test"]),
@@ -101,13 +101,12 @@ dict_advanced_syntax_input_and_expected_output = {
                             sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
         ("~~test~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
                             sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]), )),
-        ("(#12345)test(#12345)", (sy.EtCustomSpanToken(["#12345"]), sy.TextToken(["test"]),
-                                  sy.EtCustomSpanToken(["#12345"]), )),
-        ("__test(#12)test**test__test~~", (sy.EtUnderlineToken("__"), sy.TextToken(["test"]),
-                                           sy.EtCustomSpanToken(["#12"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]),
-                                           sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
-                                           sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
-        ("#. List of elements", (sy.EtUlistToken(["#", "List of elements"]), )),
+        ("(#12345)test(#12345)", (sy.EtCustomSpanToken(["12345"]), sy.TextToken(["test"]),
+                                  sy.EtCustomSpanToken(["12345"]), )),
+        ("__test(#12)test**test__test~~", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]),
+                                           sy.EtCustomSpanToken(["12"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]),
+                                           sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
+                                           sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]), )),
         ("Test text with a link [link_name](link)", (sy.TextToken(["Test text with a link "]),
                                                      sy.HyperlinkToken(["link_name", "link"]), )),
         ("Test text with a link [link_name](link) and a *bold* text", (sy.TextToken(["Test text with a link "]),
@@ -120,16 +119,16 @@ dict_advanced_syntax_input_and_expected_output = {
     # Structural Elements
     "se_start": [
         # Matches a start of a structural element
-        ("<<div", (sy.StructuralElementStartToken("div"), )),
+        ("<<div", (sy.StructuralElementStartToken(["div"]), )),
     ],
     "se_end": [
-        ("div>>", (sy.StructuralElementEndToken("div"), )),
+        ("div>>", (sy.StructuralElementEndToken(["div"]), )),
     ],
     "se": [
         # Matches a div element, must be at the beginning of the line, the closing div can be with arguments
-        ("div>> [class='blue', 123#]{var='test', number=11}", (sy.StructuralElementEndToken(["div", sy.OptionalToken(["[", "class='blue'", ",", "123#", "]","{", "var='test'", ",", "number=11", "}"])]))), # noqa E501 (line too long)
-        ("div>> [class='blue', 123#]", (sy.StructuralElementEndToken(["div", sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"])]))), # noqa E501 (line too long)
-        ("div>> {var='test', number=11}", (sy.StructuralElementEndToken(["div", sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"])]))), # noqa E501 (line too long)
+        ("div>> [class='blue', 123#]{var='test', number=11}", [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["[", "class='blue'", ",", "123#", "]","{", "var='test'", ",", "number=11", "}"])]])]), # noqa E501 (line too long)
+        ("div>> [class='blue', 123#]", [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"])]])]), # noqa E501 (line too long)
+        ("div>> {var='test', number=11}", [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"])]])]), # noqa E501 (line too long)
     ],
 
     # List Elements
@@ -186,6 +185,7 @@ dict_advanced_syntax_input_and_expected_output = {
     ],
 }
 
+# test__add_tag
 list_add_tag_input_and_expected_output = [
     # Test cases for the add_tag function
     # Input:
@@ -200,28 +200,27 @@ list_add_tag_input_and_expected_output = [
     (sy.HeaderToken(["#", "Text"]), "<header = '#,Text' />"),
 ]
 
-
+# test_readable_markup
 list_of_text_input_and_readable_output = [
     # Header
-    ("# Text1 #", "one_header", "<header: '#,Text1 ' />"),
-    ("## Text2 ##", "one_header", "<header: '##,Text2 ' />"),
+    ("# Text1 #", "one_header", "<header = '#,Text1 ' />"),
+    ("## Text2 ##", "one_header", "<header = '##,Text2 ' />"),
 
     # Text
-    ("*Italic*", "et_em", "<em: *>Italic</em :*>"),
-    ("__Underline__", "et_underline", "<underline: __>Underline</underline :__>"),
-    ("**Bold**", "et_strong", "<strong: **>Bold</strong :**>"),
-    ("~~Strikethrough~~", "et_strikethrough", "<strikethrough: ~~>Strikethrough</strikethrough :~~>"),
-    ("Text *bold __underline__ still bold*", "enhanced_text", "<em: *><strong: **><underline: __><strikethrough: ~~>Text bold underline still bold</strikethrough :~~></underline :__></strong :**></em :*>"),  # noqa E501 (line too long)
+    ("*Italic*", "et_em", "<text:em = '*' />"),
+    ("__Underline__", "et_underline", "<text:underline = '__' />"),
+    ("**Bold**", "et_strong", "<text:strong = '**' />"),
+    ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough = '~~' />"),
+    # ("Text *bold __underline__ still bold*", "enhanced_text", "<em: *><strong: **><underline: __><strikethrough: ~~>Text bold underline still bold</strikethrough :~~></underline :__></strong :**></em :*>"),  # noqa E501 (line too long)
     ("[link]('http://www.google.com')", "il_link", "<link: [link](http://www.google.com)>"),
 
     # Structural elements
-    ("<<div", "se", "<div: <<div>"),
-    ("div>>", "se", "<div: div>>>"),
+    ("<<div", "se", "<se:start = 'div' />"),
+    ("div>>", "se", "<se:end = 'div' />"),
 
     # Lists
-    ("- Text", "il_ulist", "<ulist: '-,Text' />"),
-    ("12. Text", "il_olist", "<olist: '12,Text' />"),
-    ("# Text", "il_olist", "<olist: '#,Text' />"),
+    ("- Text", "one_ulist", "<list:ulist = '-,Text' />"),
+    ("#. Text", "one_olist", "<list:olist = '#,Text' />"),
 
     # Tables
     ("| Text1 | Text2 |", "table", "<table: | Text1 | Text2 |>"),
