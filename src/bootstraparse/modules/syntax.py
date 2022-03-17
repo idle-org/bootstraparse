@@ -1,7 +1,9 @@
 # Dedicated module for the syntax of all the parsing
 import os
+from itertools import zip_longest
+
 import pyparsing as pp
-import rich
+# import rich
 
 pps = pp.Suppress
 
@@ -16,6 +18,20 @@ class SemanticType:
     def __init__(self, content):
         self.content = content
 
+    def to_markup(self):
+        """
+        Function used for testing and readability purposes. Replaces matched markup with html-like tags.
+        """
+        if self.content:
+            return_list = []
+            for elt in self.content:
+                try:
+                    return_list.append(elt.to_markup())
+                except Exception:
+                    return_list.append(str(elt))
+            return f"<{self.label} = '{','.join(return_list)}' />"
+        return f'<[NOC] {self.label} />'
+
     def __str__(self):
         if type(self.content) == str:
             return f'{self.label}[{self.content}]'
@@ -27,11 +43,30 @@ class SemanticType:
 
     def __eq__(self, other):
         if type(other) == type(self):
-            for e1, e2 in zip(self.content, other.content):
+            for e1, e2 in zip_longest(self.content, other.content):
                 if e1 != e2:
                     return False
             return True
         return False
+
+
+class ExplicitSemanticType(SemanticType):
+    """
+    Explicit semantic type, the label is the only information we need.
+    """
+    def to_markup(self):
+        return f'<{self.label} />'
+
+
+class EmptySemanticType(SemanticType):
+    """
+    Empty semantic type, the content is the only information we need.
+    """
+    def to_markup(self):
+        if type(self.content) == str:
+            return f'{self.content}'
+        else:
+            return " ".join(map(str, self.content))
 
 
 class UnimplementedToken(SemanticType):
@@ -46,27 +81,27 @@ class ImageToken(SemanticType):
     label = "image"
 
 
-class TextToken(SemanticType):
+class TextToken(EmptySemanticType):
     label = "text"
 
 
-class EnhancedToken(SemanticType):
+class EnhancedToken(ExplicitSemanticType):
     label = "text:enhanced"
 
 
-class EtEmToken(SemanticType):
+class EtEmToken(ExplicitSemanticType):
     label = "text:em"
 
 
-class EtStrongToken(SemanticType):
+class EtStrongToken(ExplicitSemanticType):
     label = "text:strong"
 
 
-class EtUnderlineToken(SemanticType):
+class EtUnderlineToken(ExplicitSemanticType):
     label = "text:underline"
 
 
-class EtStrikethroughToken(SemanticType):
+class EtStrikethroughToken(ExplicitSemanticType):
     label = "text:strikethrough"
 
 
@@ -141,25 +176,16 @@ def readable_markup(list_of_tokens):
     :return: returns readable string.
     :rtype: string
     """
-    readable_string = ''
+    readable_list = []
     for token in list_of_tokens:
         if type(token) == str:
-            readable_string += token
+            readable_list.append(token)
         else:
-            readable_string += _add_tag(token)
-    return readable_string
-
-
-def _add_tag(token):
-    """
-    Function used for testing and readability purposes. Replaces matched markup with html-like tags.
-    :param token: matched markup token in analysed text.
-    :return: returns readable string.
-    """
-    if token.label == 'text':
-        return token.content[0]
-    if token.content:
-        return "<{} = '{}' />".format(token.label, ",".join(token.content))
+            try:
+                readable_list.append(token.to_markup())
+            except Exception:
+                readable_list.append(str(token))
+    return " ".join(readable_list)
 
 
 # Base elements
@@ -194,6 +220,10 @@ optional = (
         pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var")
 )("optional").add_parse_action(of_type(OptionalToken))
 
+# Inline elements
+il_link = pp.Regex(
+    r"""\[(?P<text>.+)\]\(['"](?P<url>[a-zA-Z-_:\/=@#!%\?\d\(\)\.]+)['"]\)"""
+).add_parse_action(of_type(HyperlinkToken))
 
 # Enhanced text elements
 et_em = pp.Literal('*')('em').add_parse_action(of_type(EtEmToken))
@@ -203,21 +233,14 @@ et_strikethrough = pp.Literal('~~')('strikethrough').add_parse_action(of_type(Et
 et_custom_span = (
         pps('(#') + pp.Word(pp.nums)('span_id') + pps(')')
 ).set_name('custom_span').add_parse_action(of_type(EtCustomSpanToken))
-markup = et_strong | et_em | et_strikethrough | et_underline | et_custom_span
+
+# markup sums up all in-line elements
+markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
 
 # Multiline elements
 se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
 se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken))
 se = se_end | se_start  # Structural element
-
-# Inline elements
-# [link text]('http://test.icule')
-il_link = pp.common.url
-# il_link = (
-#         pp.Literal('[') + pp.SkipTo('](')('text') + '](' +
-#         quotes + url_characters('url') + pp.match_previous_literal(quotes)
-#         + ')'
-# ).add_parse_action(of_type(HyperlinkToken))
 
 # Oneline elements
 one_header = (
@@ -234,10 +257,9 @@ one_ulist = pp.line_start + (
 ).add_parse_action(of_type(EtUlistToken))
 
 # Final elements
-enhanced_text = pp.OneOrMore(markup + text)
-#     pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup |
-#     pp.SkipTo(pp.line_end)("text").add_parse_action(of_type(TextToken))
-# )
+enhanced_text = pp.ZeroOrMore(
+    markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
+) + pp.Opt(pp.rest_of_line("text").add_parse_action(of_type(TextToken)))
 
 
 ##############################################################################
@@ -253,19 +275,13 @@ line_to_replace = pp.OneOrMore(
     pp.SkipTo(image ^ alias)('text').add_parse_action(of_type(TextToken))
     ^ image.add_parse_action(of_type(ImageToken))
     ^ alias.add_parse_action(of_type(AliasToken))
-) ^ pp.SkipTo(pp.lineEnd)('text').add_parse_action(of_type(TextToken))
+) ^ pp.rest_of_line('text').add_parse_action(of_type(TextToken))
 
 ##############################################################################
 # Temporary tests
 ##############################################################################
 if __name__ == '__main__':  # pragma: no cover
     pp.autoname_elements()
-
-    list_strings = [
-        "'http://test.icule'",
-    ]
-
-    rich.inspect(il_link.parse_string(list_strings[0]))
 
     if not os.path.exists('../../../dev_outputs/'):
         os.mkdir('../../../dev_outputs/')

@@ -58,7 +58,7 @@ expressions_to_match = {
 # Testing the parser lexical elements
 # test_advanced_expression_and_token_creation
 dict_advanced_syntax_input_and_expected_output = {
-    # Enhanced text # TODO : Test optional inline args
+    # Enhanced text
     "et_em": [
         # Single em element, should only match the first "*"
         ("*", (sy.EtEmToken(["*"]), )),
@@ -80,9 +80,9 @@ dict_advanced_syntax_input_and_expected_output = {
         ("(#12345)", (sy.EtCustomSpanToken(["12345"]), )),
     ],
     "il_link": [
-        # Single link element, should only match the first "[link_name](link)"
+        # Single link element, should only match the first "[link_name]('link')"
         ("[text_link]('text://www.website.com/link.html')",
-         sy.HyperlinkToken("[text_link]('text://www.website.com/link.html')"))
+         [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])])
     ],
 
     # Enhanced Text
@@ -107,12 +107,11 @@ dict_advanced_syntax_input_and_expected_output = {
                                            sy.EtCustomSpanToken(["12"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]),
                                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
                                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]), )),
-        ("Test text with a link [link_name](link)", (sy.TextToken(["Test text with a link "]),
-                                                     sy.HyperlinkToken(["link_name", "link"]), )),
-        ("Test text with a link [link_name](link) and a *bold* text", (sy.TextToken(["Test text with a link "]),
-                                                                       sy.HyperlinkToken(["link_name", "link"]),
-                                                                       sy.TextToken([" and a "]), sy.EtEmToken(["*"]),
-                                                                       sy.TextToken(["bold"]), sy.EtEmToken(["*"]), )),
+        ("Test text with a link [link_name]('link')", (sy.TextToken(["Test text with a link"]), sy.HyperlinkToken(["[link_name]('link')"]), )),  # noqa E501 (line too long)
+        ("Test text with a link [link_name](\"link\") and a *bold* text", (sy.TextToken(["Test text with a link"]),
+                                                                           sy.HyperlinkToken(['[link_name]("link")']),
+                                                                           sy.TextToken(["and a"]), sy.EtEmToken(["*"]),
+                                                                           sy.TextToken(["bold"]), sy.EtEmToken(["*"]), )),
     ],
 
 
@@ -190,10 +189,10 @@ list_add_tag_input_and_expected_output = [
     # Test cases for the add_tag function
     # Input:
     (sy.TextToken(["Text"]), "Text"),
-    (sy.EtEmToken(["*"]), "<text:em = '*' />"),
-    (sy.EtStrongToken(["**"]), "<text:strong = '**' />"),
-    (sy.EtUnderlineToken(["__"]), "<text:underline = '__' />"),
-    (sy.EtStrikethroughToken(["~~"]), "<text:strikethrough = '~~' />"),
+    (sy.EtEmToken(["*"]), "<text:em />"),
+    (sy.EtStrongToken(["**"]), "<text:strong />"),
+    (sy.EtUnderlineToken(["__"]), "<text:underline />"),
+    (sy.EtStrikethroughToken(["~~"]), "<text:strikethrough />"),
     (sy.StructuralElementStartToken(["div"]), "<se:start = 'div' />"),
     (sy.StructuralElementEndToken(["div"]), "<se:end = 'div' />"),
     (sy.EtCustomSpanToken(["(#12)"]), "<text:custom_span = '(#12)' />"),
@@ -207,13 +206,12 @@ list_of_text_input_and_readable_output = [
     ("## Text2 ##", "one_header", "<header = '##,Text2 ' />"),
 
     # Text
-    ("*Italic*", "et_em", "<text:em = '*' />"),
-    ("__Underline__", "et_underline", "<text:underline = '__' />"),
-    ("**Bold**", "et_strong", "<text:strong = '**' />"),
-    ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough = '~~' />"),
-    ("Text *bold __underline__ still bold*", "enhanced_text", "Text <text:em = '*' />bold <text:underline = '__' />underline<text:underline = '__' /> still bold<text:em = '*' />"),  # noqa E501 (line too long)
-
-    ("[link]('http://www.google.com')", "il_link", "<link: [link](http://www.google.com)>"),
+    ("*Italic*", "et_em", "<text:em />"),
+    ("__Underline__", "et_underline", "<text:underline />"),
+    ("**Bold**", "et_strong", "<text:strong />"),
+    ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough />"),
+    ("Text *bold __underline__ still bold*", "enhanced_text", "Text <text:em /> bold <text:underline /> underline <text:underline /> still bold <text:em /> "),  # noqa E501 (line too long)
+    ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />"),
 
     # Structural elements
     ("<<div", "se", "<se:start = 'div' />"),
@@ -291,6 +289,33 @@ def test_semantic_type():
     assert strings_in_token(st, ["[1, 2, 3]", "test"])
 
 
+def test_semantic_type_eq():
+    """
+    Test that the semantic type is correctly created.
+    """
+    st1 = sy.SemanticType("test")
+    st2 = sy.SemanticType("test")
+    assert st1 == st2
+    st1 = sy.SemanticType(["test"])
+    st2 = sy.SemanticType(["test2"])
+    assert st1 != st2
+    st1 = sy.SemanticType("test")
+    st2 = sy.SemanticType([1, 2, 3])
+    assert st1 != st2
+    st1 = sy.SemanticType([1, 2, 3])
+    st2 = sy.SemanticType([1, 2, 3])
+    assert st1 == st2
+    st1 = sy.SemanticType([1, 2, 3])
+    st2 = sy.SemanticType([1, 2, 3, 4])
+    assert st1 != st2
+    st1 = sy.SemanticType([1, 2, 3, 4])
+    st2 = sy.SemanticType([1, 2, 3])
+    assert st1 != st2
+    st1 = sy.SemanticType([1, 2, 3])
+    st2 = sy.SemanticType([1, 2, 3, 4])
+    assert st1 != st2
+
+
 def find_expression_from_str(expression_str):
     """
     Find the expression from its string representation.
@@ -354,7 +379,7 @@ def test__add_tag(token, expected_output):
     :type token: sy.SemanticType
     :type expected_output: str
     """
-    assert sy._add_tag(token) == expected_output
+    assert token.to_markup() == expected_output
 
 
 # Test text functions
@@ -374,3 +399,18 @@ def test_readable_markup(token_list, parsing_expression, expected):
     result = expr.parse_string(token_list)
     assert result is not None
     assert sy.readable_markup(result) == expected
+
+
+def test_weird_markup():
+    """
+    Test that the readable markup is correctly generated.
+    """
+    assert sy.readable_markup([sy.EmptySemanticType("weird")]) == "weird"
+    empty_token = sy.SemanticType(None)
+    empty_token.label = "weird"
+    assert sy.readable_markup([empty_token]) == "<[NOC] weird />"
+
+    class WeirdClass:
+        def __str__(self):
+            return "weird"
+    assert sy.readable_markup([sy.EmptySemanticType("weird"), empty_token, WeirdClass()]) == "weird <[NOC] weird /> weird"
