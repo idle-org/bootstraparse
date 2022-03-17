@@ -64,7 +64,7 @@ dict_advanced_syntax_input_and_expected_output = {
     ],
     "et_strong": [
         # Single strong element, should only match the first "**"
-        ("**", sy.EtEmToken("**"), ),
+        ("**", sy.EtStrongToken("**"), ),
     ],
     "et_underline": [
         # Single underline element, should only match the first "__"
@@ -89,14 +89,14 @@ dict_advanced_syntax_input_and_expected_output = {
     "enhanced_text": [
         # Matches a line of text, with or without inline elements
         ("*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]))),
-        ("**test**", (sy.EtEmToken(["**"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]))),
+        ("**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]))),
         ("__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]))),
         ("~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]))),
         ("(#12345)", (sy.EtCustomSpanToken(["#12345"]), )),
         ("*test*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]), sy.TextToken(["test"]),
                          sy.EtEmToken(["*"]))),
-        ("**test**test**", (sy.EtEmToken(["**"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]), sy.TextToken(["test"]),
-                            sy.EtEmToken(["**"]), )),
+        ("**test**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]), sy.TextToken(["test"]),
+                            sy.EtStrongToken(["**"]), )),
         ("__test__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
                             sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
         ("~~test~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
@@ -104,10 +104,10 @@ dict_advanced_syntax_input_and_expected_output = {
         ("(#12345)test(#12345)", (sy.EtCustomSpanToken(["#12345"]), sy.TextToken(["test"]),
                                   sy.EtCustomSpanToken(["#12345"]), )),
         ("__test(#12)test**test__test~~", (sy.EtUnderlineToken("__"), sy.TextToken(["test"]),
-                                           sy.EtCustomSpanToken(["#12"]), sy.TextToken(["test"]), sy.EtEmToken(["**"]),
+                                           sy.EtCustomSpanToken(["#12"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]),
                                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
                                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
-        ("12. List of elements", (sy.EtUlistToken(["12", "List of elements"]), )),
+        ("#. List of elements", (sy.EtUlistToken(["#", "List of elements"]), )),
         ("Test text with a link [link_name](link)", (sy.TextToken(["Test text with a link "]),
                                                      sy.HyperlinkToken(["link_name", "link"]), )),
         ("Test text with a link [link_name](link) and a *bold* text", (sy.TextToken(["Test text with a link "]),
@@ -127,18 +127,16 @@ dict_advanced_syntax_input_and_expected_output = {
     ],
     "se": [
         # Matches a div element, must be at the beginning of the line, the closing div can be with arguments
-        # TODO: Implement a specific div token
-        ("<<div", (sy.UnimplementedToken(["<<", "div"]), )),
-        ("div>>", (sy.UnimplementedToken(["div", ">>"]))),
-        # TODO: Add a specific optional token for the arguments
-        ("div>> [class='blue', 123#]{var='test', number=11}", (sy.UnimplementedToken(["div", ">>", sy.UnimplementedToken(["[", "class='blue'", ",", "123#", "]"]), sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"])]))), # noqa E501 (line too long)
+        ("div>> [class='blue', 123#]{var='test', number=11}", (sy.StructuralElementEndToken(["div", sy.OptionalToken(["[", "class='blue'", ",", "123#", "]","{", "var='test'", ",", "number=11", "}"])]))), # noqa E501 (line too long)
+        ("div>> [class='blue', 123#]", (sy.StructuralElementEndToken(["div", sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"])]))), # noqa E501 (line too long)
+        ("div>> {var='test', number=11}", (sy.StructuralElementEndToken(["div", sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"])]))), # noqa E501 (line too long)
     ],
 
     # List Elements
     "one_olist": [
         # Matches a one-level ordered list element, must be at the beginning of the line
         # Drop the "." from the match
-        ("12. Text", (sy.EtOlistToken(["12", "Text"]), )),
+        ("#. Text", (sy.EtOlistToken(["#", "Text"]), )),
     ],
     "one_ulist": [
         # Matches a one-level unordered list element, must be at the beginning of the line
@@ -149,15 +147,15 @@ dict_advanced_syntax_input_and_expected_output = {
     # Headers
     "one_header": [
         # Matches a one-level header element, must be at the beginning of the line
-        ("# Text1 #", (sy.HeaderToken(["#", "Text1"]), )),
-        ("## Text2 ##", (sy.HeaderToken(["##", "Text2"]), )),
-        ("### Text3 ###", (sy.HeaderToken(["###", "Text3"]), )),
-        ("#### Text4 ####", (sy.HeaderToken(["####", "Text4"]), )),
-        ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5"]), )),
-        ("###### Text6 ######", (sy.HeaderToken(["######", "Text6"]), )),
-        ("## Text2 ## {var='test', number=11}", (sy.HeaderToken(["##", "Text2"]),
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]), )),
+        ("## Text2 ##", (sy.HeaderToken(["##", "Text2 "]), )),
+        ("### Text3 ###", (sy.HeaderToken(["###", "Text3 "]), )),
+        ("#### Text4 ####", (sy.HeaderToken(["####", "Text4 "]), )),
+        ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5 "]), )),
+        ("###### Text6 ######", (sy.HeaderToken(["######", "Text6 "]), )),
+        ("## Text2 ## {var='test', number=11}", (sy.HeaderToken(["##", "Text2 "]),
                                                  sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))),
-        ("### Text3 ### [class='blue', 123#]{var='test', number=11}", (sy.HeaderToken(["###", "Text3"]),
+        ("### Text3 ### [class='blue', 123#]{var='test', number=11}", (sy.HeaderToken(["###", "Text3 "]),
                                                                        sy.UnimplementedToken(["[", "class='blue'", ",", "123#", "]"]), # noqa E501 (line too long)
                                                                        sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))), # noqa E501 (line too long)
     ],
@@ -179,7 +177,7 @@ dict_advanced_syntax_input_and_expected_output = {
     ],
     "line": [
         # Match any line parsed by the parser (can match header, list table etc...) this is the main syntax element
-        ("# Text1 #", (sy.HeaderToken(["#", "Text1"]), )),
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]), )),
         ("Text *bold __underline__ still bold*", (sy.TextToken(["Text ", sy.EtStrongToken(["bold", " ", sy.EtUnderlineToken(["underline"]), " still bold"])]), )),  # noqa E501 (line too long)
         ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
         ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]), )),
@@ -205,8 +203,8 @@ list_add_tag_input_and_expected_output = [
 
 list_of_text_input_and_readable_output = [
     # Header
-    ("# Text1 #", "one_header", "<header: '#,Text1' />"),
-    ("## Text2 ##", "one_header", "<header: '##,Text2' />"),
+    ("# Text1 #", "one_header", "<header: '#,Text1 ' />"),
+    ("## Text2 ##", "one_header", "<header: '##,Text2 ' />"),
 
     # Text
     ("*Italic*", "et_em", "<em: *>Italic</em :*>"),
@@ -221,9 +219,9 @@ list_of_text_input_and_readable_output = [
     ("div>>", "se", "<div: div>>>"),
 
     # Lists
-    ("- Text", "et_ulist", "<ulist: '-,Text' />"),
-    ("12. Text", "et_olist", "<olist: '12,Text' />"),
-    ("# Text", "et_olist", "<olist: '#,Text' />"),
+    ("- Text", "il_ulist", "<ulist: '-,Text' />"),
+    ("12. Text", "il_olist", "<olist: '12,Text' />"),
+    ("# Text", "il_olist", "<olist: '#,Text' />"),
 
     # Tables
     ("| Text1 | Text2 |", "table", "<table: | Text1 | Text2 |>"),
