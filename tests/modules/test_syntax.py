@@ -211,7 +211,8 @@ list_of_text_input_and_readable_output = [
     ("__Underline__", "et_underline", "<text:underline = '__' />"),
     ("**Bold**", "et_strong", "<text:strong = '**' />"),
     ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough = '~~' />"),
-    # ("Text *bold __underline__ still bold*", "enhanced_text", "<em: *><strong: **><underline: __><strikethrough: ~~>Text bold underline still bold</strikethrough :~~></underline :__></strong :**></em :*>"),  # noqa E501 (line too long)
+    ("Text *bold __underline__ still bold*", "enhanced_text", "Text <text:em = '*' />bold <text:underline = '__' />underline<text:underline = '__' /> still bold<text:em = '*' />"),  # noqa E501 (line too long)
+
     ("[link]('http://www.google.com')", "il_link", "<link: [link](http://www.google.com)>"),
 
     # Structural elements
