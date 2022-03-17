@@ -196,16 +196,11 @@ optional = (
 
 
 # Enhanced text elements
-et_em = (pp.Literal('*') + pp.SkipTo('*'))('em').add_parse_action(of_type(EtEmToken))
-et_strong = (pp.Literal('**') + pp.SkipTo('**'))('strong').add_parse_action(of_type(EtStrongToken))
-et_underline = (pp.Literal('__') + pp.SkipTo('__'))('underline').add_parse_action(of_type(EtUnderlineToken))
-et_strikethrough = (pp.Literal('~~') + pp.SkipTo('~~'))('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
-custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('span_tag')
-et_custom_span = (
-        custom_span + pp.SkipTo(pp.match_previous_literal(custom_span))
-)('custom_span').add_parse_action(of_type(EtCustomSpanToken))
-# enhanced_text <== (text | et_strong | et_em | et_underline |
-# et_strikethrough | et_custom_span) + pp.Opt(enhanced_text)
+et_em = pp.Literal('*')('em').add_parse_action(of_type(EtEmToken))
+et_strong = pp.Literal('**')('strong').add_parse_action(of_type(EtStrongToken))
+et_underline = pp.Literal('__')('underline').add_parse_action(of_type(EtUnderlineToken))
+et_strikethrough = pp.Literal('~~')('strikethrough').add_parse_action(of_type(EtStrikethroughToken))
+et_custom_span = ('(#' + pp.Word(pp.nums)('span_id') + ')').set_name('custom_span')
 
 # Multiline elements
 se_start = ('<<' + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
