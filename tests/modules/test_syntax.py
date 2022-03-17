@@ -80,9 +80,9 @@ dict_advanced_syntax_input_and_expected_output = {
         ("(#12345)", (sy.EtCustomSpanToken(["12345"]), )),
     ],
     "il_link": [
-        # Single link element, should only match the first "[link_name](link)"
+        # Single link element, should only match the first "[link_name]('link')"
         ("[text_link]('text://www.website.com/link.html')",
-         sy.HyperlinkToken("[text_link]('text://www.website.com/link.html')"))
+         [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])])
     ],
 
     # Enhanced Text
@@ -107,11 +107,11 @@ dict_advanced_syntax_input_and_expected_output = {
                                            sy.EtCustomSpanToken(["12"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]),
                                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
                                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]), )),
-        ("Test text with a link [link_name](link)", (sy.TextToken(["Test text with a link "]),
-                                                     sy.HyperlinkToken(["link_name", "link"]), )),
-        ("Test text with a link [link_name](link) and a *bold* text", (sy.TextToken(["Test text with a link "]),
-                                                                       sy.HyperlinkToken(["link_name", "link"]),
-                                                                       sy.TextToken([" and a "]), sy.EtEmToken(["*"]),
+        ("Test text with a link [link_name]('link')", (sy.TextToken(["Test text with a link"]),
+                                                     sy.HyperlinkToken(["[link_name]('link')"]), )),
+        ("Test text with a link [link_name](\"link\") and a *bold* text", (sy.TextToken(["Test text with a link"]),
+                                                                       sy.HyperlinkToken(['[link_name]("link")']),
+                                                                       sy.TextToken(["and a"]), sy.EtEmToken(["*"]),
                                                                        sy.TextToken(["bold"]), sy.EtEmToken(["*"]), )),
     ],
 
@@ -212,7 +212,7 @@ list_of_text_input_and_readable_output = [
     ("**Bold**", "et_strong", "<text:strong = '**' />"),
     ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough = '~~' />"),
     # ("Text *bold __underline__ still bold*", "enhanced_text", "<em: *><strong: **><underline: __><strikethrough: ~~>Text bold underline still bold</strikethrough :~~></underline :__></strong :**></em :*>"),  # noqa E501 (line too long)
-    ("[link]('http://www.google.com')", "il_link", "<link: [link](http://www.google.com)>"),
+    ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />"),
 
     # Structural elements
     ("<<div", "se", "<se:start = 'div' />"),

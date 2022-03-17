@@ -194,6 +194,10 @@ optional = (
         pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var")
 )("optional").add_parse_action(of_type(OptionalToken))
 
+# Inline elements
+il_link = pp.Regex(
+    r"""\[(?P<text>.+)\]\(['"](?P<url>[a-zA-Z-_:\/=@#!%\?\d\(\)\.]+)['"]\)"""
+).add_parse_action(of_type(HyperlinkToken))
 
 # Enhanced text elements
 et_em = pp.Literal('*')('em').add_parse_action(of_type(EtEmToken))
@@ -203,21 +207,14 @@ et_strikethrough = pp.Literal('~~')('strikethrough').add_parse_action(of_type(Et
 et_custom_span = (
         pps('(#') + pp.Word(pp.nums)('span_id') + pps(')')
 ).set_name('custom_span').add_parse_action(of_type(EtCustomSpanToken))
-markup = et_strong | et_em | et_strikethrough | et_underline | et_custom_span
+
+# markup sums up all in-line elements
+markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
 
 # Multiline elements
 se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
 se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken))
 se = se_end | se_start  # Structural element
-
-# Inline elements
-# [link text]('http://test.icule')
-il_link = pp.common.url
-# il_link = (
-#         pp.Literal('[') + pp.SkipTo('](')('text') + '](' +
-#         quotes + url_characters('url') + pp.match_previous_literal(quotes)
-#         + ')'
-# ).add_parse_action(of_type(HyperlinkToken))
 
 # Oneline elements
 one_header = (
@@ -234,10 +231,9 @@ one_ulist = pp.line_start + (
 ).add_parse_action(of_type(EtUlistToken))
 
 # Final elements
-enhanced_text = pp.OneOrMore(markup + text)
-#     pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup |
-#     pp.SkipTo(pp.line_end)("text").add_parse_action(of_type(TextToken))
-# )
+enhanced_text = pp.ZeroOrMore(
+    markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
+) + pp.Opt(pp.rest_of_line("text").add_parse_action(of_type(TextToken)))
 
 
 ##############################################################################
@@ -253,19 +249,13 @@ line_to_replace = pp.OneOrMore(
     pp.SkipTo(image ^ alias)('text').add_parse_action(of_type(TextToken))
     ^ image.add_parse_action(of_type(ImageToken))
     ^ alias.add_parse_action(of_type(AliasToken))
-) ^ pp.SkipTo(pp.lineEnd)('text').add_parse_action(of_type(TextToken))
+) ^ pp.rest_of_line('text').add_parse_action(of_type(TextToken))
 
 ##############################################################################
 # Temporary tests
 ##############################################################################
 if __name__ == '__main__':  # pragma: no cover
     pp.autoname_elements()
-
-    list_strings = [
-        "'http://test.icule'",
-    ]
-
-    rich.inspect(il_link.parse_string(list_strings[0]))
 
     if not os.path.exists('../../../dev_outputs/'):
         os.mkdir('../../../dev_outputs/')
