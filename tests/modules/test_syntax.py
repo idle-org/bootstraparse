@@ -6,6 +6,20 @@ import pytest
 import bootstraparse.modules.syntax as sy
 
 ptp = pytest.param
+
+
+##############################################################################################################
+# Error Classes
+##############################################################################################################
+class ReturnArgumentSizeError(Exception):
+    def __init__(self, expected, actual):
+        self.expected = expected
+        self.actual = actual
+
+    def __str__(self):
+        return f"Expected {self.expected} arguments, got {self.actual}"
+
+
 ##############################################################################################################
 # PRE-PARSER
 ##############################################################################################################
@@ -64,30 +78,29 @@ dict_advanced_syntax_input_and_expected_output = {
     # Enhanced text
     "et_em": [
         # Single em element, should only match the first "*"
-        ("*", (sy.EtEmToken(["*"]), )),
+        ("*", (sy.EtEmToken(["*"]),)),
     ],
     "et_strong": [
         # Single strong element, should only match the first "**"
-        ("**", (sy.EtStrongToken(["**"]), )),
+        ("**", (sy.EtStrongToken(["**"]),)),
     ],
     "et_underline": [
         # Single underline element, should only match the first "__"
-        ("__", (sy.EtUnderlineToken(["__"]), )),
+        ("__", (sy.EtUnderlineToken(["__"]),)),
     ],
     "et_strikethrough": [
         # Single strikethrough element, should only match the first "~~"
-        ("~~", (sy.EtStrikethroughToken(["~~"]), )),
+        ("~~", (sy.EtStrikethroughToken(["~~"]),)),
     ],
     "et_custom_span": [
         # Single custom span element, should only match the first "(#number)"
-        ("(#12345)", (sy.EtCustomSpanToken(["12345"]), )),
+        ("(#12345)", (sy.EtCustomSpanToken(["12345"]),)),
     ],
     "il_link": [
         # Single link element, should only match the first "[link_name]('link')"
         ("[text_link]('text://www.website.com/link.html')",
          [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])])
     ],
-
 
     # il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
     # Enhanced Text
@@ -97,53 +110,64 @@ dict_advanced_syntax_input_and_expected_output = {
         ("**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]))),
         ("__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]))),
         ("~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]))),
-        ("(#12345)", (sy.EtCustomSpanToken(["12345"]), )),
+        ("(#12345)", (sy.EtCustomSpanToken(["12345"]),)),
         ("*test*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]), sy.TextToken(["test"]),
                          sy.EtEmToken(["*"]))),
-        ("**test**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]), sy.TextToken(["test"]),
-                            sy.EtStrongToken(["**"]), )),
+        ("**test**test**",
+         (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]), sy.TextToken(["test"]),
+          sy.EtStrongToken(["**"]),)),
         ("__test__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
-                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]), )),
+                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),)),
         ("~~test~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
-                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]), )),
+                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),)),
         ("(#12345)test(#12345)", (sy.EtCustomSpanToken(["12345"]), sy.TextToken(["test"]),
-                                  sy.EtCustomSpanToken(["12345"]), )),
+                                  sy.EtCustomSpanToken(["12345"]),)),
         ("__test(#12)test**test__test~~", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]),
-                                           sy.EtCustomSpanToken(["12"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]),
+                                           sy.EtCustomSpanToken(["12"]), sy.TextToken(["test"]),
+                                           sy.EtStrongToken(["**"]),
                                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
-                                           sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]), )),
-        ("Test text with a link [link_name]('link')", (sy.TextToken(["Test text with a link"]), sy.HyperlinkToken(["[link_name]('link')"]), )),  # noqa E501 (line too long)
+                                           sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),)),
+        ("Test text with a link [link_name]('link')",
+         (sy.TextToken(["Test text with a link"]), sy.HyperlinkToken(["[link_name]('link')"]),)),
+        # noqa E501 (line too long)
         ("Test text with a link [link_name](\"link\") and a *bold* text", (sy.TextToken(["Test text with a link"]),
                                                                            sy.HyperlinkToken(['[link_name]("link")']),
                                                                            sy.TextToken(["and a"]), sy.EtEmToken(["*"]),
-                                                                           sy.TextToken(["bold"]), sy.EtEmToken(["*"]), )),
-        ("Reverse order (#123) Span __ Underline ~~ Strikethrough", (sy.EtCustomSpanToken(["123"]), sy.TextToken(["Reverse order"]),
-                                                                     sy.EtCustomSpanToken(["123"]), sy.TextToken(["Span"]),
-                                                                     sy.EtUnderlineToken(["__"]), sy.TextToken(["Underline"]),
-                                                                     sy.EtStrikethroughToken(["~~"]), sy.TextToken(["Strikethrough"]), )),  # noqa E501 (line too long)
+                                                                           sy.TextToken(["bold"]),
+                                                                           sy.EtEmToken(["*"]),)),
+        ("Reverse order (#123) Span __ Underline ~~ Strikethrough",
+         (sy.EtCustomSpanToken(["123"]), sy.TextToken(["Reverse order"]),
+          sy.EtCustomSpanToken(["123"]), sy.TextToken(["Span"]),
+          sy.EtUnderlineToken(["__"]), sy.TextToken(["Underline"]),
+          sy.EtStrikethroughToken(["~~"]), sy.TextToken(["Strikethrough"]),)),  # noqa E501 (line too long)
     ],
-
 
     # Structural Elements
     "se_start": [
         # Matches a start of a structural element
-        ("<<div", (sy.StructuralElementStartToken(["div"]), )),
+        ("<<div", (sy.StructuralElementStartToken(["div"]),)),
     ],
     "se_end": [
-        ("div>>", (sy.StructuralElementEndToken(["div"]), )),
+        ("div>>", (sy.StructuralElementEndToken(["div"]),)),
     ],
     "se": [
         # Matches a div element, must be at the beginning of the line, the closing div can be with arguments
-        ("div>> [class='blue', 123#]{var='test', number=11}", [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["[", "class='blue'", ",", "123#", "]","{", "var='test'", ",", "number=11", "}"])]])]), # noqa E501 (line too long)
-        ("div>> [class='blue', 123#]", [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"])]])]), # noqa E501 (line too long)
-        ("div>> {var='test', number=11}", [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"])]])]), # noqa E501 (line too long)
+        ("div>> [class='blue', 123#]{var='test', number=11}", [sy.StructuralElementEndToken(["div", [
+            sy.OptionalToken(["[", "class='blue'", ",", "123#", "]", "{", "var='test'", ",", "number=11", "}"])]])]),
+        # noqa E501 (line too long)
+        ("div>> [class='blue', 123#]",
+         [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"])]])]),
+        # noqa E501 (line too long)
+        ("div>> {var='test', number=11}",
+         [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"])]])]),
+        # noqa E501 (line too long)
     ],
 
     # List Elements
     "one_olist": [
         # Matches a one-level ordered list element, must be at the beginning of the line
         # Drop the "." from the match
-        ("#. Text", (sy.EtOlistToken(["#", "Text"]), )),
+        ("#. Text", (sy.EtOlistToken(["#", "Text"]),)),
     ],
     "one_ulist": [
         # Matches a one-level unordered list element, must be at the beginning of the line
@@ -154,52 +178,61 @@ dict_advanced_syntax_input_and_expected_output = {
     # Headers
     "one_header": [
         # Matches a one-level header element, must be at the beginning of the line
-        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]), )),
-        ("## Text2 ##", (sy.HeaderToken(["##", "Text2 "]), )),
-        ("### Text3 ###", (sy.HeaderToken(["###", "Text3 "]), )),
-        ("#### Text4 ####", (sy.HeaderToken(["####", "Text4 "]), )),
-        ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5 "]), )),
-        ("###### Text6 ######", (sy.HeaderToken(["######", "Text6 "]), )),
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),)),
+        ("## Text2 ##", (sy.HeaderToken(["##", "Text2 "]),)),
+        ("### Text3 ###", (sy.HeaderToken(["###", "Text3 "]),)),
+        ("#### Text4 ####", (sy.HeaderToken(["####", "Text4 "]),)),
+        ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5 "]),)),
+        ("###### Text6 ######", (sy.HeaderToken(["######", "Text6 "]),)),
         ("## Text2 ## {var='test', number=11}", (sy.HeaderToken(["##", "Text2 "]),
                                                  sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"]))),
         ("### Text3 ### [class='blue', 123#]{var='test', number=11}", (sy.HeaderToken(["###", "Text3 "]),
-                                                                       sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"]), # noqa E501 (line too long)
-                                                                       sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"]))), # noqa E501 (line too long)
+                                                                       sy.OptionalToken(
+                                                                           ["[", "class='blue'", ",", "123#", "]"]),
+                                                                       # noqa E501 (line too long)
+                                                                       sy.OptionalToken(
+                                                                           ["{", "var='test'", ",", "number=11",
+                                                                            "}"]))),  # noqa E501 (line too long)
     ],
     # Tables
     "table_row": [
         # Matches a table element, must be at the beginning of the line
-        ("| Text1 | Text2 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|"]), )),
-        ("| Text1 | Text2 | Text3 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|", "Text3", "|"]), )),
-        ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
-        ("|2 Text1 |3 Text2 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|"]), )),
-        ("|2 Text1 |3 Text2 |4 Text3 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|4", "Text3", "|"]), )),
-        ("|3 Text1 | Text2 | {var='test', number=11}", (sy.TableRowToken(["|3", "Text1", "|", "Text2", "|"]), sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))), # noqa E501 (line too long)
+        ("| Text1 | Text2 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|"]),)),
+        ("| Text1 | Text2 | Text3 |", (sy.TableRowToken(["|", "Text1", "|", "Text2", "|", "Text3", "|"]),)),
+        ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]),)),
+        ("|2 Text1 |3 Text2 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|"]),)),
+        ("|2 Text1 |3 Text2 |4 Text3 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|4", "Text3", "|"]),)),
+        ("|3 Text1 | Text2 | {var='test', number=11}", (sy.TableRowToken(["|3", "Text1", "|", "Text2", "|"]),
+                                                        sy.UnimplementedToken(
+                                                            ["{", "var='test'", ",", "number=11", "}"]))),
+        # noqa E501 (line too long)
     ],
     "table_separator": [
         # Matches a table element, must be at the beginning of the line # TODO: Tokens ?
-        ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]), )),
-        ("|---|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|", "---", "|"]), )),
-        ("|:--|-:-|--:|--:|", (sy.TableSeparatorToken(["|", ":--", "|", "-:-", "|", "--:", "|", "--:", "|"]), )),
+        ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]),)),
+        ("|---|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|", "---", "|"]),)),
+        ("|:--|-:-|--:|--:|", (sy.TableSeparatorToken(["|", ":--", "|", "-:-", "|", "--:", "|", "--:", "|"]),)),
     ],
     "line": [
         # Match any line parsed by the parser (can match header, list table etc...) this is the main syntax element
-        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]), )),
-        ("Text *bold __underline__ still bold*", (sy.TextToken(["Text ", sy.EtStrongToken(["bold", " ", sy.EtUnderlineToken(["underline"]), " still bold"])]), )),  # noqa E501 (line too long)
-        ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
-        ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]), )),
-        ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]), )),
-        ("div>>", (sy.StructuralElementEndToken(["div", ">>"]), )),
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),)),
+        ("Text *bold __underline__ still bold*", (
+        sy.TextToken(["Text ", sy.EtStrongToken(["bold", " ", sy.EtUnderlineToken(["underline"]), " still bold"])]),)),
+        # noqa E501 (line too long)
+        ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]),)),
+        ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]),)),
+        ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),)),
+        ("div>>", (sy.StructuralElementEndToken(["div", ">>"]),)),
     ],
 }
 
 # Cursed zipping oneline
 zipped_dict_advanced_syntax_input_and_expected_output = [
     ptp(item[0], item[1][0], item[1][1], id=f"{item[0]}@{item[1][0][:8]}") for sublist in [
-        zip_longest([key], dict_advanced_syntax_input_and_expected_output[key], fillvalue=key) for key in dict_advanced_syntax_input_and_expected_output.keys() # noqa E501 (line too cursed)
+        zip_longest([key], dict_advanced_syntax_input_and_expected_output[key], fillvalue=key) for key in
+        dict_advanced_syntax_input_and_expected_output.keys()  # noqa E501 (line too cursed)
     ] for item in sublist
 ]
-
 
 # test__add_tag
 list_add_tag_input_and_expected_output = [
@@ -228,9 +261,13 @@ list_of_text_input_and_readable_output = [
     ("__Underline__", "et_underline", "<text:underline />"),
     ("**Bold**", "et_strong", "<text:strong />"),
     ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough />"),
-    ("Text *bold __underline__ still bold*", "enhanced_text", "Text <text:em /> bold <text:underline /> underline <text:underline /> still bold <text:em /> "),  # noqa E501 (line too long)
+    ("Text *bold __underline__ still bold*", "enhanced_text",
+     "Text <text:em /> bold <text:underline /> underline <text:underline /> still bold <text:em /> "),
+    # noqa E501 (line too long)
     ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />"),
-    ("Reverse order: (#123) Span, __underline__ ~~strikethrough~~ **emphasis * Strong**", "enhanced_text", "Reverse order: (<text:custom_span = '(#123)' /> Span, <text:underline /> ~~strikethrough~~ <text:strong /> emphasis <text:em /> Strong<text:strong /> "),  # noqa E501 (line too long)
+    ("Reverse order: (#123) Span, __underline__ ~~strikethrough~~ **emphasis * Strong**", "enhanced_text",
+     "Reverse order: (<text:custom_span = '(#123)' /> Span, <text:underline /> ~~strikethrough~~ <text:strong /> emphasis <text:em /> Strong<text:strong /> "),
+    # noqa E501 (line too long)
 
     # Structural elements
     ("<<div", "se", "<se:start = 'div' />"),
@@ -380,7 +417,8 @@ def test_advanced_expression_and_token_creation(markup_element, to_parse, expect
     result = expr.parse_string(to_parse)
     print(f"Found: {result} (len:{len(result)}). Expected {expected} (len:{len(expected)})")
     assert result is not None
-    assert len(result) == len(expected)
+    if len(result) != len(expected):
+        raise ReturnArgumentSizeError(len(expected), len(result))
     for token, expected_token in zip_longest(result, expected):
         assert token == expected_token
 
@@ -434,4 +472,6 @@ def test_weird_markup():
     class WeirdClass:
         def __str__(self):
             return "weird"
-    assert sy.readable_markup([sy.EmptySemanticType("weird"), empty_token, WeirdClass()]) == "weird <[NOC] weird /> weird"
+
+    assert sy.readable_markup(
+        [sy.EmptySemanticType("weird"), empty_token, WeirdClass()]) == "weird <[NOC] weird /> weird"
