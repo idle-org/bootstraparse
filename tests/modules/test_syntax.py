@@ -217,8 +217,7 @@ dict_advanced_syntax_input_and_expected_output = {
         # Match any line parsed by the parser (can match header, list table etc...) this is the main syntax element
         ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),)),
         ("Text *bold __underline__ still bold*", (
-        sy.TextToken(["Text ", sy.EtStrongToken(["bold", " ", sy.EtUnderlineToken(["underline"]), " still bold"])]),)),
-        # noqa E501 (line too long)
+        sy.TextToken(["Text ", sy.EtStrongToken(["bold", " ", sy.EtUnderlineToken(["underline"]), " still bold"])]),)), # noqa E501 (line too long)
         ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]),)),
         ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]),)),
         ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),)),
@@ -228,7 +227,7 @@ dict_advanced_syntax_input_and_expected_output = {
 
 # Cursed zipping oneline
 zipped_dict_advanced_syntax_input_and_expected_output = [
-    ptp(item[0], item[1][0], item[1][1], id=f"{item[0]}@{item[1][0][:8]}") for sublist in [
+    ptp(item[0], item[1][0], item[1][1], id=f"{item[0]}@{item[1][0][:8]} @") for sublist in [
         zip_longest([key], dict_advanced_syntax_input_and_expected_output[key], fillvalue=key) for key in
         dict_advanced_syntax_input_and_expected_output.keys()  # noqa E501 (line too cursed)
     ] for item in sublist
@@ -266,8 +265,7 @@ list_of_text_input_and_readable_output = [
     # noqa E501 (line too long)
     ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />"),
     ("Reverse order: (#123) Span, __underline__ ~~strikethrough~~ **emphasis * Strong**", "enhanced_text",
-     "Reverse order: (<text:custom_span = '(#123)' /> Span, <text:underline /> ~~strikethrough~~ <text:strong /> emphasis <text:em /> Strong<text:strong /> "),
-    # noqa E501 (line too long)
+     "Reverse order: (<text:custom_span = '(#123)' /> Span, <text:underline /> ~~strikethrough~~ <text:strong /> emphasis <text:em /> Strong<text:strong /> "), # noqa E501 (line too long)
 
     # Structural elements
     ("<<div", "se", "<se:start = 'div' />"),
