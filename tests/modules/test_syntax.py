@@ -1,8 +1,11 @@
+from itertools import zip_longest
+
 import pyparsing
 import pytest
 
 import bootstraparse.modules.syntax as sy
 
+ptp = pytest.param
 ##############################################################################################################
 # PRE-PARSER
 ##############################################################################################################
@@ -152,10 +155,10 @@ dict_advanced_syntax_input_and_expected_output = {
         ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5 "]), )),
         ("###### Text6 ######", (sy.HeaderToken(["######", "Text6 "]), )),
         ("## Text2 ## {var='test', number=11}", (sy.HeaderToken(["##", "Text2 "]),
-                                                 sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))),
+                                                 sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"]))),
         ("### Text3 ### [class='blue', 123#]{var='test', number=11}", (sy.HeaderToken(["###", "Text3 "]),
-                                                                       sy.UnimplementedToken(["[", "class='blue'", ",", "123#", "]"]), # noqa E501 (line too long)
-                                                                       sy.UnimplementedToken(["{", "var='test'", ",", "number=11", "}"]))), # noqa E501 (line too long)
+                                                                       sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"]), # noqa E501 (line too long)
+                                                                       sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"]))), # noqa E501 (line too long)
     ],
     # Tables
     "table_row": [
@@ -180,9 +183,17 @@ dict_advanced_syntax_input_and_expected_output = {
         ("|2 Text1 | Text2 |", (sy.TableRowToken(["|2", "Text1", "|", "Text2", "|"]), )),
         ("|---|---|", (sy.TableSeparatorToken(["|", "---", "|", "---", "|"]), )),
         ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]), )),
-        ("div>>", (sy.UnimplementedToken(["div", ">>"]), )),
+        ("div>>", (sy.StructuralElementEndToken(["div", ">>"]), )),
     ],
 }
+
+# Cursed zipping oneline
+zipped_dict_advanced_syntax_input_and_expected_output = [
+    ptp(item[0], item[1][0], item[1][1], id=f"{item[0]}@{item[1][0][:8]}") for sublist in [
+        zip_longest([key], dict_advanced_syntax_input_and_expected_output[key], fillvalue=key) for key in dict_advanced_syntax_input_and_expected_output.keys() # noqa E501 (line too cursed)
+    ] for item in sublist
+]
+
 
 # test__add_tag
 list_add_tag_input_and_expected_output = [
@@ -344,31 +355,33 @@ def test_expression_matching(expression, to_parse):
         assert expr.parse_string(string) is not None
 
 
-# @pytest.mark.xfail(reason="Not implemented yet.")
-@pytest.mark.parametrize("expression, tokens", dict_advanced_syntax_input_and_expected_output.items())
-def test_advanced_expression_and_token_creation(expression, tokens):
+@pytest.mark.parametrize("markup_element, to_parse, expected", zipped_dict_advanced_syntax_input_and_expected_output)
+def test_advanced_expression_and_token_creation(markup_element, to_parse, expected):
     """
     Test that the advanced syntax is correctly parsed and returns the correct tokens.
-    :param expression: The expression to test.
-    :param tokens: The expected tokens.
-    :type expression: str
-    :type tokens: list
+    :param markup_element: The expression to test.
+    :param to_parse: The string to test.
+    :param expected: The expected tokens.
+    :type markup_element: str
+    :type to_parse: str
+    :type expected: list
     """
-    expr = find_expression_from_str(expression)
+    expr = find_expression_from_str(markup_element)
 
     assert isinstance(expr, pyparsing.ParserElement)
-    for string_to_test, expected_tokens in tokens:
-        result = expr.parse_string(string_to_test)
-        print("Found:", result, "Expected:", expected_tokens)
-        assert result is not None
-        for token, expected_token in zip(result, expected_tokens):
-            assert token == expected_token
+    result = expr.parse_string(to_parse)
+    print(f"Found: {result} (len:{len(result)}). Expected {expected} (len:{len(expected)})")
+    assert result is not None
+    assert len(result) == len(expected)
+    for token, expected_token in zip_longest(result, expected):
+        assert token == expected_token
 
 
 ########################################################################################################################
 # TEXT OUTPUT
 ########################################################################################################################
 # Test the add tag function
+
 
 @pytest.mark.parametrize("token, expected_output", list_add_tag_input_and_expected_output)
 def test__add_tag(token, expected_output):
