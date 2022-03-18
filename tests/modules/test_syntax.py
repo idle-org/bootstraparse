@@ -88,6 +88,8 @@ dict_advanced_syntax_input_and_expected_output = {
          [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])])
     ],
 
+
+    # il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
     # Enhanced Text
     "enhanced_text": [
         # Matches a line of text, with or without inline elements
@@ -115,6 +117,10 @@ dict_advanced_syntax_input_and_expected_output = {
                                                                            sy.HyperlinkToken(['[link_name]("link")']),
                                                                            sy.TextToken(["and a"]), sy.EtEmToken(["*"]),
                                                                            sy.TextToken(["bold"]), sy.EtEmToken(["*"]), )),
+        ("Reverse order (#123) Span __ Underline ~~ Strikethrough", (sy.EtCustomSpanToken(["123"]), sy.TextToken(["Reverse order"]),
+                                                                     sy.EtCustomSpanToken(["123"]), sy.TextToken(["Span"]),
+                                                                     sy.EtUnderlineToken(["__"]), sy.TextToken(["Underline"]),
+                                                                     sy.EtStrikethroughToken(["~~"]), sy.TextToken(["Strikethrough"]), )),  # noqa E501 (line too long)
     ],
 
 
@@ -217,12 +223,14 @@ list_of_text_input_and_readable_output = [
     ("## Text2 ##", "one_header", "<header = '##,Text2 ' />"),
 
     # Text
+    # il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
     ("*Italic*", "et_em", "<text:em />"),
     ("__Underline__", "et_underline", "<text:underline />"),
     ("**Bold**", "et_strong", "<text:strong />"),
     ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough />"),
     ("Text *bold __underline__ still bold*", "enhanced_text", "Text <text:em /> bold <text:underline /> underline <text:underline /> still bold <text:em /> "),  # noqa E501 (line too long)
     ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />"),
+    ("Reverse order: (#123) Span, __underline__ ~~strikethrough~~ **emphasis * Strong**", "enhanced_text", "Reverse order: (<text:custom_span = '(#123)' /> Span, <text:underline /> ~~strikethrough~~ <text:strong /> emphasis <text:em /> Strong<text:strong /> "),  # noqa E501 (line too long)
 
     # Structural elements
     ("<<div", "se", "<se:start = 'div' />"),
