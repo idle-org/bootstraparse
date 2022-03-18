@@ -241,6 +241,15 @@ markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_cust
 se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
 se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken))
 se = se_end | se_start  # Structural element
+table_row = (
+        pp.Literal('|') +
+        pp.Opt(pp.nums)('table_colspan') +
+        pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken)) + '|'
+).add_parse_action(of_type(TableRowToken))
+table_separator = pp.OneOrMore(
+    pp.Regex(r'\|-+'))('table_separator').add_parse_action(of_type(TableSeparatorToken)) + '|'
+table = table_row + pp.Opt(table_separator) + pp.OneOrMore(table_row) + optional
+
 
 # Oneline elements
 one_header = (
