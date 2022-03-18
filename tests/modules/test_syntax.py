@@ -278,8 +278,8 @@ list_of_text_input_and_readable_output = [
     # Tables
     ("| Text1 | Text2 |", "table", "<table: | Text1 | Text2 |>"),
     ("| Text1 |3 Text2 |", "table", "<table: | Text1 |3 Text2 |>"),
-    ("|---|---|", "table_separator", "<table_separator: |---|---|>"),
-    ("|:--|-:-|--:|--:|", "table_separator", "<table_separator: |:--|-:-|--:|--:|>"),
+    ("|---|---|", "table_separator", "<table:separator = '---,---' />"),
+    ("|:--|-:-|--:|--:|", "table_separator", "<table:separator = ':--,-:-,--:,--:' />"),
 
     # Other Mostly for testing and coverage
     ("'", "quotes", "'"),

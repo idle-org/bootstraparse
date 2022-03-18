@@ -246,7 +246,8 @@ table_row = (
         pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken)) + '|'
 ).add_parse_action(of_type(TableRowToken))
 table_separator = pp.OneOrMore(
-    pp.Regex(r'\|-+'))('table_separator').add_parse_action(of_type(TableSeparatorToken)) + '|'
+    pps('|') + pp.Word(':-')
+)('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')
 table = table_row + pp.Opt(table_separator) + pp.OneOrMore(table_row) + optional
 # multi_line sums up all multi-line elements
 multi_line = se | table
@@ -255,6 +256,7 @@ multi_line = se | table
 one_header = (
         header_element + pp.SkipTo(pp.match_previous_literal(header_element))
 ).add_parse_action(of_type(HeaderToken))
+# TODO : Add display to tests
 one_display = (
         display_element + pp.SkipTo(pp.match_previous_literal(display_element))
 ).add_parse_action(of_type(DisplayToken))
@@ -271,7 +273,7 @@ one_line = one_header | one_display | one_olist | one_ulist
 enhanced_text = pp.ZeroOrMore(
     markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
 ) + pp.Opt(pp.rest_of_line("text").add_parse_action(of_type(TextToken)))
-line = enhanced_text | one_line | multi_line | markup
+line = enhanced_text | one_line | multi_line
 
 
 ##############################################################################
@@ -297,4 +299,7 @@ if __name__ == '__main__':  # pragma: no cover
 
     if not os.path.exists('../../../dev_outputs/'):
         os.mkdir('../../../dev_outputs/')
-    enhanced_text.create_diagram("../../../dev_outputs/diagram.html")
+    line.create_diagram("../../../dev_outputs/diagram_line.html")
+    multi_line.create_diagram("../../../dev_outputs/diagram_multi_line.html")
+    one_line.create_diagram("../../../dev_outputs/diagram_one_line.html")
+    enhanced_text.create_diagram("../../../dev_outputs/diagram_enchanced_text.html")
