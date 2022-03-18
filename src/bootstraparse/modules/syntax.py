@@ -233,7 +233,6 @@ et_strikethrough = pp.Literal('~~')('strikethrough').add_parse_action(of_type(Et
 et_custom_span = (
         pps('(#') + pp.Word(pp.nums)('span_id') + pps(')')
 ).set_name('custom_span').add_parse_action(of_type(EtCustomSpanToken))
-
 # markup sums up all in-line elements
 markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
 
@@ -249,7 +248,8 @@ table_row = (
 table_separator = pp.OneOrMore(
     pp.Regex(r'\|-+'))('table_separator').add_parse_action(of_type(TableSeparatorToken)) + '|'
 table = table_row + pp.Opt(table_separator) + pp.OneOrMore(table_row) + optional
-
+# multi_line sums up all multi-line elements
+multi_line = se | table
 
 # Oneline elements
 one_header = (
@@ -264,11 +264,14 @@ one_olist = pp.line_start + (
 one_ulist = pp.line_start + (
         pp.Literal('-') + pp.SkipTo(pp.line_end)('ulist_text')
 ).add_parse_action(of_type(EtUlistToken))
+# one_line sums up all one-line elements
+one_line = one_header | one_display | one_olist | one_ulist
 
 # Final elements
 enhanced_text = pp.ZeroOrMore(
     markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
 ) + pp.Opt(pp.rest_of_line("text").add_parse_action(of_type(TextToken)))
+line = enhanced_text | one_line | multi_line | markup
 
 
 ##############################################################################
