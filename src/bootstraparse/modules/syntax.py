@@ -216,7 +216,7 @@ display_element = pp.Word('!')
 
 
 # Optional elements
-optional = (
+optional = pp.Opt(
         pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var")
 )("optional").add_parse_action(of_type(OptionalToken))
 
@@ -235,20 +235,23 @@ et_custom_span = (
 ).set_name('custom_span').add_parse_action(of_type(EtCustomSpanToken))
 # markup sums up all in-line elements
 markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
+enhanced_text = pp.ZeroOrMore(
+    markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
+) + pp.Opt(pp.Regex(r'.+')("text").add_parse_action(of_type(TextToken)))
 
 # Multiline elements
 se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
-se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken))
+se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken))  # TODO: + pp.Opt(optional)
 se = se_end | se_start  # Structural element
-table_row = (
-        pp.Literal('|') +
-        pp.Opt(pp.nums)('table_colspan') +
-        pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken)) + '|'
-).add_parse_action(of_type(TableRowToken))
+table_row = pp.OneOrMore(
+        # pp.Regex(r'\|(\d)?')('table_colspan') +
+        (pp.Combine(pps('|') + pp.Word(pp.nums)('table_colspan')) | pps('|')) +
+        pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken))  # TODO: account for enhanced text
+).add_parse_action(of_type(TableRowToken)) + pps('|')  # TODO: + pp.Opt(optional)
 table_separator = pp.OneOrMore(
     pps('|') + pp.Word(':-')
 )('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')
-table = table_row + pp.Opt(table_separator) + pp.OneOrMore(table_row) + optional
+table = table_separator | table_row
 # multi_line sums up all multi-line elements
 multi_line = se | table
 
@@ -261,19 +264,16 @@ one_display = (
         display_element + pp.SkipTo(pp.match_previous_literal(display_element))
 ).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
-        pp.Literal('#') + pps('.') + pp.SkipTo(pp.line_end)('olist_text')
+        pps(pp.Literal('#')) + pps('.') + enhanced_text('olist_text')
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
-        pp.Literal('-') + pp.SkipTo(pp.line_end)('ulist_text')
+        pps(pp.Literal('-')) + enhanced_text('ulist_text')
 ).add_parse_action(of_type(EtUlistToken))
 # one_line sums up all one-line elements
-one_line = one_header | one_display | one_olist | one_ulist
+one_line = one_header | one_display | one_olist | one_ulist  # TODO: + pp.Opt(optional)
 
 # Final elements
-enhanced_text = pp.ZeroOrMore(
-    markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
-) + pp.Opt(pp.rest_of_line("text").add_parse_action(of_type(TextToken)))
-line = enhanced_text | one_line | multi_line
+line = one_line | multi_line | enhanced_text
 
 
 ##############################################################################
