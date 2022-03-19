@@ -323,7 +323,11 @@ dict_advanced_syntax_input_and_expected_output = {
                 sy.TableCellToken(["Text1 "]),
                 sy.TableCellToken(["Text2 "]),
             ]),
-            sy.OptionalToken(["{", "var='test'", "number=11", "}"]),
+            sy.OptionalToken([
+                sy.OptionalInsertToken([
+                    "var='test', number=11",
+                ]),
+            ]),
         ), __GL(), __XF),  # Bad optional implementation
     ],
 
