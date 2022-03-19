@@ -164,6 +164,8 @@ def of_type(token_class):
     :return: returns a function creating an instance of the given class
     """
     def _of_type(_, __, content):
+        if len(content) == 0:  # Drop Empty token
+            return None
         return token_class(content)
 
     return _of_type
@@ -199,12 +201,18 @@ url_characters = pp.common.url
 # Composite elements
 var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
 
-
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
 expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
 html_insert = '{' + expression('html_insert') + '}'
+
+# Optional elements
+optional = (
+        pp.Opt(html_insert)("html_insert") & pp.Opt(var)("var")
+)("optional").add_parse_action(of_type(OptionalToken))
+
+# Structural elements
 structural_elements = (
         pp.CaselessLiteral('div') |
         pp.CaselessLiteral('article') |
@@ -213,12 +221,6 @@ structural_elements = (
 )('structural_element')
 header_element = pp.Word('#')
 display_element = pp.Word('!')
-
-
-# Optional elements
-optional = pp.Opt(
-        pp.Opt(html_insert)("html_insert") + pp.Opt(var)("var")
-)("optional").add_parse_action(of_type(OptionalToken))
 
 # Inline elements
 il_link = pp.Regex(
@@ -233,6 +235,7 @@ et_strikethrough = pp.Literal('~~')('strikethrough').add_parse_action(of_type(Et
 et_custom_span = (
         pps('(#') + pp.Word(pp.nums)('span_id') + pps(')')
 ).set_name('custom_span').add_parse_action(of_type(EtCustomSpanToken))
+
 # markup sums up all in-line elements
 markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
 enhanced_text = pp.ZeroOrMore(
@@ -241,17 +244,18 @@ enhanced_text = pp.ZeroOrMore(
 
 # Multiline elements
 se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
-se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken))  # TODO: + pp.Opt(optional)
+se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken)) + optional
 se = se_end | se_start  # Structural element
 table_row = pp.OneOrMore(
         # pp.Regex(r'\|(\d)?')('table_colspan') +
         (pp.Combine(pps('|') + pp.Word(pp.nums)('table_colspan')) | pps('|')) +
         pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken))  # TODO: account for enhanced text
-).add_parse_action(of_type(TableRowToken)) + pps('|')  # TODO: + pp.Opt(optional)
+).add_parse_action(of_type(TableRowToken)) + pps('|') + pp.Opt(optional)
 table_separator = pp.OneOrMore(
     pps('|') + pp.Word(':-')
-)('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')
+)('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')  # TODO: Tokenize table separator ?
 table = table_separator | table_row
+
 # multi_line sums up all multi-line elements
 multi_line = se | table
 
@@ -259,7 +263,6 @@ multi_line = se | table
 one_header = (
         header_element + pp.SkipTo(pp.match_previous_literal(header_element))
 ).add_parse_action(of_type(HeaderToken))
-# TODO : Add display to tests
 one_display = (
         display_element + pp.SkipTo(pp.match_previous_literal(display_element))
 ).add_parse_action(of_type(DisplayToken))
@@ -269,8 +272,9 @@ one_olist = pp.line_start + (
 one_ulist = pp.line_start + (
         pps(pp.Literal('-')) + enhanced_text('ulist_text')
 ).add_parse_action(of_type(EtUlistToken))
+
 # one_line sums up all one-line elements
-one_line = one_header | one_display | one_olist | one_ulist  # TODO: + pp.Opt(optional)
+one_line = (one_header | one_display | one_olist | one_ulist) + pp.Opt(optional)
 
 # Final elements
 line = one_line | multi_line | enhanced_text

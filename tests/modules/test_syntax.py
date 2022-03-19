@@ -2,10 +2,19 @@ from itertools import zip_longest
 
 import pyparsing
 import pytest
+import inspect
+
 
 import bootstraparse.modules.syntax as sy
 
+
 ptp = pytest.param
+__XF = pytest.mark.xfail
+
+
+# Cursed frame inspection
+def __GL():
+    return inspect.getframeinfo(inspect.currentframe().f_back).lineno
 
 
 ##############################################################################################################
@@ -78,159 +87,242 @@ dict_advanced_syntax_input_and_expected_output = {
     # Enhanced text
     "et_em": [
         # Single em element, should only match the first "*"
-        ("*", (sy.EtEmToken(["*"]),)),
+        ("*", (sy.EtEmToken(["*"]),), __GL()),
     ],
     "et_strong": [
         # Single strong element, should only match the first "**"
-        ("**", (sy.EtStrongToken(["**"]),)),
+        ("**", (sy.EtStrongToken(["**"]),), __GL()),
     ],
     "et_underline": [
         # Single underline element, should only match the first "__"
-        ("__", (sy.EtUnderlineToken(["__"]),)),
+        ("__", (sy.EtUnderlineToken(["__"]),), __GL()),
     ],
     "et_strikethrough": [
         # Single strikethrough element, should only match the first "~~"
-        ("~~", (sy.EtStrikethroughToken(["~~"]),)),
+        ("~~", (sy.EtStrikethroughToken(["~~"]),), __GL()),
     ],
     "et_custom_span": [
         # Single custom span element, should only match the first "(#number)"
-        ("(#12345)", (sy.EtCustomSpanToken(["12345"]),)),
+        ("(#12345)", (sy.EtCustomSpanToken(["12345"]),), __GL()),
     ],
     "il_link": [
         # Single link element, should only match the first "[link_name]('link')"
         ("[text_link]('text://www.website.com/link.html')",
-         [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])])
+         [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])], __GL())
     ],
 
     # il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
     # Enhanced Text
     "enhanced_text": [
         # Matches a line of text, with or without inline elements
-        ("*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]))),
-        ("**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]))),
-        ("__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]))),
-        ("~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]))),
-        ("(#12345)", (sy.EtCustomSpanToken(["12345"]),)),
+        ("*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"])), __GL()),
+        ("**test**", (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"])), __GL()),
+        ("__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"])), __GL()),
+        ("~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"])), __GL()),
+        ("(#12345)", (sy.EtCustomSpanToken(["12345"]),), __GL()),
         ("*test*test*", (sy.EtEmToken(["*"]), sy.TextToken(["test"]), sy.EtEmToken(["*"]), sy.TextToken(["test"]),
-                         sy.EtEmToken(["*"]))),
+                         sy.EtEmToken(["*"])), __GL()),
         ("**test**test**",
          (sy.EtStrongToken(["**"]), sy.TextToken(["test"]), sy.EtStrongToken(["**"]), sy.TextToken(["test"]),
-          sy.EtStrongToken(["**"]),)),
+          sy.EtStrongToken(["**"]),), __GL()),
         ("__test__test__", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
-                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),)),
+                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),), __GL()),
         ("~~test~~test~~", (sy.EtStrikethroughToken(["~~"]), sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),
-                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),)),
+                            sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),), __GL()),
         ("(#12345)test(#12345)", (sy.EtCustomSpanToken(["12345"]), sy.TextToken(["test"]),
-                                  sy.EtCustomSpanToken(["12345"]),)),
+                                  sy.EtCustomSpanToken(["12345"]),), __GL()),
         ("__test(#12)test**test__test~~", (sy.EtUnderlineToken(["__"]), sy.TextToken(["test"]),
                                            sy.EtCustomSpanToken(["12"]), sy.TextToken(["test"]),
                                            sy.EtStrongToken(["**"]),
                                            sy.TextToken(["test"]), sy.EtUnderlineToken(["__"]),
-                                           sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),)),
-        ("Test text with a link [link_name]('link')",
-         (sy.TextToken(["Test text with a link"]), sy.HyperlinkToken(["[link_name]('link')"]),)),
-        # noqa E501 (line too long)
-        ("Test text with a link [link_name](\"link\") and a *bold* text", (sy.TextToken(["Test text with a link"]),
-                                                                           sy.HyperlinkToken(['[link_name]("link")']),
-                                                                           sy.TextToken(["and a"]), sy.EtEmToken(["*"]),
-                                                                           sy.TextToken(["bold"]),
-                                                                           sy.EtEmToken(["*"]),
-                                                                           sy.TextToken(["text"]),
-                                                                           )),
-        ("Reverse order (#123) Span __ Underline ~~ Strikethrough",
-         (sy.TextToken(["Reverse order"]),
-          sy.EtCustomSpanToken(["123"]), sy.TextToken(["Span"]),
-          sy.EtUnderlineToken(["__"]), sy.TextToken(["Underline"]),
-          sy.EtStrikethroughToken(["~~"]), sy.TextToken(["Strikethrough"]),)),  # noqa E501 (line too long)
+                                           sy.TextToken(["test"]), sy.EtStrikethroughToken(["~~"]),), __GL()),
+        ("Test text with a link [link_name]('link')", (
+            sy.TextToken(["Test text with a link"]),
+            sy.HyperlinkToken(["[link_name]('link')"]),
+        ), __GL()),
+        ("Test text with a link [link_name](\"link\") and a *bold* text", (
+            sy.TextToken(["Test text with a link"]),
+            sy.HyperlinkToken(['[link_name]("link")']),
+            sy.TextToken(["and a"]), sy.EtEmToken(["*"]),
+            sy.TextToken(["bold"]),
+            sy.EtEmToken(["*"]),
+            sy.TextToken(["text"]),
+        ), __GL()),
+        ("Reverse order (#123) Span __ Underline ~~ Strikethrough", (
+            sy.TextToken(["Reverse order"]),
+            sy.EtCustomSpanToken(["123"]), sy.TextToken(["Span"]),
+            sy.EtUnderlineToken(["__"]), sy.TextToken(["Underline"]),
+            sy.EtStrikethroughToken(["~~"]), sy.TextToken(["Strikethrough"]),
+        ), __GL()),
     ],
 
     # Structural Elements
     "se_start": [
         # Matches a start of a structural element
-        ("<<div", (sy.StructuralElementStartToken(["div"]),)),
+        ("<<div", (sy.StructuralElementStartToken(["div"]),), __GL()),
     ],
     "se_end": [
-        ("div>>", (sy.StructuralElementEndToken(["div"]),)),
+        ("div>>", (sy.StructuralElementEndToken(["div"]),), __GL()),
     ],
-    # "se": [
+    "se": [
         # Matches a div element, must be at the beginning of the line, the closing div can be with arguments
-        # TODO : Re-implement this
-        # ("div>> [class='blue', 123#]{var='test', number=11}", [sy.StructuralElementEndToken(["div", [
-        #     sy.OptionalToken(["[", "class='blue'", ",", "123#", "]", "{", "var='test'", ",", "number=11", "}"])]])]),
+        ("div>> [class='blue', 123]{var='test', number=11}", (
+            sy.StructuralElementEndToken(["div"]),
+            sy.OptionalToken(["[", ["class", "=", "'blue'"], 123, "]", "{", "var='test'", "number=11", "}"]),
+        ), __GL(), __XF),  # Bad optional implementation
         # ("div>> [class='blue', 123#]",
         #  [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"])]])]),
         # ("div>> {var='test', number=11}",
         #  [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"])]])]),
-    # ],
+    ],
 
     # List Elements
-    # TODO: Test markup in lists
+    # TODO: Test markup and add optionnals in lists
     "one_olist": [
         # Matches a one-level ordered list element, must be at the beginning of the line
         # Drop the "." from the match
-        ("#. Text", (sy.EtOlistToken([sy.TextToken(["Text"])]),)),
+        ("#. Text", (sy.EtOlistToken([sy.TextToken(["Text"])]),), __GL()),
     ],
     "one_ulist": [
         # Matches a one-level unordered list element, must be at the beginning of the line
         # Drop the "-" from the match
-        ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),)),
+        ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),), __GL()),
     ],
 
     # Headers
     "one_header": [
         # Matches a one-level header element, must be at the beginning of the line
-        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),)),
-        ("## Text2 ##", (sy.HeaderToken(["##", "Text2 "]),)),
-        ("### Text3 ###", (sy.HeaderToken(["###", "Text3 "]),)),
-        ("#### Text4 ####", (sy.HeaderToken(["####", "Text4 "]),)),
-        ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5 "]),)),
-        ("###### Text6 ######", (sy.HeaderToken(["######", "Text6 "]),)),
-        # TODO : Re-implement that
-        # ("## Text2 ## {var='test', number=11}", (sy.HeaderToken(["##", "Text2 "]),
-        #                                          sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"]))),
-        # ("### Text3 ### [class='blue', 123#]{var='test', number=11}", (sy.HeaderToken(["###", "Text3 "]),
-        #                                                                sy.OptionalToken(
-        #                                                                    ["[", "class='blue'", ",", "123#", "]"]),
-        #                                                                # noqa E501 (line too long)
-        #                                                                sy.OptionalToken(
-        #                                                                    ["{", "var='test'", ",", "number=11",
-        #                                                                     "}"]))),  # noqa E501 (line too long)
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),), __GL()),
+        ("## Text2 ##", (sy.HeaderToken(["##", "Text2 "]),), __GL()),
+        ("### Text3 ###", (sy.HeaderToken(["###", "Text3 "]),), __GL()),
+        ("#### Text4 ####", (sy.HeaderToken(["####", "Text4 "]),), __GL()),
+        ("##### Text5 #####", (sy.HeaderToken(["#####", "Text5 "]),), __GL()),
+        ("###### Text6 ######", (sy.HeaderToken(["######", "Text6 "]),), __GL()),
     ],
+
+    # One-line display elements
+    "one_display": [
+        # Matches a one-level display element, must be at the beginning of the line
+        ("! Display1 !", (sy.DisplayToken(["!", "Display1 "]),), __GL()),
+        ("!! Display2 !!", (sy.DisplayToken(["!!", "Display2 "]),), __GL()),
+        ("!!! Display3 !!!", (sy.DisplayToken(["!!!", "Display3 "]),), __GL()),
+    ],
+
+    # One-line elements
+    "one_line": [
+        # Matches a one-line element, must be at the beginning of the line
+        ("- Text1", (sy.EtUlistToken([sy.TextToken(["Text1"])]),), __GL()),
+        ("#. Text2", (sy.EtOlistToken([sy.TextToken(["Text2"])]),), __GL()),
+        ("! Display3 !", (sy.DisplayToken(["!", "Display3 "]),), __GL()),
+        ("!! Display4 !!", (sy.DisplayToken(["!!", "Display4 "]),), __GL()),
+        ("### Text5 ###", (sy.HeaderToken(["###", "Text5 "]),), __GL()),
+        ("#### Text6 ####", (sy.HeaderToken(["####", "Text6 "]),), __GL()),
+        ("- Text7 [class='blue', 123]{var='test', number=11}", (
+            sy.EtUlistToken([
+                sy.TextToken(["Text7"]),
+                sy.OptionalToken(["[", "class='blue'", ",", "123#", "]", "{", "var='test'", ",", "number=11", "}"])
+            ]),
+        ), __GL(), __XF),
+        ("#. Text8 [class='blue', 123]{var='test', number=11}", (
+            sy.EtOlistToken([
+                sy.TextToken(["Text8"]),
+                sy.OptionalToken(["[", "class='blue'", ",", "123", "]", "{", "var='test'", ",", "number=11", "}"])
+            ]),
+        ), __GL(), __XF),
+        ("! Display9 ! [class='blue', 123]{var='test', number=11}", (
+            sy.DisplayToken([
+                "!",
+                "Display9",
+                sy.OptionalToken([
+                    "[", "class='blue'", ",", "123", "]",
+                    "{", "var='test'", ",", "number=11", "}"
+                ])
+            ]),
+        ), __GL(), __XF),  # Bad optional implementation
+        ("## Text10 ## [class='blue', 123]{var='test', number=11}", (
+            sy.HeaderToken([
+                "##",
+                "Text10",
+                sy.OptionalToken([
+                    "[", "class='blue'", ",", "123", "]",
+                    "{", "var='test'", ",", "number=11", "}"])
+            ]),
+         ), __GL(), __XF),  # Bad optional implementation
+    ],
+
     # Tables
     "table_row": [
         # Matches a table element, must be at the beginning of the line
-        ("| Text1 | Text2 |", (sy.TableRowToken([sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "]),]),)),
-        ("| Text1 | Text2 | Text3 |", (sy.TableRowToken([sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "]), sy.TableCellToken(["Text3 "])]),)),
-        ("| 2 Text1 | Text2 |", (sy.TableRowToken([sy.TableCellToken(["2 Text1 "]), sy.TableCellToken(["Text2 "])]),)),
-        ("|2 Text1 | Text2 |", (sy.TableRowToken(['2', sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "])]),)),
-        ("|2 Text1 |3 Text2 |", (sy.TableRowToken(['2', sy.TableCellToken(["Text1 "]), '3', sy.TableCellToken(["Text2 "])]),)),
-        # ("|2 Text1 |3 Text2 |4 Text3 |", (sy.TableRowToken(["|2", "Text1", "|3", "Text2", "|4", "Text3", "|"]),)),
-        # ("|3 Text1 | Text2 | {var='test', number=11}", (sy.TableRowToken(["|3", "Text1", "|", "Text2", "|"]),
-        #                                                 sy.UnimplementedToken(
-        #                                                     ["{", "var='test'", ",", "number=11", "}"]))),
+        ("| Text1 | Text2 |", (sy.TableRowToken([sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "]), ]), ), __GL()),
+        ("| Text1 | Text2 | Text3 |", (
+            sy.TableRowToken([
+                sy.TableCellToken(["Text1 "]),
+                sy.TableCellToken(["Text2 "]),
+                sy.TableCellToken(["Text3 "])
+            ]),
+        ), __GL()),
+        ("| 2 Text1 | Text2 |", (sy.TableRowToken([sy.TableCellToken(["2 Text1 "]), sy.TableCellToken(["Text2 "])]),), __GL()),
+        ("|2 Text1 | Text2 |", (
+            sy.TableRowToken([
+                '2',
+                sy.TableCellToken(["Text1 "]),
+                sy.TableCellToken(["Text2 "]),
+            ]),
+        ), __GL()),
+        ("|2 Text1 |3 Text2 |", (
+            sy.TableRowToken(['2', sy.TableCellToken(["Text1 "]), '3', sy.TableCellToken(["Text2 "])]),
+        ), __GL()),
+        ("|2 Text1 |3 Text2 |4 Text3 |", (
+            sy.TableRowToken([
+                '2',
+                sy.TableCellToken(["Text1 "]),
+                '3',
+                sy.TableCellToken(["Text2 "]),
+                '4',
+                sy.TableCellToken(["Text3 "])]),
+         ), __GL()),
+        ("|3 Text1 | Text2 | {var='test', number=11}", (
+            sy.TableRowToken([
+                '3',
+                sy.TableCellToken(["Text1 "]),
+                sy.TableCellToken(["Text2 "]),
+            ]),
+            sy.OptionalToken(["{", "var='test'", "number=11", "}"]),
+        ), __GL(), __XF),  # Bad optional implementation
     ],
+
     "table_separator": [
-        # Matches a table element, must be at the beginning of the line # TODO: Tokens ?
-        ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),)),
-        ("|---|---|---|", (sy.TableSeparatorToken(["---", "---", "---"]),)),
-        ("|:--|-:-|--:|--:|", (sy.TableSeparatorToken([":--", "-:-", "--:", "--:"]),)),
+        # Matches a table element, must be at the beginning of the line
+        ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),), __GL()),
+        ("|---|---|---|", (sy.TableSeparatorToken(["---", "---", "---"]),), __GL()),
+        ("|:--|-:-|--:|--:|", (sy.TableSeparatorToken([":--", "-:-", "--:", "--:"]),), __GL()),
     ],
+
     "line": [
         # Match any line parsed by the parser (can match header, list table etc...) this is the main syntax element
-        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),)),
-        # TODO: old testing, needs freshening up
-        # ("Text *bold __underline__ still bold*", (
-        # sy.TextToken(["Text ", sy.EtStrongToken(["bold", " ", sy.EtUnderlineToken(["underline"]), " still bold"])]),)), # noqa E501 (line too long)
-        ("|2 Text1 | Text2 |", (sy.TableRowToken(["2", sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "])]),)),
-        ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),)),
-        ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),)),
-        ("div>>", (sy.StructuralElementEndToken(["div"]),)),
+        ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),), __GL()),
+        ("Text *em __underline__ still em*", (
+            sy.TextToken(["Text "]),
+            sy.EtEmToken(["*"]),
+            sy.TextToken(["em "]),
+            sy.EtUnderlineToken(["__"]),
+            sy.TextToken(["underline"]),
+            sy.EtUnderlineToken(["__"]),
+            sy.TextToken(["still em"]),
+            sy.EtEmToken(["*"]),
+        ), __GL(), __XF),  # Bad optional implementation
+        ("|2 Text1 | Text2 |", (
+            sy.TableRowToken(["2", sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "])]),
+        ), __GL()),
+        ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),), __GL()),
+        ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),), __GL()),
+        ("div>>", (sy.StructuralElementEndToken(["div"]),), __GL()),
     ],
 }
 
 # Cursed zipping oneline
 zipped_dict_advanced_syntax_input_and_expected_output = [
-    ptp(item[0], item[1][0], item[1][1], id=f"{item[0]}@{item[1][0][:8]} @") for sublist in [
+    ptp(item[0], item[1][0], item[1][1], item[1][2], marks=item[1][3:], id=f"{item[0]} [line {item[1][2]}]") for sublist in [
         zip_longest([key], dict_advanced_syntax_input_and_expected_output[key], fillvalue=key) for key in
         dict_advanced_syntax_input_and_expected_output.keys()  # noqa E501 (line too cursed)
     ] for item in sublist
@@ -318,7 +410,7 @@ def test_of_type_creator(token_class):
     :type token_class: sy.SemanticType
     """
     fcr = sy.of_type(token_class)
-    tnk = fcr(None, None, None)
+    tnk = fcr(None, None, ['Text'])
     # noinspection PyTypeChecker
     assert isinstance(tnk, token_class)  # pylint: disable=unidiomatic-typecheck
     assert tnk.label == token_class.label
@@ -401,22 +493,28 @@ def test_expression_matching(expression, to_parse):
         assert expr.parse_string(string) is not None
 
 
-@pytest.mark.parametrize("markup_element, to_parse, expected", zipped_dict_advanced_syntax_input_and_expected_output)
-def test_advanced_expression_and_token_creation(markup_element, to_parse, expected):
+@pytest.mark.parametrize("markup_element, to_parse, expected, line_test", zipped_dict_advanced_syntax_input_and_expected_output)  # noqa: E501 (line too long)
+def test_advanced_expression_and_token_creation(markup_element, to_parse, expected, line_test):
     """
     Test that the advanced syntax is correctly parsed and returns the correct tokens.
     :param markup_element: The expression to test.
     :param to_parse: The string to test.
     :param expected: The expected tokens.
+    :param line_test: The line number of the test.
     :type markup_element: str
     :type to_parse: str
     :type expected: list
+    :type line_test: int
     """
     expr = find_expression_from_str(markup_element)
 
     assert isinstance(expr, pyparsing.ParserElement)
     result = expr.parse_string(to_parse)
-    print(f"Found: {result} (len:{len(result)}). Expected {expected} (len:{len(expected)})")
+    print()
+    print(f"Parsing expression: {to_parse} with {markup_element}")
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': line_test})
+    print(f"Found: {result} (len:{len(result)}).")
+    print(f"Expected: {expected} (len:{len(expected)})")
     assert result is not None
     if len(result) != len(expected):
         raise ReturnArgumentSizeError(len(expected), len(result))
