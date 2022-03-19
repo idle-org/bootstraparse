@@ -206,7 +206,7 @@ def test_preparser_content(filename, content):
     pp.make_import_list()
 
     assert pp.export_with_imports().read() == content
-    # todo: test import in sub-folders
+    # TODO: Test import in sub-folders
 
 
 @pytest.mark.xfail(reason="Not implemented")

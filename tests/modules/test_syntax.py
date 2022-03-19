@@ -168,16 +168,33 @@ dict_advanced_syntax_input_and_expected_output = {
         # Matches a div element, must be at the beginning of the line, the closing div can be with arguments
         ("div>> [class='blue', 123]{var='test', number=11}", (
             sy.StructuralElementEndToken(["div"]),
-            sy.OptionalToken(["[", ["class", "=", "'blue'"], 123, "]", "{", "var='test'", "number=11", "}"]),
-        ), __GL(), __XF),  # Bad optional implementation
-        # ("div>> [class='blue', 123#]",
-        #  [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["[", "class='blue'", ",", "123#", "]"])]])]),
-        # ("div>> {var='test', number=11}",
-        #  [sy.StructuralElementEndToken(["div", [sy.OptionalToken(["{", "var='test'", ",", "number=11", "}"])]])]),
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["class", "blue"]]),
+                    sy.BeValueToken([123.0]),
+                ]),
+                sy.OptionalInsertToken(["var='test', number=11"]),
+            ]),
+        ), __GL(),),
+        ("div>> [class='blue', 123]", (
+            sy.StructuralElementEndToken(["div"]),
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["class", "blue"]]),
+                    sy.BeValueToken([123.0]),
+                ]),
+            ]),
+        ), __GL(),),
+
+        ("div>> {var='test', number=11}", (
+            sy.StructuralElementEndToken(["div"]),
+            sy.OptionalToken([
+                sy.OptionalInsertToken(["var='test', number=11"]),
+            ]),
+        ), __GL(),),
     ],
 
     # List Elements
-    # TODO: Test markup and add optionnals in lists
     "one_olist": [
         # Matches a one-level ordered list element, must be at the beginning of the line
         # Drop the "." from the match
@@ -220,13 +237,25 @@ dict_advanced_syntax_input_and_expected_output = {
         ("- Text7 [class='blue', 123]{var='test', number=11}", (
             sy.EtUlistToken([
                 sy.TextToken(["Text7"]),
-                sy.OptionalToken(["[", "class='blue'", ",", "123#", "]", "{", "var='test'", ",", "number=11", "}"])
+                sy.OptionalToken([
+                    sy.OptionalVarToken([
+                        sy.BeAssignToken([["class", "blue"]]),
+                        sy.BeValueToken([123.0]),
+                    ]),
+                    sy.OptionalInsertToken(["var='test', number=11"]),
+                ]),
             ]),
         ), __GL(), __XF),
         ("#. Text8 [class='blue', 123]{var='test', number=11}", (
             sy.EtOlistToken([
                 sy.TextToken(["Text8"]),
-                sy.OptionalToken(["[", "class='blue'", ",", "123", "]", "{", "var='test'", ",", "number=11", "}"])
+                sy.OptionalToken([
+                    sy.OptionalVarToken([
+                        sy.BeAssignToken([["class", "blue"]]),
+                        sy.BeValueToken([123.0]),
+                    ]),
+                    sy.OptionalInsertToken(["var='test', number=11"]),
+                ]),
             ]),
         ), __GL(), __XF),
         ("! Display9 ! [class='blue', 123]{var='test', number=11}", (
@@ -234,9 +263,12 @@ dict_advanced_syntax_input_and_expected_output = {
                 "!",
                 "Display9",
                 sy.OptionalToken([
-                    "[", "class='blue'", ",", "123", "]",
-                    "{", "var='test'", ",", "number=11", "}"
-                ])
+                    sy.OptionalVarToken([
+                        sy.BeAssignToken([["class", "blue"]]),
+                        sy.BeValueToken([123.0]),
+                    ]),
+                    sy.OptionalInsertToken(["var='test', number=11"]),
+                ]),
             ]),
         ), __GL(), __XF),  # Bad optional implementation
         ("## Text10 ## [class='blue', 123]{var='test', number=11}", (
@@ -244,8 +276,12 @@ dict_advanced_syntax_input_and_expected_output = {
                 "##",
                 "Text10",
                 sy.OptionalToken([
-                    "[", "class='blue'", ",", "123", "]",
-                    "{", "var='test'", ",", "number=11", "}"])
+                    sy.OptionalVarToken([
+                        sy.BeAssignToken([["class", "blue"]]),
+                        sy.BeValueToken([123.0]),
+                    ]),
+                    sy.OptionalInsertToken(["var='test', number=11"]),
+                ]),
             ]),
          ), __GL(), __XF),  # Bad optional implementation
     ],
@@ -302,15 +338,15 @@ dict_advanced_syntax_input_and_expected_output = {
         # Match any line parsed by the parser (can match header, list table etc...) this is the main syntax element
         ("# Text1 #", (sy.HeaderToken(["#", "Text1 "]),), __GL()),
         ("Text *em __underline__ still em*", (
-            sy.TextToken(["Text "]),
+            sy.TextToken(["Text"]),
             sy.EtEmToken(["*"]),
-            sy.TextToken(["em "]),
+            sy.TextToken(["em"]),
             sy.EtUnderlineToken(["__"]),
             sy.TextToken(["underline"]),
             sy.EtUnderlineToken(["__"]),
             sy.TextToken(["still em"]),
             sy.EtEmToken(["*"]),
-        ), __GL(), __XF),  # Bad optional implementation
+        ), __GL(),),
         ("|2 Text1 | Text2 |", (
             sy.TableRowToken(["2", sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "])]),
         ), __GL()),

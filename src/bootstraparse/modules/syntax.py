@@ -44,10 +44,17 @@ class SemanticType:
     def __eq__(self, other):
         if type(other) == type(self):
             for e1, e2 in zip_longest(self.content, other.content):
-                if e1 != e2:
+                if isinstance(e1, (pp.ParseResults, list)):  # if it's a list, we need to compare each element
+                    for elt1, elt2 in zip_longest(e1, e2):
+                        if elt1 != elt2:
+                            return False
+                elif e1 != e2:
                     return False
             return True
         return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class ExplicitSemanticType(SemanticType):
@@ -157,6 +164,22 @@ class OptionalToken(SemanticType):
     label = "optional"
 
 
+class OptionalInsertToken(SemanticType):
+    label = "optional:insert"
+
+
+class OptionalVarToken(SemanticType):
+    label = "optional:var"
+
+
+class BeAssignToken(SemanticType):
+    label = "be:assign"
+
+
+class BeValueToken(SemanticType):
+    label = "be:var"
+
+
 def of_type(token_class):
     """
     Function creating a custom function for generating the given Token type.
@@ -192,25 +215,31 @@ def readable_markup(list_of_tokens):
 
 # Base elements
 quotes = pp.Word(r""""'""")
-value = (quotes + pp.Word(pp.alphanums + r'.') + pp.match_previous_literal(quotes) ^
+value = (pps(quotes) + pp.Word(pp.alphanums + r'.') + pps(pp.match_previous_literal(quotes)) ^
          pp.common.fnumber)("value")
-assignation = pp.Group(pp.common.identifier('var_name') + '=' + value('var_value'))("assignation")
+assignation = pp.Group(
+    pp.common.identifier('var_name') + pps('=') + value('var_value')
+)("assignation")  # TODO: More extensive testing
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
 url_characters = pp.common.url
 
 # Composite elements
-var = '[' + pp.delimitedList(assignation ^ value)("list_vars").set_name("list_vars") + ']'
+var = pps('[') + pp.delimitedList(
+    assignation.add_parse_action(of_type(BeAssignToken)) ^
+    value.add_parse_action(of_type(BeValueToken))
+)("list_vars").set_name("list_vars") + pps(']')  # TODO: More extensive testing
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
 expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
-html_insert = '{' + expression('html_insert') + '}'
+html_insert = pps('{') + expression('html_insert') + pps('}')  # TODO: More extensive testing
 
 # Optional elements
 optional = (
-        pp.Opt(html_insert)("html_insert") & pp.Opt(var)("var")
-)("optional").add_parse_action(of_type(OptionalToken))
+        pp.Opt(html_insert)("html_insert").add_parse_action(of_type(OptionalInsertToken)) &
+        pp.Opt(var)("var").add_parse_action(of_type(OptionalVarToken))
+)("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionnalToken might be redundant
 
 # Structural elements
 structural_elements = (
