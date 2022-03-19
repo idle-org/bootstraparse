@@ -172,6 +172,10 @@ class OptionalVarToken(SemanticType):
     label = "optional:var"
 
 
+class OptionalClassToken(SemanticType):
+    label = "optional:class"
+
+
 class BeAssignToken(SemanticType):
     label = "be:assign"
 
@@ -192,6 +196,18 @@ def of_type(token_class):
         return token_class(content)
 
     return _of_type
+
+
+def reparse(parse_element):
+    """
+    Creates a function which re-parses given match with specified parsing element.
+    :param parse_element: pp object defining desired match
+    :return: returns a function parsing given match with specified parsing element
+    """
+    def _reparse(original_string, _, __):
+        parse_element.parse_string(original_string)
+
+    return _reparse
 
 
 def readable_markup(list_of_tokens):
@@ -232,14 +248,16 @@ var = pps('[') + pp.delimitedList(
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
-expression = pp.Word(pp.alphanums + r'=+-_\'",;:!<> ')
+expression = pp.Word(pp.alphanums + r'=+-_\'",;:!\/\\ ')
 html_insert = pps('{') + expression('html_insert') + pps('}')  # TODO: More extensive testing
+class_insert = pps('{{') + expression('class_insert') + pps('}}')  # TODO: test dis
 
 # Optional elements
 optional = (
+        pp.Opt(class_insert)("class_insert").add_parse_action(of_type(OptionalClassToken)) &
         pp.Opt(html_insert)("html_insert").add_parse_action(of_type(OptionalInsertToken)) &
-        pp.Opt(var)("var").add_parse_action(of_type(OptionalVarToken))
-)("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionnalToken might be redundant
+        pp.Opt(var)("var").add_parse_action(of_type(OptionalVarToken))  # noqa TODO: add class_insert to tests
+)("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionalToken
 
 # Structural elements
 structural_elements = (
@@ -278,11 +296,12 @@ se = se_end | se_start  # Structural element
 table_row = pp.OneOrMore(
         # pp.Regex(r'\|(\d)?')('table_colspan') +
         (pp.Combine(pps('|') + pp.Word(pp.nums)('table_colspan')) | pps('|')) +
-        pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken))  # TODO: account for enhanced text
+        pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken))  # TODO: add reparse
 ).add_parse_action(of_type(TableRowToken)) + pps('|') + pp.Opt(optional)
 table_separator = pp.OneOrMore(
     pps('|') + pp.Word(':-')
-)('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')  # TODO: Tokenize table separator ?
+)('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')
+# Future: Add Blockquote element
 table = table_separator | table_row
 
 # multi_line sums up all multi-line elements
@@ -296,10 +315,14 @@ one_display = (
         display_element + pp.SkipTo(pp.match_previous_literal(display_element))
 ).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
-        pps(pp.Literal('#')) + pps('.') + enhanced_text('olist_text')
+        pps(pp.Literal('#.')) + (
+         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) ^  # TODO: add reparse
+         enhanced_text)
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
-        pps(pp.Literal('-')) + enhanced_text('ulist_text')
+        pps(pp.Literal('-')) + (
+         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) ^  # TODO: add reparse
+         enhanced_text)
 ).add_parse_action(of_type(EtUlistToken))
 
 # one_line sums up all one-line elements
