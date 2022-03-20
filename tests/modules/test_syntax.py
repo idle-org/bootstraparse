@@ -2,19 +2,33 @@ from itertools import zip_longest
 
 import pyparsing
 import pytest
-import inspect
-
 
 import bootstraparse.modules.syntax as sy
-
+from tools import __GL, __module_path, find_variables_in_file  # , find_functions_in_file, find_classes_in_file
 
 ptp = pytest.param
 __XF = pytest.mark.xfail
 
 
-# Cursed frame inspection
-def __GL():
-    return inspect.getframeinfo(inspect.currentframe().f_back).lineno
+##############################################################################################################
+# Utility functions
+##############################################################################################################
+def likely_definition(list_expression, file):
+    """
+    Returns a dict for each expresion and the associated line where this expression is likely to be defined.
+    :param list_expression: list of expressions
+    :param file: file to search in
+    :return: dict of expression and line
+    """
+    likely_definition_dict = {}
+    loop_list = [e for e in list_expression]
+    with open(file) as f:
+        for line_number, line in enumerate(f):
+            for expression_id, expression in enumerate(loop_list):
+                if expression in line:
+                    likely_definition_dict[expression] = line_number+1
+                    loop_list.remove(expression)
+    return likely_definition_dict, file
 
 
 ##############################################################################################################
@@ -368,6 +382,9 @@ zipped_dict_advanced_syntax_input_and_expected_output = [
     ] for item in sublist
 ]
 
+__syntax_file = __module_path("syntax.py")
+__definition_of_syntax_elements = find_variables_in_file(__syntax_file, dict_advanced_syntax_input_and_expected_output.keys())
+
 # test__add_tag
 list_add_tag_input_and_expected_output = [
     # Test cases for the add_tag function
@@ -551,8 +568,12 @@ def test_advanced_expression_and_token_creation(markup_element, to_parse, expect
     assert isinstance(expr, pyparsing.ParserElement)
     result = expr.parse_string(to_parse)
     print()
-    print(f"Parsing expression: {to_parse} with {markup_element}")
+    print(f"Parsing string: '{to_parse}'")
     print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': line_test})
+    print(f"With expression: '{markup_element}'")
+    # print(likely_definition_of_advanced_syntax)
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __syntax_file,
+                                                  'lineno': __definition_of_syntax_elements[markup_element]})
     print(f"Found: {result} (len:{len(result)}).")
     print(f"Expected: {expected} (len:{len(expected)})")
     assert result is not None
