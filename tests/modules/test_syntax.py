@@ -124,8 +124,117 @@ dict_advanced_syntax_input_and_expected_output = {
         ("[text_link]('text://www.website.com/link.html')",
          [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])], __GL())
     ],
-
-    # il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
+    "assignation": [
+        # Single assignation element, should only match the first "a=1"
+        ("a=1", [sy.BeAssignToken([["a", 1]]), ], __GL()),
+        ("a='str'", [sy.BeAssignToken([["a", 'str']]), ], __GL()),
+    ],
+    "var": [
+        # List of variables or assignations, should match "[a=12, b=13, 'c']"
+        ("[a=12, b=13, 'c']", [
+            sy.BeAssignToken([["a", 12]]),
+            sy.BeAssignToken([["b", 13]]),
+            sy.BeValueToken(["c"]),
+        ], __GL()),
+        ("[a=12, b=13, 'c', d=14]", [
+            sy.BeAssignToken([["a", 12]]),
+            sy.BeAssignToken([["b", 13]]),
+            sy.BeValueToken(["c"]),
+            sy.BeAssignToken([["d", 14]]),
+        ], __GL()),
+    ],
+    "optional": [
+        # Optional element, should match any optional"
+        ("[a=12, b=13, 'c']", [
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                    sy.BeAssignToken([["b", 13]]),
+                    sy.BeValueToken(["c"]),
+                ]),
+            ]),
+        ], __GL()),
+        ("[a=12, b=13, 'c', d=14]", [
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                    sy.BeAssignToken([["b", 13]]),
+                    sy.BeValueToken(["c"]),
+                    sy.BeAssignToken([["d", 14]]),
+                ]),
+            ]),
+        ], __GL()),
+        ("[a=12]{aze,/.}", (
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+                sy.OptionalInsertToken([
+                    "aze,/.",
+                ]),
+            ]),
+        ), __GL()),
+        ("{aze,/.}[a=12]", (
+            sy.OptionalToken([
+                sy.OptionalInsertToken([
+                    "aze,/.",
+                ]),
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+            ]),
+        ), __GL()),
+        ("{aze!=}", (
+            sy.OptionalToken([
+                sy.OptionalInsertToken([
+                    "aze!=",
+                ]),
+            ]),
+        ), __GL()),
+        ("{{aze!=}}", (
+            sy.OptionalToken([
+                sy.OptionalClassToken([
+                    "aze!=",
+                ]),
+            ]),
+        ), __GL()),
+        ("{{aze!=}}{azett!=}", (
+            sy.OptionalToken([
+                sy.OptionalClassToken([
+                    "aze!=",
+                ]),
+                sy.OptionalInsertToken([
+                    "azett!=",
+                ]),
+            ]),
+        ), __GL()),
+        ("{{aze!=}}{azett!=}[a=12]", (
+            sy.OptionalToken([
+                sy.OptionalClassToken([
+                    "aze!=",
+                ]),
+                sy.OptionalInsertToken([
+                    "azett!=",
+                ]),
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+            ]),
+        ), __GL()),
+        ("[a=12]{aze,/.}{{azer!=}}", (
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+                sy.OptionalInsertToken([
+                    "aze,/.",
+                ]),
+                sy.OptionalClassToken([
+                    "azer!=",
+                ]),
+            ]),
+        ), __GL()),
+    ],
     # Enhanced Text
     "enhanced_text": [
         # Matches a line of text, with or without inline elements
@@ -169,7 +278,18 @@ dict_advanced_syntax_input_and_expected_output = {
             sy.EtStrikethroughToken(["~~"]), sy.TextToken(["Strikethrough"]),
         ), __GL()),
     ],
-
+    "html_insert": [
+        # Match a HTML insert
+        ("{azer='\"}", (
+            "azer='\"",
+        ), __GL()),
+    ],
+    "class_insert": [
+        # Match a class insert
+        ("{{azer='\"}}", (
+            "azer='\"",
+        ), __GL()),
+    ],
     # Structural Elements
     "se_start": [
         # Matches a start of a structural element
@@ -571,7 +691,6 @@ def test_advanced_expression_and_token_creation(markup_element, to_parse, expect
     print(f"Parsing string: '{to_parse}'")
     print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': line_test})
     print(f"With expression: '{markup_element}'")
-    # print(likely_definition_of_advanced_syntax)
     print("Defined at %(filename)s:%(lineno)d" % {'filename': __syntax_file,
                                                   'lineno': __definition_of_syntax_elements[markup_element]})
     print(f"Found: {result} (len:{len(result)}).")

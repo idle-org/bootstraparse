@@ -235,7 +235,7 @@ value = (pps(quotes) + pp.Word(pp.alphanums + r'.') + pps(pp.match_previous_lite
          pp.common.fnumber)("value")
 assignation = pp.Group(
     pp.common.identifier('var_name') + pps('=') + value('var_value')
-)("assignation")  # TODO: More extensive testing
+)("assignation")
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
 url_characters = pp.common.url
 
@@ -243,20 +243,25 @@ url_characters = pp.common.url
 var = pps('[') + pp.delimitedList(
     assignation.add_parse_action(of_type(BeAssignToken)) ^
     value.add_parse_action(of_type(BeValueToken))
-)("list_vars").set_name("list_vars") + pps(']')  # TODO: More extensive testing
+)("list_vars").set_name("list_vars") + pps(']')
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
 expression = pp.Word(pp.alphanums + r'=+-_\'",;:!\/\\ ')
-html_insert = pps('{') + expression('html_insert') + pps('}')  # TODO: More extensive testing
-class_insert = pps('{{') + expression('class_insert') + pps('}}')  # TODO: test dis
+html_insert = pps('{') + expression('html_insert') + pps('}')
+class_insert = pps('{{') + expression('class_insert') + pps('}}')
 
 # Optional elements
-optional = (
-        pp.Opt(class_insert)("class_insert").add_parse_action(of_type(OptionalClassToken)) &
-        pp.Opt(html_insert)("html_insert").add_parse_action(of_type(OptionalInsertToken)) &
-        pp.Opt(var)("var").add_parse_action(of_type(OptionalVarToken))  # noqa TODO: add class_insert to tests
+# optional = (
+#         pp.Opt(class_insert)("class_insert").add_parse_action(of_type(OptionalClassToken)) &
+#         pp.Opt(html_insert)("html_insert").add_parse_action(of_type(OptionalInsertToken)) &
+#         pp.Opt(var)("var").add_parse_action(of_type(OptionalVarToken))
+# )("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionalToken
+optional = pp.ZeroOrMore(
+        class_insert("class_insert").add_parse_action(of_type(OptionalClassToken)) |
+        html_insert("html_insert").add_parse_action(of_type(OptionalInsertToken)) |
+        var("var").add_parse_action(of_type(OptionalVarToken))
 )("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionalToken
 
 # Structural elements
