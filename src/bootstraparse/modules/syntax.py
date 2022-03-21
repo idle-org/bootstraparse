@@ -205,7 +205,7 @@ def reparse(parse_element):
     :return: returns a function parsing given match with specified parsing element
     """
     def _reparse(original_string, _, __):
-        parse_element.parse_string(original_string)
+        return parse_element.parse_string(original_string)
 
     return _reparse
 

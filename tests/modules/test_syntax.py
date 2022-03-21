@@ -173,7 +173,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     "aze,/.",
                 ]),
             ]),
-        ), __GL()),
+        ), __GL(), __XF),
         ("{aze,/.}[a=12]", (
             sy.OptionalToken([
                 sy.OptionalInsertToken([
@@ -183,7 +183,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.BeAssignToken([["a", 12]]),
                 ]),
             ]),
-        ), __GL()),
+        ), __GL(), __XF),
         ("{aze!=}", (
             sy.OptionalToken([
                 sy.OptionalInsertToken([
@@ -233,7 +233,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     "azer!=",
                 ]),
             ]),
-        ), __GL()),
+        ), __GL(), __XF),
     ],
     # Enhanced Text
     "enhanced_text": [
@@ -558,6 +558,15 @@ list_of_text_input_and_readable_output = [
 ]
 
 
+list_of_reparsing_input_and_expected_output = [
+    ("reparse_test", "enhanced_text", sy.TextToken(["reparse_test"]), __GL())  # TODO : add more test cases
+]
+final_list_of_reparsing_input_and_expected_output = [
+    ptp(item[0], item[1], item[2], item[3], id=f'{item[0]} (line:{item[3]})', marks=item[4:])
+    for item in list_of_reparsing_input_and_expected_output
+]
+
+
 @pytest.mark.parametrize("token_name,token_class", list_of_token_types.items())
 def test_token_type_exists(token_name, token_class):
     """
@@ -639,6 +648,9 @@ def test_semantic_type_eq():
     assert st1 != st2
     st1 = sy.SemanticType([1, 2, 3])
     st2 = sy.SemanticType([1, 2, 3, 4])
+    assert st1 != st2
+    st1 = sy.SemanticType([[1, 2, 4]])
+    st2 = sy.SemanticType([[1, 2, 3]])
     assert st1 != st2
 
 
@@ -754,3 +766,16 @@ def test_weird_markup():
 
     assert sy.readable_markup(
         [sy.EmptySemanticType("weird"), empty_token, WeirdClass()]) == "weird <[NOC] weird /> weird"
+
+
+@pytest.mark.parametrize("original_string, reparse_with, expected_output, line_test",
+                         final_list_of_reparsing_input_and_expected_output)
+def test_reparse(original_string, reparse_with, expected_output, line_test):
+    """
+    Test the reparse function
+    """
+    expression = find_expression_from_str(reparse_with)
+    reparse_action = pyparsing.Word(pyparsing.alphanums).add_parse_action(sy.reparse(expression))
+    reparse_result = reparse_action.parseString(original_string)
+    assert reparse_result is not None
+    assert reparse_result[0] == expected_output
