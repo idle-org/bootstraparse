@@ -1,0 +1,110 @@
+# Enhanced text
+italics:
+  bpr: '*italics*'
+  markdown compatible: yes
+  additional unsupported markdown syntax: '_italics_'
+  accepts arguments: no
+  type: enhanced text
+
+bold:
+  bpr: '**bold**'
+  markdown compatible: yes
+  accepts arguments: no
+  type: enhanced text
+
+strikethrough:
+  bpr: '~~strikethrough~~'
+  markdown compatible: yes
+  accepts arguments: no
+  type: enhanced text
+
+underline:
+  bpr: '__underline__'
+  markdown compatible: -
+  accepts arguments: no
+  type: enhanced text
+
+
+# In-line elements
+hyperlinks:
+  bpr: '[text]("hyperlink")'
+  markdown compatible: yes
+  accepts arguments: no
+  type: in-line
+
+# Pre-parsing elements
+aliases:
+  bpr: '@[alias]'
+  markdown compatible: -
+  accepts arguments: yes
+  type: pre-parsing
+
+images:
+  bpr: '@{image}'
+  markdown compatible: no
+  accepts arguments: yes
+  type: pre-parsing
+
+# One-line elements
+headers:
+  bpr: '# header #'
+  markdown compatible: no
+  accepts arguments: yes
+  accepts enhanced text: no
+  type: one-line
+
+display:
+  bpr: '! header !'
+  markdown compatible: -
+  accepts arguments: yes
+  accepts enhanced text: no
+  type: one-line
+
+# Not sure about sublists for the moment, add that later
+numbered lists:
+  bpr: '#. nbd list item'
+  markdown compatible: no
+  accepts arguments: no
+  accepts enhanced text: yes
+  type: one-line
+
+bullet lists:
+  bpr: '- list item'
+  markdown compatible: yes
+  accepts arguments: no
+  accepts enhanced text: yes
+  type: one-line
+
+
+# Multi-line elements
+structural elements:
+  bpr: '<<start /// end>>'
+  accepted elements: div, article, aside, section
+  markdown compatible: -
+  accepts arguments: yes
+  type: multi-line
+
+tables:
+  bpr: '| table cell |'
+  markdown compatible: -
+  accepts arguments: yes
+  accepts enhanced text: yes
+  type: multi-line
+
+table-separator: 
+  bpr: '|-----------|' 
+  # accepts ':' either at the start, middle or end of the line to align text for the column
+  # putting a separator after a row will change said row to table-header
+  # putting a separator after a column will change said column to table-header
+  markdown compatible: -
+  accepts arguments: yes
+  accepts enhanced text: yes
+  type: multi-line
+
+
+# # Things to add
+# blockquotes:
+# code:
+# code-blocks:
+# horizontal rule:
+# reference-style link:
