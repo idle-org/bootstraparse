@@ -276,7 +276,7 @@ display_element = pp.Word('!')
 
 # Inline elements
 il_link = pp.Regex(
-    r"""\[(?P<text>.+)\]\(['"](?P<url>[a-zA-Z-_:\/=@#!%\?\d\(\)\.]+)['"]\)"""
+    r"""\[(?P<text>.+)\]\(['"]?(?P<url>[a-zA-Z-_:\/=@#!%\?\d\(\)\.]+)['"]?\)"""
 ).add_parse_action(of_type(HyperlinkToken))
 
 # Enhanced text elements
