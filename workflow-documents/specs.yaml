@@ -5,24 +5,28 @@ italics:
   additional unsupported markdown syntax: '_italics_'
   accepts arguments: no
   type: enhanced text
+  scope: first release
 
 bold:
   bpr: '**bold**'
   markdown compatible: yes
   accepts arguments: no
   type: enhanced text
+  scope: first release
 
 strikethrough:
   bpr: '~~strikethrough~~'
   markdown compatible: yes
   accepts arguments: no
   type: enhanced text
+  scope: first release
 
 underline:
   bpr: '__underline__'
   markdown compatible: -
   accepts arguments: no
   type: enhanced text
+  scope: first release
 
 
 # In-line elements
@@ -31,6 +35,7 @@ hyperlinks:
   markdown compatible: yes
   accepts arguments: no
   type: in-line
+  scope: first release
 
 # Pre-parsing elements
 aliases:
@@ -38,12 +43,14 @@ aliases:
   markdown compatible: -
   accepts arguments: yes
   type: pre-parsing
+  scope: first release
 
 images:
   bpr: '@{image}'
   markdown compatible: no
   accepts arguments: yes
   type: pre-parsing
+  scope: first release
 
 # One-line elements
 headers:
@@ -52,6 +59,7 @@ headers:
   accepts arguments: yes
   accepts enhanced text: no
   type: one-line
+  scope: first release
 
 display:
   bpr: '! header !'
@@ -59,6 +67,7 @@ display:
   accepts arguments: yes
   accepts enhanced text: no
   type: one-line
+  scope: first release
 
 # Not sure about sublists for the moment, add that later
 numbered lists:
@@ -67,6 +76,7 @@ numbered lists:
   accepts arguments: no
   accepts enhanced text: yes
   type: one-line
+  scope: first release
 
 bullet lists:
   bpr: '- list item'
@@ -74,6 +84,7 @@ bullet lists:
   accepts arguments: no
   accepts enhanced text: yes
   type: one-line
+  scope: first release
 
 
 # Multi-line elements
@@ -83,6 +94,7 @@ structural elements:
   markdown compatible: -
   accepts arguments: yes
   type: multi-line
+  scope: first release
 
 tables:
   bpr: '| table cell |'
@@ -90,6 +102,7 @@ tables:
   accepts arguments: yes
   accepts enhanced text: yes
   type: multi-line
+  scope: first release
 
 table-separator: 
   bpr: '|-----------|' 
@@ -100,11 +113,48 @@ table-separator:
   accepts arguments: yes
   accepts enhanced text: yes
   type: multi-line
+  scope: first release
 
 
 # # Things to add
-# blockquotes:
-# code:
-# code-blocks:
-# horizontal rule:
-# reference-style link:
+blockquotes:
+  bpr: '> quote'
+  markdown compatible: yes
+  accepts arguments: yes
+  accepts enhanced text: yes
+  type: one-line
+  scope: first release
+
+code:
+  bpr: '`quote`'
+  markdown compatible: yes
+  accepts arguments: no
+  accepts enhanced text: no
+  type: in-line
+  scope: post-release
+
+code-blocks:
+  bpr: '```quote```'
+  markdown compatible: yes
+  accepts arguments: yes
+  accepts enhanced text: no
+  type: multi-line
+  scope: post-release
+
+horizontal rule:
+  bpr: '---'
+  markdown compatible: yes
+  accepts arguments: yes
+  accepts enhanced text: no
+  type: one-line
+  scope: first release
+
+reference-style link:
+  bpr: '[digit]("hyperlink")'
+  markdown syntax: '[link][digit]' # needs testing, unclear
+  accepts arguments: yes
+  accepts enhanced text: no
+  type: one-line
+  scope: first release
+
+# Inline-style link with title 
