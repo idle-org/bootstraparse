@@ -183,7 +183,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     "aze,/.",
                 ]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
         ("{aze,/.}[a=12]", (
             sy.OptionalToken([
                 sy.OptionalInsertToken([
@@ -193,7 +193,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.BeAssignToken([["a", 12]]),
                 ]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
         ("{aze!=}", (
             sy.OptionalToken([
                 sy.OptionalInsertToken([
@@ -243,7 +243,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     "azer!=",
                 ]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
     ],
     # Enhanced Text
     "enhanced_text": [
@@ -389,7 +389,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
         ("#. Text8 [class='blue', 123]{var='test', number=11}", (
             sy.EtOlistToken([
                 sy.TextToken(["Text8"]),
@@ -401,11 +401,11 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
         ("! Display9 ! [class='blue', 123]{var='test', number=11}", (
             sy.DisplayToken([
                 "!",
-                "Display9",
+                "Display9 ",
                 sy.OptionalToken([
                     sy.OptionalVarToken([
                         sy.BeAssignToken([["class", "blue"]]),
@@ -414,11 +414,11 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-        ), __GL(), __XF),  # Bad optional implementation
+        ), __GL()),  # Bad optional implementation
         ("## Text10 ## [class='blue', 123]{var='test', number=11}", (
             sy.HeaderToken([
                 "##",
-                "Text10",
+                "Text10 ",
                 sy.OptionalToken([
                     sy.OptionalVarToken([
                         sy.BeAssignToken([["class", "blue"]]),
@@ -427,7 +427,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-         ), __GL(), __XF),  # Bad optional implementation
+         ), __GL()),  # Bad optional implementation
     ],
 
     # Tables
@@ -472,7 +472,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     "var='test', number=11",
                 ]),
             ]),
-        ), __GL(), __XF),  # Bad optional implementation
+        ), __GL()),
     ],
 
     "table_separator": [
