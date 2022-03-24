@@ -248,19 +248,14 @@ var = pps('[') + pp.delimitedList(
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
-expression = pp.Word(pp.alphanums + r'=+-_\'",;:!\/\\ ')
+expression = pp.Word(pp.alphanums + r'=+-_\'",;:!\/\\. ')
 html_insert = pps('{') + expression('html_insert') + pps('}')
 class_insert = pps('{{') + expression('class_insert') + pps('}}')
 
 # Optional elements
-# optional = (
-#         pp.Opt(class_insert)("class_insert").add_parse_action(of_type(OptionalClassToken)) &
-#         pp.Opt(html_insert)("html_insert").add_parse_action(of_type(OptionalInsertToken)) &
-#         pp.Opt(var)("var").add_parse_action(of_type(OptionalVarToken))
-# )("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionalToken
-optional = pp.ZeroOrMore(
-        class_insert("class_insert").add_parse_action(of_type(OptionalClassToken)) |
-        html_insert("html_insert").add_parse_action(of_type(OptionalInsertToken)) |
+optional = pp.OneOrMore(
+        class_insert("class_insert").add_parse_action(of_type(OptionalClassToken)) ^
+        html_insert("html_insert").add_parse_action(of_type(OptionalInsertToken)) ^
         var("var").add_parse_action(of_type(OptionalVarToken))
 )("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionalToken
 
@@ -296,7 +291,7 @@ enhanced_text = pp.ZeroOrMore(
 
 # Multiline elements
 se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
-se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken)) + optional
+se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken)) + pp.Opt(optional)
 se = se_end | se_start  # Structural element
 table_row = pp.OneOrMore(
         # pp.Regex(r'\|(\d)?')('table_colspan') +
@@ -314,24 +309,30 @@ multi_line = se | table
 
 # Oneline elements
 one_header = (
-        header_element + pp.SkipTo(pp.match_previous_literal(header_element))
+        header_element +
+        pp.SkipTo(pp.match_previous_literal(header_element)) +
+        pps(pp.match_previous_literal(header_element)) +
+        pp.Opt(optional)
 ).add_parse_action(of_type(HeaderToken))
 one_display = (
-        display_element + pp.SkipTo(pp.match_previous_literal(display_element))
+        display_element +
+        pp.SkipTo(pp.match_previous_literal(display_element)) +
+        pps(pp.match_previous_literal(display_element)) +
+        pp.Opt(optional)
 ).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
         pps(pp.Literal('#.')) + (
-         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) ^  # TODO: add reparse
+         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) |  # TODO: add reparse
          enhanced_text)
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
         pps(pp.Literal('-')) + (
-         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) ^  # TODO: add reparse
+         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) |  # TODO: add reparse
          enhanced_text)
 ).add_parse_action(of_type(EtUlistToken))
 
 # one_line sums up all one-line elements
-one_line = (one_header | one_display | one_olist | one_ulist) + pp.Opt(optional)
+one_line = (one_header | one_display | one_olist | one_ulist)
 
 # Final elements
 line = one_line | multi_line | enhanced_text
@@ -342,8 +343,8 @@ line = one_line | multi_line | enhanced_text
 ##############################################################################
 
 # Composite elements
-image = image_element + optional
-alias = alias_element + optional
+image = image_element + pp.Opt(optional)
+alias = alias_element + pp.Opt(optional)
 
 # Syntax elements
 line_to_replace = pp.OneOrMore(
@@ -363,4 +364,4 @@ if __name__ == '__main__':  # pragma: no cover
     line.create_diagram("../../../dev_outputs/diagram_line.html")
     multi_line.create_diagram("../../../dev_outputs/diagram_multi_line.html")
     one_line.create_diagram("../../../dev_outputs/diagram_one_line.html")
-    enhanced_text.create_diagram("../../../dev_outputs/diagram_enchanced_text.html")
+    enhanced_text.create_diagram("../../../dev_outputs/diagram_enhanced_text.html")

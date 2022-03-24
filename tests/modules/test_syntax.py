@@ -53,6 +53,7 @@ list_of_token_types = {
 }
 
 # Dictionary of all lexical elements and a list of matching strings for the Pre_parser
+# test_expression_matching
 expressions_to_match = {
     # Base elements
     "quotes": ["'hi, there'", "'hi, there'"],
@@ -73,7 +74,16 @@ expressions_to_match = {
     "html_insert": ['{test=12, 22=3, "=5}', "{testing=12, 22=3, 4=5, 6='7'}"],
 
     # Optional elements
-    "optional": ["a=1", "a=1.33", "tr2='hu'"],
+    "optional": ["[a=1]", "[a=1, b=2]",
+                 "{a=1'\";}",
+                 "[a=1, b='2', 43, 'eee']",
+                 "[a=1, b='2', 43, 'eee'] {azer=,;}",
+                 "{{a=1, b='2', 43, 'eee'}}",
+                 "{{a=1, b='2', 43, 'eee'}} {azer=,;}",
+                 "{{a=1, b='2', 43, 'eee'}} {azer=,;} [azer=,;]",
+                 "[a=1, b='2', 43, 'eee'] {azer=,;} {{azer=,;}}",
+                 ],
+
 
     # Pre_parser elements
     "image": ["@{image}{test=22}[a=12,22,c,d,ERE,r,3]", "@{image123_456}{a=12,22,c,d,ERE,r,3}",
