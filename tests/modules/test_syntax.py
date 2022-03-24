@@ -501,6 +501,31 @@ dict_advanced_syntax_input_and_expected_output = {
         ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),), __GL()),
         ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),), __GL()),
         ("div>>", (sy.StructuralElementEndToken(["div"]),), __GL()),
+        ("#. Text with *em* and __underline__ and {arguments}{{super-arguments}}[a=1,'ui']", (
+            sy.EtOlistToken([
+                sy.TextToken(["Text with"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["em"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["and"]),
+                sy.EtUnderlineToken(["__"]),
+                sy.TextToken(["underline"]),
+                sy.EtUnderlineToken(["__"]),
+                sy.TextToken(["and"]),
+                sy.OptionalToken([
+                    sy.OptionalInsertToken([
+                        "arguments",
+                        ]),
+                    sy.OptionalClassToken([
+                        "super-arguments",
+                        ]),
+                    sy.OptionalVarToken([
+                        sy.BeAssignToken([["a", 1]]),
+                        sy.BeValueToken(["ui"]),
+                        ]),
+                    ]),
+            ]),
+        ), __GL(),),
     ],
 }
 
@@ -802,11 +827,19 @@ def test_reparse(original_string, reparse_with, expected_output, line_test):
     print(f"With expression: '{reparse_with}'")
     print("Defined at %(filename)s:%(lineno)d" % {'filename': __syntax_file,
                                                   'lineno': __definition_of_syntax_elements[reparse_with]})
-    print(f"Expected: {expected_output}")
+    print(f"Expected: {expected_output} (len:{len(expected_output)})")
 
     expression = find_expression_from_str(str(reparse_with))
-    reparse_action = pyparsing.Word(pyparsing.alphanums).add_parse_action(sy.reparse(expression))
+    reparse_action = pyparsing.Word(pyparsing.printables+" ").add_parse_action(sy.reparse(expression))
     reparse_result = reparse_action.parseString(str(original_string))
+    print(f"Found: {reparse_result} (len:{len(reparse_result)}).")
+
     assert reparse_result is not None
     for expected, result in zip_longest(expected_output, reparse_result):
-        assert expected == result
+        assert result == expected
+
+
+def test_empty_token():
+    """Test that empty tokens are correctly dropped."""
+
+    assert sy.of_type(sy.EmptySemanticType)("", [], []) is None

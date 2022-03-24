@@ -27,7 +27,7 @@ class SemanticType:
             for elt in self.content:
                 try:
                     return_list.append(elt.to_markup())
-                except Exception:
+                except Exception: # noqa E722 (This function is used for testing only)
                     return_list.append(str(elt))
             return f"<{self.label} = '{','.join(return_list)}' />"
         return f'<[NOC] {self.label} />'
@@ -204,8 +204,8 @@ def reparse(parse_element):
     :param parse_element: pp object defining desired match
     :return: returns a function parsing given match with specified parsing element
     """
-    def _reparse(original_string, _, __):
-        return parse_element.parse_string(original_string)
+    def _reparse(__, _, tokens):
+        return parse_element.parseString(tokens[0])  # TODO: fix this with a proper solution
 
     return _reparse
 
@@ -224,7 +224,7 @@ def readable_markup(list_of_tokens):
         else:
             try:
                 readable_list.append(token.to_markup())
-            except Exception:
+            except Exception: # noqa E722 (This function is used for testing and readability purposes)
                 readable_list.append(str(token))
     return " ".join(readable_list)
 
@@ -322,12 +322,12 @@ one_display = (
 ).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
         pps(pp.Literal('#.')) + (
-         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) |  # TODO: add reparse
+         (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
         pps(pp.Literal('-')) + (
-         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) |  # TODO: add reparse
+         (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtUlistToken))
 
