@@ -15,7 +15,7 @@ __XF = pytest.mark.xfail
 ##############################################################################################################
 def likely_definition(list_expression, file):
     """
-    Returns a dict for each expresion and the associated line where this expression is likely to be defined.
+    Returns a dict for each expression and the associated line where this expression is likely to be defined.
     :param list_expression: list of expressions
     :param file: file to search in
     :return: dict of expression and line
@@ -144,7 +144,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ], __GL()),
     ],
     "optional": [
-        # Optional element, should match any optional"
+        # Optional element, should match any optional element
         ("[a=12, b=13, 'c']", [
             sy.OptionalToken([
                 sy.OptionalVarToken([
@@ -279,7 +279,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ), __GL()),
     ],
     "html_insert": [
-        # Match a HTML insert
+        # Match an HTML insert
         ("{azer='\"}", (
             "azer='\"",
         ), __GL()),
@@ -559,7 +559,19 @@ list_of_text_input_and_readable_output = [
 
 
 list_of_reparsing_input_and_expected_output = [
-    ("reparse_test", "enhanced_text", sy.TextToken(["reparse_test"]), __GL())  # TODO : add more test cases
+    ("reparse_test", "enhanced_text", [sy.TextToken(["reparse_test"])], __GL()),
+    ("reparse text *bold*, __underlined__ (#123) Custom", "enhanced_text", [
+        sy.TextToken(["reparse text"]),
+        sy.EtEmToken(["*"]),
+        sy.TextToken(["bold"]),
+        sy.EtEmToken(["*"]),
+        sy.TextToken([","]),
+        sy.EtUnderlineToken(["__"]),
+        sy.TextToken(["underlined"]),
+        sy.EtUnderlineToken(["__"]),
+        sy.EtCustomSpanToken(["123"]),
+        sy.TextToken(["Custom"])
+    ], __GL())
 ]
 final_list_of_reparsing_input_and_expected_output = [
     ptp(item[0], item[1], item[2], item[3], id=f'{item[0]} (line:{item[3]})', marks=item[4:])
@@ -774,8 +786,17 @@ def test_reparse(original_string, reparse_with, expected_output, line_test):
     """
     Test the reparse function
     """
-    expression = find_expression_from_str(reparse_with)
+    print()
+    print(f"Reparsing string: '{original_string}'")
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': int(line_test)})
+    print(f"With expression: '{reparse_with}'")
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __syntax_file,
+                                                  'lineno': __definition_of_syntax_elements[reparse_with]})
+    print(f"Expected: {expected_output}")
+
+    expression = find_expression_from_str(str(reparse_with))
     reparse_action = pyparsing.Word(pyparsing.alphanums).add_parse_action(sy.reparse(expression))
-    reparse_result = reparse_action.parseString(original_string)
+    reparse_result = reparse_action.parseString(str(original_string))
     assert reparse_result is not None
-    assert reparse_result[0] == expected_output
+    for expected, result in zip_longest(expected_output, reparse_result):
+        assert expected == result
