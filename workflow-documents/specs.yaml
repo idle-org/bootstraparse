@@ -23,7 +23,7 @@ strikethrough:
 
 underline:
   bpr: '__underline__'
-  markdown compatible: -
+  markdown compatible: no
   accepts arguments: no
   type: enhanced text
   scope: first release
@@ -40,7 +40,7 @@ hyperlinks:
 # Pre-parsing elements
 aliases:
   bpr: '@[alias]'
-  markdown compatible: -
+  markdown compatible: no
   accepts arguments: yes
   type: pre-parsing
   scope: first release
@@ -63,7 +63,7 @@ headers:
 
 display:
   bpr: '! header !'
-  markdown compatible: -
+  markdown compatible: no
   accepts arguments: yes
   accepts enhanced text: no
   type: one-line
@@ -75,6 +75,7 @@ numbered lists:
   markdown compatible: no
   accepts arguments: no
   accepts enhanced text: yes
+  additional unsupported features: sub-lists
   type: one-line
   scope: first release
 
@@ -91,14 +92,14 @@ bullet lists:
 structural elements:
   bpr: '<<start /// end>>'
   accepted elements: div, article, aside, section
-  markdown compatible: -
+  markdown compatible: no
   accepts arguments: yes
   type: multi-line
   scope: first release
 
 tables:
   bpr: '| table cell |'
-  markdown compatible: -
+  markdown compatible: no
   accepts arguments: yes
   accepts enhanced text: yes
   type: multi-line
@@ -109,7 +110,7 @@ table-separator:
   # accepts ':' either at the start, middle or end of the line to align text for the column
   # putting a separator after a row will change said row to table-header
   # putting a separator after a column will change said column to table-header
-  markdown compatible: -
+  markdown compatible: no
   accepts arguments: yes
   accepts enhanced text: yes
   type: multi-line
