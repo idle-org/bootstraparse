@@ -2,19 +2,33 @@ from itertools import zip_longest
 
 import pyparsing
 import pytest
-import inspect
-
 
 import bootstraparse.modules.syntax as sy
-
+from tools import __GL, __module_path, find_variables_in_file  # , find_functions_in_file, find_classes_in_file
 
 ptp = pytest.param
 __XF = pytest.mark.xfail
 
 
-# Cursed frame inspection
-def __GL():
-    return inspect.getframeinfo(inspect.currentframe().f_back).lineno
+##############################################################################################################
+# Utility functions
+##############################################################################################################
+def likely_definition(list_expression, file):
+    """
+    Returns a dict for each expression and the associated line where this expression is likely to be defined.
+    :param list_expression: list of expressions
+    :param file: file to search in
+    :return: dict of expression and line
+    """
+    likely_definition_dict = {}
+    loop_list = [e for e in list_expression]
+    with open(file) as f:
+        for line_number, line in enumerate(f):
+            for expression_id, expression in enumerate(loop_list):
+                if expression in line:
+                    likely_definition_dict[expression] = line_number+1
+                    loop_list.remove(expression)
+    return likely_definition_dict, file
 
 
 ##############################################################################################################
@@ -39,6 +53,7 @@ list_of_token_types = {
 }
 
 # Dictionary of all lexical elements and a list of matching strings for the Pre_parser
+# test_expression_matching
 expressions_to_match = {
     # Base elements
     "quotes": ["'hi, there'", "'hi, there'"],
@@ -59,7 +74,16 @@ expressions_to_match = {
     "html_insert": ['{test=12, 22=3, "=5}', "{testing=12, 22=3, 4=5, 6='7'}"],
 
     # Optional elements
-    "optional": ["a=1", "a=1.33", "tr2='hu'"],
+    "optional": ["[a=1]", "[a=1, b=2]",
+                 "{a=1'\";}",
+                 "[a=1, b='2', 43, 'eee']",
+                 "[a=1, b='2', 43, 'eee'] {azer=,;}",
+                 "{{a=1, b='2', 43, 'eee'}}",
+                 "{{a=1, b='2', 43, 'eee'}} {azer=,;}",
+                 "{{a=1, b='2', 43, 'eee'}} {azer=,;} [azer=,;]",
+                 "[a=1, b='2', 43, 'eee'] {azer=,;} {{azer=,;}}",
+                 ],
+
 
     # Pre_parser elements
     "image": ["@{image}{test=22}[a=12,22,c,d,ERE,r,3]", "@{image123_456}{a=12,22,c,d,ERE,r,3}",
@@ -110,8 +134,117 @@ dict_advanced_syntax_input_and_expected_output = {
         ("[text_link]('text://www.website.com/link.html')",
          [sy.HyperlinkToken(["[text_link]('text://www.website.com/link.html')"])], __GL())
     ],
-
-    # il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
+    "assignation": [
+        # Single assignation element, should only match the first "a=1"
+        ("a=1", [sy.BeAssignToken([["a", 1]]), ], __GL()),
+        ("a='str'", [sy.BeAssignToken([["a", 'str']]), ], __GL()),
+    ],
+    "var": [
+        # List of variables or assignations, should match "[a=12, b=13, 'c']"
+        ("[a=12, b=13, 'c']", [
+            sy.BeAssignToken([["a", 12]]),
+            sy.BeAssignToken([["b", 13]]),
+            sy.BeValueToken(["c"]),
+        ], __GL()),
+        ("[a=12, b=13, 'c', d=14]", [
+            sy.BeAssignToken([["a", 12]]),
+            sy.BeAssignToken([["b", 13]]),
+            sy.BeValueToken(["c"]),
+            sy.BeAssignToken([["d", 14]]),
+        ], __GL()),
+    ],
+    "optional": [
+        # Optional element, should match any optional element
+        ("[a=12, b=13, 'c']", [
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                    sy.BeAssignToken([["b", 13]]),
+                    sy.BeValueToken(["c"]),
+                ]),
+            ]),
+        ], __GL()),
+        ("[a=12, b=13, 'c', d=14]", [
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                    sy.BeAssignToken([["b", 13]]),
+                    sy.BeValueToken(["c"]),
+                    sy.BeAssignToken([["d", 14]]),
+                ]),
+            ]),
+        ], __GL()),
+        ("[a=12]{aze,/.}", (
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+                sy.OptionalInsertToken([
+                    "aze,/.",
+                ]),
+            ]),
+        ), __GL()),
+        ("{aze,/.}[a=12]", (
+            sy.OptionalToken([
+                sy.OptionalInsertToken([
+                    "aze,/.",
+                ]),
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+            ]),
+        ), __GL()),
+        ("{aze!=}", (
+            sy.OptionalToken([
+                sy.OptionalInsertToken([
+                    "aze!=",
+                ]),
+            ]),
+        ), __GL()),
+        ("{{aze!=}}", (
+            sy.OptionalToken([
+                sy.OptionalClassToken([
+                    "aze!=",
+                ]),
+            ]),
+        ), __GL()),
+        ("{{aze!=}}{azett!=}", (
+            sy.OptionalToken([
+                sy.OptionalClassToken([
+                    "aze!=",
+                ]),
+                sy.OptionalInsertToken([
+                    "azett!=",
+                ]),
+            ]),
+        ), __GL()),
+        ("{{aze!=}}{azett!=}[a=12]", (
+            sy.OptionalToken([
+                sy.OptionalClassToken([
+                    "aze!=",
+                ]),
+                sy.OptionalInsertToken([
+                    "azett!=",
+                ]),
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+            ]),
+        ), __GL()),
+        ("[a=12]{aze,/.}{{azer!=}}", (
+            sy.OptionalToken([
+                sy.OptionalVarToken([
+                    sy.BeAssignToken([["a", 12]]),
+                ]),
+                sy.OptionalInsertToken([
+                    "aze,/.",
+                ]),
+                sy.OptionalClassToken([
+                    "azer!=",
+                ]),
+            ]),
+        ), __GL()),
+    ],
     # Enhanced Text
     "enhanced_text": [
         # Matches a line of text, with or without inline elements
@@ -155,7 +288,18 @@ dict_advanced_syntax_input_and_expected_output = {
             sy.EtStrikethroughToken(["~~"]), sy.TextToken(["Strikethrough"]),
         ), __GL()),
     ],
-
+    "html_insert": [
+        # Match an HTML insert
+        ("{azer='\"}", (
+            "azer='\"",
+        ), __GL()),
+    ],
+    "class_insert": [
+        # Match a class insert
+        ("{{azer='\"}}", (
+            "azer='\"",
+        ), __GL()),
+    ],
     # Structural Elements
     "se_start": [
         # Matches a start of a structural element
@@ -245,7 +389,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
         ("#. Text8 [class='blue', 123]{var='test', number=11}", (
             sy.EtOlistToken([
                 sy.TextToken(["Text8"]),
@@ -257,11 +401,11 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
         ("! Display9 ! [class='blue', 123]{var='test', number=11}", (
             sy.DisplayToken([
                 "!",
-                "Display9",
+                "Display9 ",
                 sy.OptionalToken([
                     sy.OptionalVarToken([
                         sy.BeAssignToken([["class", "blue"]]),
@@ -270,11 +414,11 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-        ), __GL(), __XF),  # Bad optional implementation
+        ), __GL()),  # Bad optional implementation
         ("## Text10 ## [class='blue', 123]{var='test', number=11}", (
             sy.HeaderToken([
                 "##",
-                "Text10",
+                "Text10 ",
                 sy.OptionalToken([
                     sy.OptionalVarToken([
                         sy.BeAssignToken([["class", "blue"]]),
@@ -283,7 +427,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     sy.OptionalInsertToken(["var='test', number=11"]),
                 ]),
             ]),
-         ), __GL(), __XF),  # Bad optional implementation
+         ), __GL()),  # Bad optional implementation
     ],
 
     # Tables
@@ -328,7 +472,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     "var='test', number=11",
                 ]),
             ]),
-        ), __GL(), __XF),  # Bad optional implementation
+        ), __GL()),
     ],
 
     "table_separator": [
@@ -357,6 +501,31 @@ dict_advanced_syntax_input_and_expected_output = {
         ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),), __GL()),
         ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),), __GL()),
         ("div>>", (sy.StructuralElementEndToken(["div"]),), __GL()),
+        ("#. Text with *em* and __underline__ and {arguments}{{super-arguments}}[a=1,'ui']", (
+            sy.EtOlistToken([
+                sy.TextToken(["Text with"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["em"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["and"]),
+                sy.EtUnderlineToken(["__"]),
+                sy.TextToken(["underline"]),
+                sy.EtUnderlineToken(["__"]),
+                sy.TextToken(["and"]),
+                sy.OptionalToken([
+                    sy.OptionalInsertToken([
+                        "arguments",
+                        ]),
+                    sy.OptionalClassToken([
+                        "super-arguments",
+                        ]),
+                    sy.OptionalVarToken([
+                        sy.BeAssignToken([["a", 1]]),
+                        sy.BeValueToken(["ui"]),
+                        ]),
+                    ]),
+            ]),
+        ), __GL(),),
     ],
 }
 
@@ -367,6 +536,9 @@ zipped_dict_advanced_syntax_input_and_expected_output = [
         dict_advanced_syntax_input_and_expected_output.keys()  # noqa E501 (line too cursed)
     ] for item in sublist
 ]
+
+__syntax_file = __module_path("syntax.py")
+__definition_of_syntax_elements = find_variables_in_file(__syntax_file, dict_advanced_syntax_input_and_expected_output.keys())
 
 # test__add_tag
 list_add_tag_input_and_expected_output = [
@@ -418,6 +590,27 @@ list_of_text_input_and_readable_output = [
 
     # Other Mostly for testing and coverage
     ("'", "quotes", "'"),
+]
+
+
+list_of_reparsing_input_and_expected_output = [
+    ("reparse_test", "enhanced_text", [sy.TextToken(["reparse_test"])], __GL()),
+    ("reparse text *bold*, __underlined__ (#123) Custom", "enhanced_text", [
+        sy.TextToken(["reparse text"]),
+        sy.EtEmToken(["*"]),
+        sy.TextToken(["bold"]),
+        sy.EtEmToken(["*"]),
+        sy.TextToken([","]),
+        sy.EtUnderlineToken(["__"]),
+        sy.TextToken(["underlined"]),
+        sy.EtUnderlineToken(["__"]),
+        sy.EtCustomSpanToken(["123"]),
+        sy.TextToken(["Custom"])
+    ], __GL())
+]
+final_list_of_reparsing_input_and_expected_output = [
+    ptp(item[0], item[1], item[2], item[3], id=f'{item[0]} (line:{item[3]})', marks=item[4:])
+    for item in list_of_reparsing_input_and_expected_output
 ]
 
 
@@ -503,6 +696,9 @@ def test_semantic_type_eq():
     st1 = sy.SemanticType([1, 2, 3])
     st2 = sy.SemanticType([1, 2, 3, 4])
     assert st1 != st2
+    st1 = sy.SemanticType([[1, 2, 4]])
+    st2 = sy.SemanticType([[1, 2, 3]])
+    assert st1 != st2
 
 
 def find_expression_from_str(expression_str):
@@ -551,8 +747,11 @@ def test_advanced_expression_and_token_creation(markup_element, to_parse, expect
     assert isinstance(expr, pyparsing.ParserElement)
     result = expr.parse_string(to_parse)
     print()
-    print(f"Parsing expression: {to_parse} with {markup_element}")
+    print(f"Parsing string: '{to_parse}'")
     print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': line_test})
+    print(f"With expression: '{markup_element}'")
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __syntax_file,
+                                                  'lineno': __definition_of_syntax_elements[markup_element]})
     print(f"Found: {result} (len:{len(result)}).")
     print(f"Expected: {expected} (len:{len(expected)})")
     assert result is not None
@@ -614,3 +813,33 @@ def test_weird_markup():
 
     assert sy.readable_markup(
         [sy.EmptySemanticType("weird"), empty_token, WeirdClass()]) == "weird <[NOC] weird /> weird"
+
+
+@pytest.mark.parametrize("original_string, reparse_with, expected_output, line_test",
+                         final_list_of_reparsing_input_and_expected_output)
+def test_reparse(original_string, reparse_with, expected_output, line_test):
+    """
+    Test the reparse function
+    """
+    print()
+    print(f"Reparsing string: '{original_string}'")
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': int(line_test)})
+    print(f"With expression: '{reparse_with}'")
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __syntax_file,
+                                                  'lineno': __definition_of_syntax_elements[reparse_with]})
+    print(f"Expected: {expected_output} (len:{len(expected_output)})")
+
+    expression = find_expression_from_str(str(reparse_with))
+    reparse_action = pyparsing.Word(pyparsing.printables+" ").add_parse_action(sy.reparse(expression))
+    reparse_result = reparse_action.parseString(str(original_string))
+    print(f"Found: {reparse_result} (len:{len(reparse_result)}).")
+
+    assert reparse_result is not None
+    for expected, result in zip_longest(expected_output, reparse_result):
+        assert result == expected
+
+
+def test_empty_token():
+    """Test that empty tokens are correctly dropped."""
+
+    assert sy.of_type(sy.EmptySemanticType)("", [], []) is None

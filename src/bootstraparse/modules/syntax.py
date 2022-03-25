@@ -27,7 +27,7 @@ class SemanticType:
             for elt in self.content:
                 try:
                     return_list.append(elt.to_markup())
-                except Exception:
+                except Exception: # noqa E722 (This function is used for testing only)
                     return_list.append(str(elt))
             return f"<{self.label} = '{','.join(return_list)}' />"
         return f'<[NOC] {self.label} />'
@@ -212,8 +212,8 @@ def reparse(parse_element):
     :param parse_element: pp object defining desired match
     :return: returns a function parsing given match with specified parsing element
     """
-    def _reparse(original_string, _, __):
-        parse_element.parse_string(original_string)
+    def _reparse(__, _, tokens):
+        return parse_element.parseString(tokens[0])  # TODO: fix this with a proper solution
 
     return _reparse
 
@@ -232,7 +232,7 @@ def readable_markup(list_of_tokens):
         else:
             try:
                 readable_list.append(token.to_markup())
-            except Exception:
+            except Exception: # noqa E722 (This function is used for testing and readability purposes)
                 readable_list.append(str(token))
     return " ".join(readable_list)
 
@@ -243,7 +243,7 @@ value = (pps(quotes) + pp.Word(pp.alphanums + r'.') + pps(pp.match_previous_lite
          pp.common.fnumber)("value")
 assignation = pp.Group(
     pp.common.identifier('var_name') + pps('=') + value('var_value')
-)("assignation")  # TODO: More extensive testing
+)("assignation")
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
 url_characters = pp.common.url
 
@@ -251,20 +251,20 @@ url_characters = pp.common.url
 var = pps('[') + pp.delimitedList(
     assignation.add_parse_action(of_type(BeAssignToken)) ^
     value.add_parse_action(of_type(BeValueToken))
-)("list_vars").set_name("list_vars") + pps(']')  # TODO: More extensive testing
+)("list_vars").set_name("list_vars") + pps(']')
 
 # Specific elements
 image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
 alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
-expression = pp.Word(pp.alphanums + r'=+-_\'",;:!\/\\ ')
-html_insert = pps('{') + expression('html_insert') + pps('}')  # TODO: More extensive testing
-class_insert = pps('{{') + expression('class_insert') + pps('}}')  # TODO: test dis
+expression = pp.Word(pp.alphanums + r'=+-_\'",;:!\/\\. ')
+html_insert = pps('{') + expression('html_insert') + pps('}')
+class_insert = pps('{{') + expression('class_insert') + pps('}}')
 
 # Optional elements
-optional = (
-        pp.Opt(class_insert)("class_insert").add_parse_action(of_type(OptionalClassToken)) &
-        pp.Opt(html_insert)("html_insert").add_parse_action(of_type(OptionalInsertToken)) &
-        pp.Opt(var)("var").add_parse_action(of_type(OptionalVarToken))  # noqa TODO: add class_insert to tests
+optional = pp.OneOrMore(
+        class_insert("class_insert").add_parse_action(of_type(OptionalClassToken)) ^
+        html_insert("html_insert").add_parse_action(of_type(OptionalInsertToken)) ^
+        var("var").add_parse_action(of_type(OptionalVarToken))
 )("optional").add_parse_action(of_type(OptionalToken))  # Macro OptionalToken
 
 # Structural elements
@@ -279,7 +279,7 @@ display_element = pp.Word('!')
 
 # Inline elements
 il_link = pp.Regex(
-    r"""\[(?P<text>.+)\]\(['"](?P<url>[a-zA-Z-_:\/=@#!%\?\d\(\)\.]+)['"]\)"""
+    r"""\[(?P<text>.+)\]\(['"]?(?P<url>[a-zA-Z-_:\/=@#!%\?\d\(\)\.]+)['"]?\)"""
 ).add_parse_action(of_type(HyperlinkToken))
 
 # Enhanced text elements
@@ -299,7 +299,7 @@ enhanced_text = pp.ZeroOrMore(
 
 # Multiline elements
 se_start = (pps('<<') + structural_elements).add_parse_action(of_type(StructuralElementStartToken))
-se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken)) + optional
+se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken)) + pp.Opt(optional)
 se = se_end | se_start  # Structural element
 table_row = pp.OneOrMore(
         # pp.Regex(r'\|(\d)?')('table_colspan') +
@@ -322,24 +322,30 @@ multi_line = se | table | quotation
 
 # Oneline elements
 one_header = (
-        header_element + pp.SkipTo(pp.match_previous_literal(header_element))
+        header_element +
+        pp.SkipTo(pp.match_previous_literal(header_element)) +
+        pps(pp.match_previous_literal(header_element)) +
+        pp.Opt(optional)
 ).add_parse_action(of_type(HeaderToken))
 one_display = (
-        display_element + pp.SkipTo(pp.match_previous_literal(display_element))
+        display_element +
+        pp.SkipTo(pp.match_previous_literal(display_element)) +
+        pps(pp.match_previous_literal(display_element)) +
+        pp.Opt(optional)
 ).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
         pps(pp.Literal('#.')) + (
-         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) ^  # TODO: add reparse
+         (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
         pps(pp.Literal('-')) + (
-         (pp.SkipTo(optional)('text').add_parse_action(of_type(TextToken)) + optional) ^  # TODO: add reparse
+         (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtUlistToken))
 
 # one_line sums up all one-line elements
-one_line = (one_header | one_display | one_olist | one_ulist) + pp.Opt(optional)
+one_line = (one_header | one_display | one_olist | one_ulist)
 
 # Final elements
 line = one_line | multi_line | enhanced_text
@@ -350,8 +356,8 @@ line = one_line | multi_line | enhanced_text
 ##############################################################################
 
 # Composite elements
-image = image_element + optional
-alias = alias_element + optional
+image = image_element + pp.Opt(optional)
+alias = alias_element + pp.Opt(optional)
 
 # Syntax elements
 line_to_replace = pp.OneOrMore(
@@ -371,4 +377,4 @@ if __name__ == '__main__':  # pragma: no cover
     line.create_diagram("../../../dev_outputs/diagram_line.html")
     multi_line.create_diagram("../../../dev_outputs/diagram_multi_line.html")
     one_line.create_diagram("../../../dev_outputs/diagram_one_line.html")
-    enhanced_text.create_diagram("../../../dev_outputs/diagram_enchanced_text.html")
+    enhanced_text.create_diagram("../../../dev_outputs/diagram_enhanced_text.html")
