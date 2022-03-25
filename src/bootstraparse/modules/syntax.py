@@ -184,6 +184,14 @@ class BeValueToken(SemanticType):
     label = "be:var"
 
 
+class BlockQuoteToken(SemanticType):
+    label = "bq:text"
+
+
+class BlockQuoteAuthorToken(SemanticType):
+    label = "bq:author"
+
+
 def of_type(token_class):
     """
     Function creating a custom function for generating the given Token type.
@@ -302,10 +310,15 @@ table_separator = pp.OneOrMore(
     pps('|') + pp.Word(':-')
 )('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')
 # Future: Add Blockquote element
+blockquote = pp.LineStart + '>' + \
+             pp.SkipTo(pp.line_end)('text').add_parse_action(of_type(BlockQuoteToken))  # TODO: add reparse
+blockquote_author = pp.LineStart + '> --' + \
+                    pp.SkipTo(pp.line_end)('author').add_parse_action(of_type(BlockQuoteAuthorToken))
 table = table_separator | table_row
+quotation = blockquote_author | blockquote
 
 # multi_line sums up all multi-line elements
-multi_line = se | table
+multi_line = se | table | quotation
 
 # Oneline elements
 one_header = (
