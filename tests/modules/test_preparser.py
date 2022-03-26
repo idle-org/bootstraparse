@@ -233,7 +233,6 @@ def test_do_replacements():
     assert f.read() == final_content_index
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_get_all_lines():
     """
     Test the line reader
@@ -318,7 +317,6 @@ def test_get_shortcut_from_config():
     assert pp.get_image_from_config("any_picture", None) == '<img src="any_picture"/>'
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_replace():
     replace_file = temp_name("test_preparse.bpr")
     make_new_file(replace_file, get_from_config)
