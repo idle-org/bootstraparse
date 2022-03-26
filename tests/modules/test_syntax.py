@@ -527,6 +527,44 @@ dict_advanced_syntax_input_and_expected_output = {
             ]),
         ), __GL(),),
     ],
+    "blockquote": [
+        ("> Text", (sy.BlockQuoteToken([sy.TextToken(["Text"])]),), __GL(), __XF),
+        ("> Text with *em* and __underline__", (
+            sy.BlockQuoteToken([
+                sy.TextToken(["Text with"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["em"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["and"]),
+                sy.EtUnderlineToken(["__"]),
+                sy.TextToken(["underline"]),
+                sy.EtUnderlineToken(["__"]),
+            ]),
+        ), __GL(), __XF),
+    ],
+    "blockquote_author": [
+        ("> -- Author Name", (
+            sy.BlockQuoteAuthorToken(["Author Name"]),
+        ), __GL(), __XF),
+    ],
+    "quotation": [
+        ("> Text", (sy.BlockQuoteToken([sy.TextToken(["Text"])]),), __GL(), __XF),
+        ("> Text with *em* and __underline__", (
+            sy.BlockQuoteToken([
+                sy.TextToken(["Text with"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["em"]),
+                sy.EtEmToken(["*"]),
+                sy.TextToken(["and"]),
+                sy.EtUnderlineToken(["__"]),
+                sy.TextToken(["underline"]),
+                sy.EtUnderlineToken(["__"]),
+            ]),
+        ), __GL(), __XF),
+        ("> -- Author Name", (
+            sy.BlockQuoteAuthorToken(["Author Name"]),
+        ), __GL(), __XF),
+    ],
 }
 
 # Cursed zipping oneline

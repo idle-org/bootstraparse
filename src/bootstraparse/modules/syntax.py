@@ -310,9 +310,9 @@ table_separator = pp.OneOrMore(
     pps('|') + pp.Word(':-')
 )('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')
 # Future: Add Blockquote element
-blockquote = pp.LineStart + '>' + \
+blockquote = pp.Literal('>') + \
              pp.SkipTo(pp.line_end)('text').add_parse_action(of_type(BlockQuoteToken))  # TODO: add reparse
-blockquote_author = pp.LineStart + '> --' + \
+blockquote_author = pp.Literal('> --') + \
                     pp.SkipTo(pp.line_end)('author').add_parse_action(of_type(BlockQuoteAuthorToken))
 table = table_separator | table_row
 quotation = blockquote_author | blockquote
