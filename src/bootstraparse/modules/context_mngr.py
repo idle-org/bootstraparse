@@ -15,4 +15,3 @@ class ContextManager:
     pass
 # Defines all methods to manage the context of the parser as a file is being parsed
 # Builds all containers as the parser is parsing the file
-
