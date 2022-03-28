@@ -528,7 +528,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ), __GL(),),
     ],
     "blockquote": [
-        ("> Text", (sy.BlockQuoteToken([sy.TextToken(["Text"])]),), __GL(), __XF),
+        ("> Text", (sy.BlockQuoteToken([sy.TextToken(["Text"])]),), __GL()),
         ("> Text with *em* and __underline__", (
             sy.BlockQuoteToken([
                 sy.TextToken(["Text with"]),
@@ -540,15 +540,15 @@ dict_advanced_syntax_input_and_expected_output = {
                 sy.TextToken(["underline"]),
                 sy.EtUnderlineToken(["__"]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
     ],
     "blockquote_author": [
         ("> -- Author Name", (
             sy.BlockQuoteAuthorToken(["Author Name"]),
-        ), __GL(), __XF),
+        ), __GL()),
     ],
     "quotation": [
-        ("> Text", (sy.BlockQuoteToken([sy.TextToken(["Text"])]),), __GL(), __XF),
+        ("> Text", (sy.BlockQuoteToken([sy.TextToken(["Text"])]),), __GL()),
         ("> Text with *em* and __underline__", (
             sy.BlockQuoteToken([
                 sy.TextToken(["Text with"]),
@@ -560,10 +560,10 @@ dict_advanced_syntax_input_and_expected_output = {
                 sy.TextToken(["underline"]),
                 sy.EtUnderlineToken(["__"]),
             ]),
-        ), __GL(), __XF),
+        ), __GL()),
         ("> -- Author Name", (
             sy.BlockQuoteAuthorToken(["Author Name"]),
-        ), __GL(), __XF),
+        ), __GL()),
     ],
 }
 
