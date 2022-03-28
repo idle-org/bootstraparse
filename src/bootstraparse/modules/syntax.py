@@ -304,15 +304,15 @@ se = se_end | se_start  # Structural element
 table_row = pp.OneOrMore(
         # pp.Regex(r'\|(\d)?')('table_colspan') +
         (pp.Combine(pps('|') + pp.Word(pp.nums)('table_colspan')) | pps('|')) +
-        pp.SkipTo('|')('table_cell').add_parse_action(of_type(TableCellToken))  # TODO: add reparse
+        pp.SkipTo('|')('table_cell').add_parse_action(reparse(enhanced_text), of_type(TableCellToken))
 ).add_parse_action(of_type(TableRowToken)) + pps('|') + pp.Opt(optional)
 table_separator = pp.OneOrMore(
     pps('|') + pp.Word(':-')
 )('table_separator').add_parse_action(of_type(TableSeparatorToken)) + pps('|')
 # Future: Add Blockquote element
-blockquote = pp.Literal('>') + \
-             pp.SkipTo(pp.line_end)('text').add_parse_action(of_type(BlockQuoteToken))  # TODO: add reparse
-blockquote_author = pp.Literal('> --') + \
+blockquote = pps(pp.Literal('>')) + \
+             pp.SkipTo(pp.line_end)('text').add_parse_action(reparse(enhanced_text), of_type(BlockQuoteToken))
+blockquote_author = pps(pp.Literal('> --')) + \
                     pp.SkipTo(pp.line_end)('author').add_parse_action(of_type(BlockQuoteAuthorToken))
 table = table_separator | table_row
 quotation = blockquote_author | blockquote
