@@ -433,39 +433,53 @@ dict_advanced_syntax_input_and_expected_output = {
     # Tables
     "table_row": [
         # Matches a table element, must be at the beginning of the line
-        ("| Text1 | Text2 |", (sy.TableRowToken([sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "]), ]), ), __GL()),
+        ("| Text1 | Text2 |", (sy.TableRowToken([
+            sy.TableCellToken([sy.TextToken(["Text1 "])]),
+            sy.TableCellToken([sy.TextToken(["Text2 "])]),
+        ]), ), __GL()),
         ("| Text1 | Text2 | Text3 |", (
             sy.TableRowToken([
-                sy.TableCellToken(["Text1 "]),
-                sy.TableCellToken(["Text2 "]),
-                sy.TableCellToken(["Text3 "])
+                sy.TableCellToken([sy.TextToken(["Text1 "])]),
+                sy.TableCellToken([sy.TextToken(["Text2 "])]),
+                sy.TableCellToken([sy.TextToken(["Text3 "])]),
             ]),
         ), __GL()),
-        ("| 2 Text1 | Text2 |", (sy.TableRowToken([sy.TableCellToken(["2 Text1 "]), sy.TableCellToken(["Text2 "])]),), __GL()),
+        ("| 2 Text1 | Text2 |", (
+            sy.TableRowToken([
+                sy.TableCellToken([sy.TextToken(["2 Text1 "])]),
+                sy.TableCellToken([sy.TextToken(["Text2 "])]),
+            ]),
+        ), __GL()),
         ("|2 Text1 | Text2 |", (
             sy.TableRowToken([
                 '2',
-                sy.TableCellToken(["Text1 "]),
-                sy.TableCellToken(["Text2 "]),
+                sy.TableCellToken([sy.TextToken(["Text1 "])]),
+                sy.TableCellToken([sy.TextToken(["Text2 "])]),
             ]),
         ), __GL()),
         ("|2 Text1 |3 Text2 |", (
-            sy.TableRowToken(['2', sy.TableCellToken(["Text1 "]), '3', sy.TableCellToken(["Text2 "])]),
+            sy.TableRowToken([
+                '2',
+                sy.TableCellToken([sy.TextToken(["Text1 "])]),
+                '3',
+                sy.TableCellToken([sy.TextToken(["Text2 "])]),
+            ]),
         ), __GL()),
         ("|2 Text1 |3 Text2 |4 Text3 |", (
             sy.TableRowToken([
                 '2',
-                sy.TableCellToken(["Text1 "]),
+                sy.TableCellToken([sy.TextToken(["Text1 "])]),
                 '3',
-                sy.TableCellToken(["Text2 "]),
+                sy.TableCellToken([sy.TextToken(["Text2 "])]),
                 '4',
-                sy.TableCellToken(["Text3 "])]),
+                sy.TableCellToken([sy.TextToken(["Text3 "])]),
+            ]),
          ), __GL()),
         ("|3 Text1 | Text2 | {var='test', number=11}", (
             sy.TableRowToken([
                 '3',
-                sy.TableCellToken(["Text1 "]),
-                sy.TableCellToken(["Text2 "]),
+                sy.TableCellToken([sy.TextToken(["Text1 "])]),
+                sy.TableCellToken([sy.TextToken(["Text2 "])]),
             ]),
             sy.OptionalToken([
                 sy.OptionalInsertToken([
@@ -496,7 +510,11 @@ dict_advanced_syntax_input_and_expected_output = {
             sy.EtEmToken(["*"]),
         ), __GL(),),
         ("|2 Text1 | Text2 |", (
-            sy.TableRowToken(["2", sy.TableCellToken(["Text1 "]), sy.TableCellToken(["Text2 "])]),
+            sy.TableRowToken([
+                "2",
+                sy.TableCellToken([sy.TextToken(["Text1 "])]),
+                sy.TableCellToken([sy.TextToken(["Text2 "])]),
+            ]),
         ), __GL()),
         ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),), __GL()),
         ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),), __GL()),
