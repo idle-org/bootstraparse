@@ -6,12 +6,28 @@ class BaseContainer:
     def __init__(self):
         self.content = []
         self.optionals = []
+        self.map = {}
 
     def add(self, other):
         self.content.append(other)
 
     def class_name(self):
         return self.__class__.__name__
+
+    def validate(self, other):
+        """
+        Takes a list as input and checks if every element is in map.
+        :return: Bool
+        """
+        for o in other:
+            if o not in self.map:
+                return False
+        return True
+
+    def debug_map(self):
+        print(f'Debug for {self.class_name()} <{id(self)}>')
+        for k, v in self.map.items():
+            print(f'{k} = {v}')
 
     def __len__(self):
         return len(self.content)
@@ -28,6 +44,9 @@ class BaseContainer:
 
     def __getslice__(self, start, end):
         return self.content[start:end]
+
+    def __rshift__(self, other):
+        return self.map[other]()
 
     def __eq__(self, other):
         if len(self) != len(other):
@@ -57,6 +76,35 @@ class BaseContainer:
                 [f'{index.__name__}: {value}' for index, value in representation.items()]
             )
         )
+
+
+class BaseContainerWithOptionals(BaseContainer):
+    def __init__(self):
+        super().__init__()
+        self.map['html_insert'] = self.fetch_html_insert
+        self.map['class_insert'] = self.fetch_class_insert
+
+    def fetch_html_insert(self):
+        """
+        Returns a list of all html_inserts, and an empty list if none exist.
+        :rtype: list
+        """
+        rlist = []
+        for o in self.optionals:
+            if o.label == 'optional:insert':
+                rlist += [o]
+        return rlist
+
+    def fetch_class_insert(self):
+        """
+        Returns a list of all class_inserts, and an empty list if none exist.
+        :rtype: list
+        """
+        rlist = []
+        for o in self.optionals:
+            if o.label == 'optional:class':
+                rlist += [o]
+        return rlist
 
 
 # Define containers all the Enhanced text elements, divs, headers, list and any element that can be a container
