@@ -1,0 +1,22 @@
+structural_elements:
+  div: "<div{optionals}>", "</div>"
+  article: "<article{optionals}>", "</article>"
+  aside: "<aside{optionals}>", "</aside>"
+  section: "<section{optionals}>", "</section>"
+  header: "<h{header_level}{optionals}>", "</h{header_level}>"
+  display: "<p class='display-{display_level}'{optionals}>", "</p>"
+
+inline_elements:
+  link: "<a href='{url}'>", "</a>"
+  em: "<em{optionals}>", "</em>"
+  strong: "<strong{optionals}>", "</strong>"
+  underline: "<u{optionals}>", "</u>"
+  strikethrough: "<s{optionals}>", "</s>"
+  #  TODO: small
+  custom_0: "<span{optionals}>", "</span>"
+
+table:
+  table: "<table{optionals}>", "</table>"
+  t_head: "<th{col_span}>", "</th>"
+  table_row: "<tr{col_span}>", "</tr>"
+  table_cell: "<td{col_span}>", "</td>"
