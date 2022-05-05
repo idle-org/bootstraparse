@@ -12,7 +12,7 @@ class ConfigLoader:
     :param config_folder: The folder to read
     """
 
-    def __init__(self, config_folder=None, extensions="yaml"):
+    def __init__(self, config_folder=None, extensions=("yaml", "yml")):
         """
         Defines the config folder and loads all configs
         :param config_folder: path to config file
@@ -23,8 +23,11 @@ class ConfigLoader:
             self.config_folders = []
         elif isinstance(config_folder, str):
             self.config_folders = [config_folder]
-        else:
+        elif isinstance(config_folder, (list, tuple)):
             self.config_folders = config_folder
+        else:
+            raise TypeError(f"Incorrect config type given. Expected a string, list or tuple; "
+                            f"got {type(config_folder).__name__} instead.")
         self.loaded_conf = {}
         self.extensions = extensions
         self.reload_all()
