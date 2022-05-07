@@ -1,6 +1,5 @@
 # Interprets config files
 import os
-
 import yaml
 
 
@@ -59,11 +58,14 @@ class ConfigLoader:
         basename = os.path.basename(filepath)
         name, ext = os.path.splitext(basename)
         with open(filepath, "r") as f:
-            if name not in self.loaded_conf:
-                self.loaded_conf[name] = yaml.safe_load(f)
-            else:
-                self.loaded_conf[name].update(yaml.safe_load(f))
-                print(f"Warning: {name} is already in {self.loaded_conf}")
+            try:
+                if name not in self.loaded_conf:
+                    self.loaded_conf[name] = yaml.safe_load(f)
+                else:
+                    self.loaded_conf[name].update(yaml.safe_load(f))
+                    print(f"Warning: {name} is already in {self.loaded_conf}")
+            except yaml.parser.ParserError as e:
+                raise yaml.parser.ParserError(e)  # TODO: make a custom error message
 
     def load_from_folder(self, folder):
         """
@@ -85,7 +87,7 @@ class ConfigLoader:
             return self.loaded_conf[item]
         except KeyError:
             print(f"Error: {item} is not in {self.loaded_conf}")
-            raise FileNotFoundError
+            raise KeyError  # TODO: add to error manager
 
     def __repr__(self):
         """
