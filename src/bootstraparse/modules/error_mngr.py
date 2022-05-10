@@ -10,7 +10,7 @@ _ERRORS = ["ParsingError"]
 __all__ = _ERRORS+[]
 
 
-def initlogging(filename=None, loglevel="ERROR", filemode='w', handler=None):
+def init_logging(filename=None, loglevel="ERROR", filemode='w', handler=None):
     """
     Initializes logging
     :param filename: The name of the log file
@@ -60,10 +60,9 @@ def log_exception(exception, level="ERROR"):
     """
     level = level.lower()
     logging.__getattribute__(level)(traceback.format_exc())
-    if level in ["critical"]:
+    if level in ["critical", "error"]:
         print("An unrecoverable error occurred, please check the log file for more information.")
-        sys.exit()
-        # raise exception  # Re-raises the exception
+        sys.exit()  # could also re-raise the exception
 
     if exception.__class__.__name__ == "ParsingError":
         logging.error(exception.__str__())

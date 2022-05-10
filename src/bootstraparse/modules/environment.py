@@ -1,5 +1,5 @@
 # Module for containing super important variables
-
+from bootstraparse import error_mngr
 
 class Environment:
     """
@@ -52,7 +52,12 @@ class Environment:
         elif attribute in self._sParams:
             return self._sParams[attribute]
         else:
-            raise AttributeError(attribute)
+            error_mngr.log_exception(AttributeError(
+                f'Attribute {attribute} not in mandatory, secondary or reserved parameters.'
+                f'\nMandatory parameters:\n{self._mParams}'
+                f'\nSecondary parameters:\n{self._sParams}'
+                f'\nReserved parameters are preceded with an underscore.'
+            ), level='CRITICAL')
 
     def __setattr__(self, attribute, value):
         """
@@ -66,4 +71,9 @@ class Environment:
         elif attribute in self._sParams:
             self._sParams[attribute] = value
         else:
-            raise AttributeError(attribute)  # Could also add attribute as a new entry
+            error_mngr.log_exception(AttributeError(
+                f'Attribute {attribute} not in mandatory, secondary or reserved parameters.'
+                f'\nMandatory parameters:\n{self._mParams}'
+                f'\nSecondary parameters:\n{self._sParams}'
+                f'\nReserved parameters are preceded with an underscore.'
+            ), level='CRITICAL')  # Could also add attribute as a new entry

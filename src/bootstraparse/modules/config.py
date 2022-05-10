@@ -1,6 +1,7 @@
 # Interprets config files
 import os
 import yaml
+from bootstraparse import error_mngr
 
 
 class ConfigLoader:
@@ -25,8 +26,8 @@ class ConfigLoader:
         elif isinstance(config_folder, (list, tuple)):
             self.config_folders = config_folder
         else:
-            raise TypeError(f"Incorrect config type given. Expected a string, list or tuple; "
-                            f"got {type(config_folder).__name__} instead.")
+            error_mngr.log_exception(TypeError(f"Incorrect config type given. Expected a string, list or tuple; "
+                                               f"got {type(config_folder).__name__} instead."), level='CRITICAL')
         self.loaded_conf = {}
         self.extensions = extensions
         self.reload_all()
@@ -63,9 +64,10 @@ class ConfigLoader:
                     self.loaded_conf[name] = yaml.safe_load(f)
                 else:
                     self.loaded_conf[name].update(yaml.safe_load(f))
-                    print(f"Warning: {name} is already in {self.loaded_conf}")
+                    error_mngr.log_message(f"Warning: {name} is already in {self.loaded_conf}", level='WARNING')
             except yaml.parser.ParserError as e:
-                raise yaml.parser.ParserError(e)  # TODO: make a custom error message
+                error_mngr.log_message(f'Error parsing in file {basename} at {filepath}.', level='CRITICAL')
+                error_mngr.log_exception(yaml.parser.ParserError(e), level='CRITICAL')
 
     def load_from_folder(self, folder):
         """
@@ -86,8 +88,7 @@ class ConfigLoader:
         try:
             return self.loaded_conf[item]
         except KeyError:
-            print(f"Error: {item} is not in {self.loaded_conf}")
-            raise KeyError  # TODO: add to error manager
+            error_mngr.log_exception(KeyError(f"Error: {item} is not in {self.loaded_conf}"), level='CRITICAL')
 
     def __repr__(self):
         """

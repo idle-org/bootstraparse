@@ -1,5 +1,4 @@
 # Module for pre-parsing user files in preparation for the parser
-import logging
 import os
 import regex
 from io import StringIO
@@ -7,7 +6,7 @@ from io import StringIO
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 from bootstraparse.modules import syntax
-from bootstraparse.modules import error_mngr as em # noqa # pylint: disable=unused-import
+from bootstraparse.modules import error_mngr # noqa # pylint: disable=unused-import
 
 import rich
 from rich.tree import Tree
@@ -137,7 +136,9 @@ class PreParser:
 
         for e, l in import_list:
             if e in self.list_of_paths:
-                raise RecursionError("Error: {} was imported earlier in {}".format(e, self.list_of_paths))
+                error_mngr.log_exception(
+                    RecursionError(f"Error: {e} was imported earlier in {self.list_of_paths}"), level='CRITICAL'
+                )
             if e in self.global_dict_of_imports:
                 pp = self.global_dict_of_imports[e]
             else:
@@ -146,9 +147,9 @@ class PreParser:
                     self.global_dict_of_imports[e] = pp
                     pp.make_import_list()
                 except FileNotFoundError:
-                    logging.error("The import {} in file {} line {} doesn't exist".format(e, self.name, l))
-                    # TODO: raise a custom exception or define a default behaviour
-                    raise ImportError("The import {} in file {} line {} doesn't exist".format(e, self.name, l))
+                    error_mngr.log_exception(
+                        ImportError("The import {} in file {} line {} doesn't exist".format(e, self.name, l))
+                    )
             self.local_dict_of_imports[e] = pp
         self.is_global_dict_of_imports_initialized = True
         return self.local_dict_of_imports

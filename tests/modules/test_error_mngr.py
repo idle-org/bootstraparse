@@ -23,7 +23,7 @@ class TestLogging(TestCase):
     def test_init_logging(self):
         for filename, level, handler in all_logging_tests:
             with self.assertLogs() as captured:
-                error_mngr.initlogging(filename=filename, loglevel=level, handler=handler)
+                error_mngr.init_logging(filename=filename, loglevel=level, handler=handler)
                 logging.critical("Logging initialized", exc_info=True)
             self.assertEqual(len(captured.records), 1)
             self.assertEqual(captured.records[0].levelname, "CRITICAL")
