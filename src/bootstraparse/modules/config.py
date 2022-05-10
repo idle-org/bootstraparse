@@ -1,7 +1,7 @@
 # Interprets config files
 import os
 import yaml
-from bootstraparse import error_mngr
+from bootstraparse.modules import error_mngr
 
 
 class ConfigLoader:
@@ -87,8 +87,14 @@ class ConfigLoader:
         """
         try:
             return self.loaded_conf[item]
-        except KeyError:
+        except KeyError:  # make sure getitem is never used
             error_mngr.log_exception(KeyError(f"Error: {item} is not in {self.loaded_conf}"), level='CRITICAL')
+
+    def __contains__(self, item):
+        """
+        Same as a dictionary.
+        """
+        return item in self.loaded_conf
 
     def __repr__(self):
         """
