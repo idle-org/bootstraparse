@@ -1,6 +1,6 @@
 # Module for final generation of the translated website
 import rich
-from bootstraparse.modules import config, pathresolver
+from bootstraparse.modules import config, pathresolver, error_mngr
 from collections import namedtuple
 
 
@@ -58,9 +58,20 @@ class ExportManager:
         Function for initializing other transform functions.
         :return: start, end, optionals
         """
-        start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
-        # TODO: make it so "bootstrap" isn't necessary
-        # TODO: add helpful error message in case of KeyError
+        try:
+            start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
+        except KeyError:
+            log_entries = ["bootstrap", export_request.type, export_request.subtype]
+            log_ = error_mngr.dict_check(self.templates, *log_entries)
+            print()
+            error_mngr.log_exception(
+                KeyError(
+                    f'Template "bootstrap"/{export_request.type}/{export_request.subtype} could not be found.'
+                    '\n'.join([f'{i}: {"Found" if j else "Not found"}' for i, j in zip(log_entries, log_)])
+                ),
+                level='CRITICAL'
+            )
+        # future: allow for template selection
         if export_request.optionals != '':
             optionals = " " + export_request.optionals
         else:
@@ -112,3 +123,7 @@ class ExportManager:
         start, end, _ = self._get_template(export_request)
         start = start.format(col_span=export_request.others["col_span"])
         return ExportResponse(start, end)
+
+
+herbert = ExportManager(cnoifg=None, templates=None)
+herbert._get_template(ExportRequest('b', 'c', 'class="hugues"'))
