@@ -4,6 +4,7 @@ from itertools import zip_longest
 
 import pyparsing as pp
 # import rich
+import regex  # future: remove regex
 
 pps = pp.Suppress
 
@@ -235,6 +236,10 @@ def readable_markup(list_of_tokens):
             except Exception: # noqa E722 (This function is used for testing and readability purposes)
                 readable_list.append(str(token))
     return " ".join(readable_list)
+
+
+# Pre-parser expressions
+rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
 
 
 # Base elements
