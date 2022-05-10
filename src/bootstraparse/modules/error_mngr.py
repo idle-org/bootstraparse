@@ -5,6 +5,7 @@ import traceback
 import sys
 
 # Define the error codes
+import rich
 
 _ERRORS = ["ParsingError"]
 __all__ = _ERRORS+[]
@@ -60,6 +61,7 @@ def log_exception(exception, level="ERROR"):
     """
     level = level.lower()
     logging.__getattribute__(level)(traceback.format_exc())
+    logging.__getattribute__(level)(exception.__str__())  # TODO: make it so it doesn't delete line breaks
     if level in ["critical", "error"]:
         print("An unrecoverable error occurred, please check the log file for more information.")
         sys.exit()  # could also re-raise the exception
@@ -68,6 +70,23 @@ def log_exception(exception, level="ERROR"):
         logging.error(exception.__str__())
         logging.debug("A custom RichException has been raised")
         return
+
+
+def dict_check(dic, *args):
+    """
+    Helper function to test existence within a dictionary.
+    :param dic: The dictionary of dictionaries to check
+    :param args: Any number of keys to check the dictionaries for
+    :return: A table of Booleans for every key checked.
+    """
+    output = [False for _ in args]
+    for i in range(len(args)):
+        if args[i] in dic:
+            output[i] = True
+            dic = dic[args[i]]
+        else:
+            break
+    return output
 
 
 class ParsingError(Exception):
