@@ -1,6 +1,6 @@
 # Module for pre-parsing user files in preparation for the parser
 import os
-import regex
+import regex  # future: remove regex
 from io import StringIO
 
 from bootstraparse.modules import pathresolver as pr
@@ -12,8 +12,7 @@ import rich
 from rich.tree import Tree
 
 # list of regexps
-_rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
-# TODO: put this in syntax.py
+_rgx_import_file = syntax.rgx_import_file
 
 
 class PreParser:
