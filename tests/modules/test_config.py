@@ -34,7 +34,7 @@ def test_config_load():
     assert usr_c["aliases"]["aliases"]["test_alias"] == "test_parser"
     with pytest.raises(KeyError):
         assert usr_c["aliases"]["aliases"]["test_alias2"] is not None
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(SystemExit):  # Not FileNotFoundError
         assert usr_c["aliases2"] is not None
     assert usr_c.__repr__()
 
@@ -48,7 +48,7 @@ def test_add_to_config():
                                     "parser": {"name": "test_parser", "type": "test_parser"}}
     assert from_list["parser_config"] == {"parser": {"name": "test_parser", "type": "test_parser"}}
 
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(SystemExit):  # Not FileNotFoundError
         assert from_empty["aliases"]
     from_empty.add_folder(user_conf)
     assert from_empty["aliases"] == {"aliases": {"test_alias": "test_parser"}}

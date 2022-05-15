@@ -280,13 +280,13 @@ def test_errors():
         pp = preparser.PreParser("not_existing_file.bprr", env)
         pp.readlines()
 
-    with pytest.raises(ImportError):
+    with pytest.raises(SystemExit):  # Not ImportError
         nofile = temp_name("real_file.bpr")
         make_new_file(nofile, "::< not_existing_file.bpr >")
         pp = preparser.PreParser(nofile, env)
         pp.make_import_list()
 
-    with pytest.raises(RecursionError):
+    with pytest.raises(SystemExit):  # Not RecursionError
         path = temp_name("test_recursion_error.bpr")
         make_new_file(path, "::< test_recursion_error.bpr >")
         pp = preparser.PreParser(path, env)
