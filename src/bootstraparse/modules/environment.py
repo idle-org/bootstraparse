@@ -1,5 +1,6 @@
 # Module for containing super important variables
-from bootstraparse import error_mngr
+from bootstraparse.modules import error_mngr
+
 
 class Environment:
     """

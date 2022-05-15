@@ -125,5 +125,6 @@ class ExportManager:
         return ExportResponse(start, end)
 
 
-herbert = ExportManager(cnoifg=None, templates=None)
-herbert._get_template(ExportRequest('b', 'c', 'class="hugues"'))
+if __name__ == '__main__':
+    herbert = ExportManager(cnoifg=None, templates=None)
+    herbert._get_template(ExportRequest('b', 'c', 'class="hugues"'))
