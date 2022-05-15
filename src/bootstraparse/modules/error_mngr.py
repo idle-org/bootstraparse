@@ -5,7 +5,7 @@ import traceback
 import sys
 
 # Define the error codes
-import rich
+
 
 _ERRORS = ["ParsingError"]
 __all__ = _ERRORS+[]
