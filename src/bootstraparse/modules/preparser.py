@@ -91,7 +91,7 @@ class PreParser:
         # export_with_imports()
         self.current_origin_for_read = self.file_with_all_imports
         # return self.current_origin_for_read
-        pass
+        return self.current_origin_for_read
 
     def do_replacements(self):
         """
@@ -102,7 +102,7 @@ class PreParser:
         #
         self.current_origin_for_read = self.file_with_all_replacements
         # return self.current_origin_for_read
-        pass
+        return self.current_origin_for_read
 
     def readlines(self):
         """
@@ -232,7 +232,7 @@ class PreParser:
         :param optional: optional parameters along with alias
         """
         # return self.__env.config["aliases"][shortcut]
-        return f'<h1>{shortcut}</h1>'
+        return f'<h1>{shortcut}</h1>'  # TODO : replace with actual alias
 
     def get_image_from_config(self, shortcut, optional):
         """
@@ -286,16 +286,28 @@ class PreParser:
         """
         return not self.__eq__(other)
 
-    def rich_tree(self, prefix="", suffix="", force=True):
+    def rich_tree(self, prefix="", suffix="", force=True, strip_prefix=""):
         """
         Returns a rich representation of the PreParser object.
         :return: a rich representation of the PreParser object
         """
+        unparsed = False
         if self.tree_view and not force:
             return self.tree_view
-        self.tree_view = Tree(prefix+self.name+suffix)
+        if strip_prefix == "":
+            strip_prefix = self.base_path
+        stripped_name = self.path.replace(strip_prefix, "")
+        self.tree_view = Tree(prefix+stripped_name+suffix)
         for p, l in self.parse_import_list():
-            self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True))
+            try:
+                self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True, strip_prefix=self.base_path))
+            except KeyError:  # The key isn't in the global dict yet
+                self.tree_view.add(Tree(prefix+p+suffix+" !!"))
+                unparsed = True
+        if unparsed:
+            self.tree_view.add(Tree("Some element are unparsed and are marked with !!"))
+            self.tree_view.add(Tree("You can force the parsing of the file by calling the method "))
+            self.tree_view.add(Tree("PreParser.make_import_list() or .do_import()"))
         return self.tree_view
 
 
