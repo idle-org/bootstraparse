@@ -29,6 +29,7 @@ def test_context_mngr():
     assert base.map == {'test': "test3"}
     assert base >> "test" == 'test3'
 
+
 def test_base_container_with_optionals():
     base = context_mngr.BaseContainerWithOptionals()
     assert base is not None

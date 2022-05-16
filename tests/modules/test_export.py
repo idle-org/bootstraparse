@@ -51,7 +51,7 @@ def test_transform(export_type, export_subtype):
         "row_span": "1",
         "url": "1"
     }))
-    re2 = em(export.ExportRequest(export_type, export_subtype, "", {
+    re = em(export.ExportRequest(export_type, export_subtype, "", {
         "header_level": "1",
         "display_level": "1",
         "col_span": "1",

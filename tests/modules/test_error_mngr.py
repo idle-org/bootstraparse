@@ -34,7 +34,7 @@ class TestLogging(TestCase):
         with self.assertLogs() as captured:
             with pytest.raises(SystemExit):
                 error_mngr.log_exception(Exception(''), level="CRITICAL")
-        self.assertEqual(2, len(captured.records))
+        self.assertEqual(len(captured.records), 1)
 
     def test_log_exception_with_message(self):
         for exception in all_non_blocking_exception_tests:

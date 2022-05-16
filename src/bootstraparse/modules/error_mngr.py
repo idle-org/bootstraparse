@@ -61,7 +61,8 @@ def log_exception(exception, level="ERROR"):
     """
     level = level.lower()
     logging.__getattribute__(level)(traceback.format_exc())
-    logging.__getattribute__(level)(exception.__str__())  # TODO: make it so it doesn't delete line breaks
+    for line in exception.__str__():
+        logging.__getattribute__(level)(line)
     if level in ["critical", "error"]:
         print("An unrecoverable error occurred, please check the log file for more information.")
         sys.exit()  # could also re-raise the exception

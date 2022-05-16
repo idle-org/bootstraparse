@@ -95,9 +95,17 @@ class ExportManager:
         Specific template for headers.
         """
         start, end, optionals = self._get_template(export_request)
-        start = start.format(optionals=optionals, header_level=export_request.others["header_level"])
-        # TODO: add helpful message if KeyError
-        end = end.format(header_level=export_request.others["header_level"])
+        try:
+            start = start.format(optionals=optionals, header_level=export_request.others["header_level"])
+            end = end.format(header_level=export_request.others["header_level"])
+        except KeyError:
+            error_mngr.log_exception(
+                KeyError(
+                    f'Header level could not be found.\n'
+                    f'{export_request.others["header_level"]} was not found in the templates.'
+                ),
+                level='CRITICAL'
+            )
         return ExportResponse(start, end)
 
     def display_transform(self, export_request):
@@ -125,6 +133,6 @@ class ExportManager:
         return ExportResponse(start, end)
 
 
-if __name__ == '__main__': # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     herbert = ExportManager(cnoifg=None, templates=None)
     herbert._get_template(ExportRequest('b', 'c', 'class="hugues"')) # noqa

@@ -214,7 +214,7 @@ def reparse(parse_element):
     :return: returns a function parsing given match with specified parsing element
     """
     def _reparse(__, _, tokens):
-        return parse_element.parseString(tokens[0])  # TODO: fix this with a proper solution
+        return parse_element.parseString(tokens[0])  # Future: fix this with a proper solution
 
     return _reparse
 

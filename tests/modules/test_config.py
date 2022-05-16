@@ -1,7 +1,5 @@
 import os
 
-import yaml
-
 import bootstraparse.modules.config as config
 import pytest
 import tempfile
