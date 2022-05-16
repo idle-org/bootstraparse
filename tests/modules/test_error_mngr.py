@@ -78,5 +78,22 @@ def re_import_log():
     reload(logging)
 
 
+def test_dict_check():
+    """
+    Test the dict_check function
+    """
+    assert(error_mngr.dict_check({"test": "test"}, "test") == [True])
+    assert(error_mngr.dict_check({"test": "test"}, "test2") == [False])
+    assert(error_mngr.dict_check({"test": {"test3": "test5"}}, "test", "test3") == [True, True])
+    assert(error_mngr.dict_check({"test": {"test3": "test5"}}, "test4", "test4") == [False, False])
+    assert(error_mngr.dict_check({"test": {"test3": "test5"}}, "test", "test34") == [True, False])
+
+
+# @pytest.mark.xfail(strict=True, reason="This test is not implemented yet")
+def test_dict_check_2():
+    assert(error_mngr.dict_check({"test": "test"}, "test", "test2") == [True, False])
+    assert(error_mngr.dict_check({"test": "test"}, "test", "test2", "test3") == [True, False, False])
+
+
 if __name__ == '__main__':
     TestLogging().test_init_logging()
