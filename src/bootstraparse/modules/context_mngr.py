@@ -46,7 +46,7 @@ class BaseContainer:
         return self.content[start:end]
 
     def __rshift__(self, other):
-        return self.map[other]()
+        return self.map[other]
 
     def __eq__(self, other):
         if len(self) != len(other):

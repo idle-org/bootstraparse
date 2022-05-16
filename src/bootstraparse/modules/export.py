@@ -127,4 +127,4 @@ class ExportManager:
 
 if __name__ == '__main__': # pragma: no cover
     herbert = ExportManager(cnoifg=None, templates=None)
-    herbert._get_template(ExportRequest('b', 'c', 'class="hugues"'))
+    herbert._get_template(ExportRequest('b', 'c', 'class="hugues"')) # noqa
