@@ -379,5 +379,4 @@ def test_early_tree(base_architecture):
     assert os.path.exists(tree_file)
     pp = preparser.PreParser(tree_file, env)
 
-    pp.make_import_list()
     rich.print(pp.rich_tree())

@@ -74,3 +74,9 @@ def test_with_optionnals():
 
 def test_return_values():
     pass
+
+
+def test_bad_header():
+    em = export.ExportManager("test", "test")
+    with pytest.raises(KeyError):
+        em(export.ExportRequest("structural_elements", "header", "", {}))
