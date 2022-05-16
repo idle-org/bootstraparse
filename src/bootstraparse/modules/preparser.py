@@ -300,7 +300,7 @@ class PreParser:
         self.tree_view = Tree(prefix+stripped_name+suffix)
         for p, l in self.parse_import_list():
             try:
-                self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True, strip_prefix=self.base_path))
+                self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True, strip_prefix=strip_prefix))
             except KeyError:  # The key isn't in the global dict yet
                 self.tree_view.add(Tree(prefix+p+suffix+" !!"))
                 unparsed = True
