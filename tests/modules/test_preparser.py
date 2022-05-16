@@ -5,7 +5,7 @@ import tempfile
 from io import StringIO
 
 import pytest
-# import rich
+import rich
 
 from bootstraparse.modules import preparser
 from bootstraparse.modules import environment
@@ -37,7 +37,16 @@ Test content line 7
 """
 content_page1 = """Test page1\nTest page1-2\nTest page1-3\n"""
 content_page2 = """Test page2\n::< page1.bpr >"""
-content_page3 = """Test page3\n::< page3.bpr >"""
+content_page3 = """Test page3\n::< subpages/page3.bpr > < subpages/spage4.bpr > <subpages/spage5.bpr > <subpages/spage6.bpr > < page4.bpr >"""
+content_page4 = """Test page4\n::< page5.bpr > < page6.bpr > < ../index.bpr >"""
+content_page5 = """Test page5\n::"""
+content_page6 = """Test page6\n::"""
+content_superimports = """Test superimports\n::< pages/page3.bpr > < pages/subpages/page3.bpr >"""
+content_sub_page3 = """Test sub page3\n::< spage4.bpr >"""
+content_sub_page4 = """Test sub page4\n::< spage5.bpr > < spage6.bpr > < ../../index.bpr >"""
+content_sub_page5 = """Test sub page5"""
+content_sub_page6 = """Test sub page6"""
+
 content_index_import_list = [(temp_name("pages/page1.bpr"), 1),
                              (temp_name("pages/page2.bpr"), 3),
                              (temp_name("pages/page1.bpr"), 5)]
@@ -60,13 +69,37 @@ Test page1-2
 Test page1-3
 Test content line 7
 """
+final_content_superimports = """Test superimports\nTest page3\nTest sub page3\nTest sub page4
+Test sub page5Test sub page6Test content line 1\nTest page1\nTest page1-2\nTest page1-3
+Test content line 3\nTest page2\nTest page1\nTest page1-2\nTest page1-3\nTest content line 5
+Test page1\nTest page1-2\nTest page1-3\nTest content line 7\nTest sub page4
+Test sub page5Test sub page6Test content line 1\nTest page1\nTest page1-2
+Test page1-3\nTest content line 3\nTest page2\nTest page1\nTest page1-2
+Test page1-3\nTest content line 5\nTest page1\nTest page1-2\nTest page1-3
+Test content line 7\nTest sub page5Test sub page6Test page4\nTest page5
+::Test page6\n::Test content line 1\nTest page1\nTest page1-2\nTest page1-3
+Test content line 3\nTest page2\nTest page1\nTest page1-2\nTest page1-3
+Test content line 5\nTest page1\nTest page1-2\nTest page1-3\nTest content line 7
+Test sub page3\nTest sub page4\nTest sub page5Test sub page6Test content line 1
+Test page1\nTest page1-2\nTest page1-3\nTest content line 3\nTest page2\nTest page1
+Test page1-2\nTest page1-3\nTest content line 5\nTest page1\nTest page1-2\nTest page1-3
+Test content line 7\n"""
+
 final_content_page1 = """Test page1\nTest page1-2\nTest page1-3\n"""
 final_content_page2 = """Test page2\nTest page1\nTest page1-2\nTest page1-3\n"""
-
 website_tree = {
     "index.bpr": content_index,
+    "superimports.bpr": content_superimports,
     "pages/page1.bpr": content_page1,
-    "pages/page2.bpr": content_page2
+    "pages/page2.bpr": content_page2,
+    "pages/page3.bpr": content_page3,
+    "pages/page4.bpr": content_page4,
+    "pages/page5.bpr": content_page5,
+    "pages/page6.bpr": content_page6,
+    "pages/subpages/page3.bpr": content_sub_page3,
+    "pages/subpages/spage4.bpr": content_sub_page4,
+    "pages/subpages/spage5.bpr": content_sub_page5,
+    "pages/subpages/spage6.bpr": content_sub_page6,
 }
 
 get_from_config = '''
@@ -206,7 +239,18 @@ def test_preparser_content(filename, content):
     pp.make_import_list()
 
     assert pp.export_with_imports().read() == content
-    # TODO: Test import in sub-folders
+
+
+def test_subfolder_parsing():
+    """
+    Test the preparser content
+    """
+    testfile = temp_name(os.path.join(_BASE_PATH_GIVEN, "superimports.bpr"))
+    assert os.path.exists(testfile)
+    pp = preparser.PreParser(testfile, env)
+    pp.make_import_list()
+    rich.print(pp.rich_tree())
+    assert pp.export_with_imports().read() == final_content_superimports
 
 
 @pytest.mark.xfail(reason="Not implemented")
@@ -217,7 +261,7 @@ def test_do_imports():
     testfile = temp_name("index.bpr")
     assert os.path.exists(testfile)
     pp = preparser.PreParser(testfile, env)
-    f = pp.do_imports()
+    f = pp.do_replacements()
     assert f.read() == final_content_index
 
 
@@ -328,3 +372,12 @@ def test_replace():
     # pp.make_import_list()
     image_f = pp.parse_shortcuts_and_images()
     assert image_f.read() == """\n<img src="shortcut"/>\n<h1>picture</h1>\n"""
+
+
+def test_early_tree(base_architecture):
+    tree_file = temp_name(os.path.join(_BASE_PATH_GIVEN, "index.bpr"))
+    assert os.path.exists(tree_file)
+    pp = preparser.PreParser(tree_file, env)
+
+    pp.make_import_list()
+    rich.print(pp.rich_tree())
