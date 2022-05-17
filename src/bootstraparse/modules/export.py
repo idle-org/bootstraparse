@@ -17,6 +17,22 @@ final output.
 ExportResponse = namedtuple("ExportResponse", ["start", "end"])
 
 
+def format_optionals(optionals):
+    """
+    Function handling parser output optional object, splitting it between html_insert and class_insert
+    on one hand and var on the other hand.
+    rtype: str
+    """
+    if optionals != '':
+        h, c = optionals.content.html_insert, optionals.content.class_insert
+    else:
+        return ''
+    if h != '':
+        h = h.content.html_insert
+    output = f'''{' '.join(h)}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''
+    return output
+
+
 class ExportManager:
     """
     Transforms ExportRequest tuples to ExportResponse tuples with the config-provided appropriate markup.
@@ -33,6 +49,7 @@ class ExportManager:
             "t_head": self.t_transform,
             "t_row": self.t_transform,
             "t_cell": self.t_transform,
+            "image": self.image_transform,
         }
 
     def __call__(self, export_request):
@@ -130,6 +147,14 @@ class ExportManager:
         """
         start, end, _ = self._get_template(export_request)
         start = start.format(col_span=export_request.others["col_span"])
+        return ExportResponse(start, end)
+
+    def image_transform(self, export_request):
+        """
+        Specific template for images.
+        """
+        start, end, optionals = self._get_template(export_request)
+        end = end.format(optionals=optionals)
         return ExportResponse(start, end)
 
 
