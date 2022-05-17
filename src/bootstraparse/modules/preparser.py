@@ -7,6 +7,7 @@ from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 from bootstraparse.modules import syntax
 from bootstraparse.modules import error_mngr # noqa # pylint: disable=unused-import
+from bootstraparse.modules import export
 
 import rich
 from rich.tree import Tree
@@ -84,11 +85,9 @@ class PreParser:
         """
         Execute all actions needed to do the imports and setup for the next step
         """
-        # TODO: Implement this
-        # Do all imports
-        # parse_import_list()
-        # make_import_list()
-        # export_with_imports()
+        self.parse_import_list()
+        self.make_import_list()
+        self.export_with_imports()
         self.current_origin_for_read = self.file_with_all_imports
         return self.current_origin_for_read
 
@@ -96,9 +95,8 @@ class PreParser:
         """
         Execute all actions needed to do the replacements.
         """
-        # TODO: Implement this
-        # Do all replacements
-        #
+        self.do_imports()
+        self.parse_shortcuts_and_images()
         self.current_origin_for_read = self.file_with_all_replacements
         return self.current_origin_for_read
 
@@ -182,6 +180,11 @@ class PreParser:
         # We could also decide to duplicate the file instead of resetting the cursor
         if self.imports_done:
             self.file_with_all_imports.seek(0)
+            error_mngr.log_message(
+                level='WARNING',
+                message=f'Imports were already done on {self.path}, returning as is ;'
+                        f' rewound to the beginning of the file.'
+            )
             return self.file_with_all_imports
 
         temp_file = self.file_with_all_imports
@@ -232,15 +235,17 @@ class PreParser:
         # return self.__env.config["aliases"][shortcut]
         return f'<h1>{shortcut}</h1>'  # TODO : replace with actual alias
 
-    def get_image_from_config(self, shortcut, optional):
+    def get_image_from_config(self, shortcut, optionals):
         """
         Fetches image paths from aliases.yaml
         :return: html to insert as a string
         :param shortcut: the id of the picture to fetch
-        :param optional: optional parameters along with image
+        :param optionals: optional parameters along with image
         """
-        # return self.__env.config["images"][shortcut]
-        return f'<img src="{shortcut}"/>'
+        blind_run = export.ExportRequest('inline_elements', 'image', export.format_optionals(optionals))
+        local_export_manager = export.ExportManager('', '')
+        output = local_export_manager(blind_run)
+        return output.start + shortcut + output.end
 
     def __repr__(self):
         """
@@ -312,20 +317,13 @@ class PreParser:
 # This part is only used for testing
 if __name__ == "__main__":  # pragma: no cover
     from bootstraparse.modules import config
-    site_path = "../../../example_userfiles/index.bpr"
-    config_path = "../../../example_userfiles/config/"
+    from bootstraparse.modules import pathresolver
+    site_path = pathresolver.b_path("../../example_userfiles/index.bpr")
+    config_path = pathresolver.b_path("../../example_userfiles/config/")
     __env = environment.Environment()
     __env.config = config.ConfigLoader(config_path)
     t_pp = PreParser(site_path, __env)
-    t_pp.parse_import_list()
-
-    t_pp.make_import_list()
-    out = t_pp.export_with_imports()
-    # path = '../../../example_userfiles/output/show_me_what_you_got.txt'
-    # os.makedirs(os.path.dirname(path), exist_ok=True)
-    # with open(path, 'w+') as file:
-    #     file.writelines(pp.export_with_imports().readlines())
-    #
+    out = t_pp.do_replacements()
 
     # rich.print(michel.rich_tree())
     string_to_match = r'@[bite]{id=2}[saucisse=13] @[chaussette] @[bermuda]{tomate=tomate}[12] @[pasteque]'
