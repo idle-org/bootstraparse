@@ -32,9 +32,9 @@ def init_logging(filename=None, loglevel="ERROR", filemode='w', handler=None):
         handler = []
 
     if filename is not None:
-        logging.basicConfig(filename=filename, filemode=filemode, level=logging.__getattribute__(loglevel))
+        logging.basicConfig(filename=filename, filemode=filemode, level=logging.__getattribute__(loglevel))  # noqa
     else:
-        logging.basicConfig(level=logging.__getattribute__(loglevel), handlers=handler)
+        logging.basicConfig(level=logging.__getattribute__(loglevel), handlers=handler)  # noqa
 
 
 def log_message(message, level="ERROR"):
@@ -46,7 +46,7 @@ def log_message(message, level="ERROR"):
     :return: None
     """
     level = level.lower()
-    logging.__getattribute__(level)(message)
+    logging.__getattribute__(level)(' ' + message)
     if level in ["critical"]:
         print("An unrecoverable error occurred, please check the log file for more information.")
 
