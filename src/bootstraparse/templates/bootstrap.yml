@@ -12,6 +12,7 @@ inline_elements:
   strong: ["<strong{optionals}>", "</strong>"]
   underline: ["<u{optionals}>", "</u>"]
   strikethrough: ["<s{optionals}>", "</s>"]
+  image: ["<img src='", "'{optionals}/>"]
   #  future: small
   custom_0: ["<span{optionals}>", "</span>"]
 
