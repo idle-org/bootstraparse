@@ -44,7 +44,7 @@ def test_transform(export_type, export_subtype):
     Test the transform method
     """
     em = export.ExportManager("test", "test")
-    re = em.transform(export.ExportRequest(export_type, export_subtype, "", {
+    re = em.transform(export.ExportRequest(export_type, export_subtype, "", { # noqa E741
         "header_level": "1",
         "display_level": "1",
         "col_span": "1",
@@ -69,7 +69,14 @@ def test_get_template_error():
 
 def test_with_optionnals():
     em = export.ExportManager("test", "test")
-    em(export.ExportRequest("structural_elements", "div", "boo"))
+    em(export.ExportRequest("structural_elements", "div", "boo")) # noqa E741
+
+
+@pytest.mark.xfail(reason="Not implemented")
+def test_format_optionnals():
+    from bootstraparse.modules import syntax # noqa E402
+    export.format_optionals("")
+    assert False
 
 
 def test_return_values():
