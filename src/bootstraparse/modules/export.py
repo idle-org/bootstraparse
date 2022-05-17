@@ -38,7 +38,7 @@ class ExportManager:
     def __call__(self, export_request):
         return self.transform(export_request)
 
-    def transform(self, export_request):
+    def transform(self, export_request):  # TODO: test all return values
         """
         Transformation function to magically poof ExportRequest tuples into
         ExportResponse tuples using the loaded config.
@@ -60,13 +60,13 @@ class ExportManager:
         """
         try:
             start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
-        except KeyError:
+        except KeyError:  # TODO: Test this in-depth
             log_entries = ["bootstrap", export_request.type, export_request.subtype]
             log_ = error_mngr.dict_check(self.templates, *log_entries)
             print()
             error_mngr.log_exception(
                 KeyError(
-                    f'Template "bootstrap"/{export_request.type}/{export_request.subtype} could not be found.'
+                    f'Template "bootstrap"/{export_request.type}/{export_request.subtype} could not be found.\n' +
                     '\n'.join([f'{i}: {"Found" if j else "Not found"}' for i, j in zip(log_entries, log_)])
                 ),
                 level='CRITICAL'
@@ -135,4 +135,5 @@ class ExportManager:
 
 if __name__ == '__main__':  # pragma: no cover
     herbert = ExportManager(cnoifg=None, templates=None)
-    herbert._get_template(ExportRequest('b', 'c', 'class="hugues"')) # noqa
+    # herbert._get_template(ExportRequest('b', 'c', 'class="hugues"')) # noqa
+    print(herbert.transform(ExportRequest('structural_elements', 'div', 'class="card"')))
