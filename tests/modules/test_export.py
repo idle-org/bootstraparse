@@ -21,7 +21,7 @@ def test_export_request():
     assert export_test.others == "others"
 
 
-def test_export_responcse():
+def test_export_response():
     """
     Test the export_response named_tuple
     """
