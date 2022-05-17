@@ -90,7 +90,6 @@ class PreParser:
         # make_import_list()
         # export_with_imports()
         self.current_origin_for_read = self.file_with_all_imports
-        # return self.current_origin_for_read
         return self.current_origin_for_read
 
     def do_replacements(self):
@@ -101,7 +100,6 @@ class PreParser:
         # Do all replacements
         #
         self.current_origin_for_read = self.file_with_all_replacements
-        # return self.current_origin_for_read
         return self.current_origin_for_read
 
     def readlines(self):
