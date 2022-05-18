@@ -4,15 +4,15 @@ structural_elements:
   aside: ["<aside{optionals}>", "</aside>"]
   section: ["<section{optionals}>", "</section>"]
   header: ["<h{header_level}{optionals}>", "</h{header_level}>"]
-  display: ["<p class='display-{display_level}'{optionals}>", "</p>"]
+  display: ["<p class=\"display-{display_level}\"{optionals}>", "</p>"]
 
 inline_elements:
-  link: ["<a href='{url}'>", "</a>"]
+  link: ["<a href=\"{url}\">", "</a>"]
   em: ["<em{optionals}>", "</em>"]
   strong: ["<strong{optionals}>", "</strong>"]
   underline: ["<u{optionals}>", "</u>"]
   strikethrough: ["<s{optionals}>", "</s>"]
-  image: ["<img src='", "'{optionals}/>"]
+  image: ["<img src=\"", "\"{optionals}/>"]
   #  future: small
   custom_0: ["<span{optionals}>", "</span>"]
 
