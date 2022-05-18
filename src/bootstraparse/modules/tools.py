@@ -9,9 +9,6 @@ import re
 ###############################################################################
 # Paths
 ########################################
-import rich
-
-
 def __base():
     """
     Return the path of the main module (relative to the tests)
@@ -36,7 +33,7 @@ def __module_path(module_name):
 # Frame inspection
 ########################################
 # Cursed frame inspection
-def __prev_stack(nb=0):
+def __prev_stack(nb=0):  # pragma: no cover (Cursed frame inspection)
     """
     Return the nth previous stack
     :return: Previous stack
@@ -47,26 +44,26 @@ def __prev_stack(nb=0):
     return inspect.getframeinfo(inspect.currentframe().f_back)
 
 
-def __GL():
+def __GL():  # pragma: no cover (Cursed frame inspection)
     return __prev_stack().lineno
 
 
-def __GFu():
+def __GFu():  # pragma: no cover (Cursed frame inspection)
     return __prev_stack().function
 
 
-def __GFi():
+def __GFi():  # pragma: no cover (Cursed frame inspection)
     return __prev_stack().filename
 
 
-def __GLk():
+def __GLk():  # pragma: no cover (Cursed frame inspection)
     return f' File "{__prev_stack(2).filename}", line {max(__prev_stack(2).lineno, 1)}'.replace("\\", "/")
 
 
 ###############################################################################
 # Code inspection
 ########################################
-def find_string_in_file(file_path, list_regex_to_find):
+def find_string_in_file(file_path, list_regex_to_find):  # pragma: no cover (Cursed code inspection)
     """
     Find the string in the file stream
     :param file_path: Path of the file
@@ -93,7 +90,7 @@ def find_string_in_file(file_path, list_regex_to_find):
     return dict_string_found
 
 
-def find_functions_in_file(file_path, list_function_name):
+def find_functions_in_file(file_path, list_function_name):  # pragma: no cover (Cursed code inspection)
     """
     Find the function in the file stream
     :param file_path: Path of the file
@@ -106,7 +103,7 @@ def find_functions_in_file(file_path, list_function_name):
     return find_string_in_file(file_path, [re.compile(f"$def ({function_name})") for function_name in list_function_name])
 
 
-def find_classes_in_file(file_path, list_class_name):
+def find_classes_in_file(file_path, list_class_name):  # pragma: no cover (Cursed code inspection)
     """
     Find the class in the file stream
     :param file_path: Path of the file
@@ -119,7 +116,7 @@ def find_classes_in_file(file_path, list_class_name):
     return find_string_in_file(file_path, [re.compile(f"^class ({class_name})") for class_name in list_class_name])
 
 
-def find_variables_in_file(file_path, list_variable_name):
+def find_variables_in_file(file_path, list_variable_name):  # pragma: no cover (Cursed code inspection)
     """
     Find the variable in the file stream
     :param file_path: Path of the file
@@ -132,6 +129,6 @@ def find_variables_in_file(file_path, list_variable_name):
     return find_string_in_file(file_path, [re.compile(f"^({variable_name}) ?=") for variable_name in list_variable_name])
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # print(find_string_in_file(__module_path("syntax.py"), [re.compile(r"^(html_insert) ?=")]))
     pass
