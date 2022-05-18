@@ -3,10 +3,10 @@
 import logging
 import traceback
 import sys
-from bootstraparse.modules.tools import __GFi, __GFu, __GL, __GLk
+from bootstraparse.modules.tools import __GLk  # __GFi, __GFu, __GL
+
+
 # Define the error codes
-
-
 _ERRORS = ["ParsingError"]
 __all__ = _ERRORS+[]
 

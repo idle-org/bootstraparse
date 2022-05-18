@@ -208,7 +208,6 @@ class PreParser:
         and replaces shortcuts and images calls with appropriate html
         :return: a table of occurrences and their lines
         """
-        # TODO: deal with optionals
         temp_file = self.file_with_all_imports
         temp_text = ''
         for line in temp_file.readlines():
@@ -242,8 +241,11 @@ class PreParser:
         :param shortcut: the id of the picture to fetch
         :param optionals: optional parameters along with image
         """
+
         blind_run = export.ExportRequest('inline_elements', 'image', export.format_optionals(optionals))
-        local_export_manager = export.ExportManager('', '')
+
+        # local_export_manager = self.__env.export_manager
+        local_export_manager = export.ExportManager("", "")
         output = local_export_manager(blind_run)
         return output.start + shortcut + output.end
 
@@ -322,6 +324,7 @@ if __name__ == "__main__":  # pragma: no cover
     config_path = pathresolver.b_path("../../example_userfiles/config/")
     __env = environment.Environment()
     __env.config = config.ConfigLoader(config_path)
+    __env.export_manager = export.ExportManager('', '')
     t_pp = PreParser(site_path, __env)
     out = t_pp.do_replacements()
 

@@ -25,8 +25,7 @@ def test_context_mngr():
     assert type(repr(base)) == str
     assert type(str(base)) == str
     assert ~base == []
-    base.map = {'test': 'test3'}
-    assert base.map == {'test': "test3"}
+    base.map = {'test': lambda: "test3"}
     assert base >> "test" == 'test3'
 
 
