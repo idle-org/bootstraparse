@@ -1,7 +1,10 @@
 # Module for final generation of the translated website
+import rich
+
 from bootstraparse.modules import config, pathresolver, error_mngr
 from collections import namedtuple
 
+from bootstraparse.modules.syntax import split_optionals
 
 """
 Named tuple containing all necessary information to select the appropriate
@@ -22,15 +25,10 @@ def format_optionals(optionals):
     on one hand and var on the other hand.
     rtype: str
     """
-    if optionals:
-        h, c = optionals.content.html_insert, optionals.content.class_insert  # TODO : Simplify this
-    else:
-        return ''
-    if h != '':
-        h = h.content.html_insert
-    if c != '':
-        c = " ".join(c.content.class_insert)  # TODO : Simplify this (sic.)
-    output = f'''{' '.join(h)}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''  # The inconsistency is here with " and '
+    split = split_optionals(optionals)
+    h = split.html_insert
+    c = split.class_insert
+    output = f'''{h}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''
     return output
 
 
