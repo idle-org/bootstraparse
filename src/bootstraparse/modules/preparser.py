@@ -199,8 +199,9 @@ class PreParser:
             temp_file.writelines(import_file.readlines())
         temp_file.writelines(source_lines[source_line_count:])
         temp_file.seek(0)
+        self.current_origin_for_read = temp_file
         self.imports_done = True
-        return temp_file
+        return self.current_origin_for_read
 
     def parse_shortcuts_and_images(self):
         """
@@ -222,6 +223,7 @@ class PreParser:
                 self.file_with_all_replacements.write(temp_text)
             self.file_with_all_replacements.write("\n")
         self.file_with_all_replacements.seek(0)
+        self.replacements_done = True
         return self.file_with_all_replacements
 
     def get_alias_from_config(self, shortcut, optional):
@@ -241,12 +243,8 @@ class PreParser:
         :param shortcut: the id of the picture to fetch
         :param optionals: optional parameters along with image
         """
-
-        blind_run = export.ExportRequest('inline_elements', 'image', export.format_optionals(optionals))
-
-        # local_export_manager = self.__env.export_manager
-        local_export_manager = export.ExportManager("", "")
-        output = local_export_manager(blind_run)
+        request = export.ExportRequest('inline_elements', 'image', export.format_optionals(optionals))
+        output = self.__env.export_mngr(request)
         return output.start + shortcut + output.end
 
     def __repr__(self):
@@ -305,7 +303,7 @@ class PreParser:
         self.tree_view = Tree(prefix+stripped_name+suffix)
         for p, l in self.parse_import_list():
             try:
-                self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True, strip_prefix=strip_prefix))
+                self.tree_view.add(self.global_dict_of_imports[p].rich_tree(suffix=" (Line:{})".format(l), force=True, strip_prefix=strip_prefix))  # noqa
             except KeyError:  # The key isn't in the global dict yet
                 self.tree_view.add(Tree(prefix+p+suffix+" !!"))
                 unparsed = True
@@ -320,14 +318,11 @@ class PreParser:
 if __name__ == "__main__":  # pragma: no cover
     from bootstraparse.modules import config
     from bootstraparse.modules import pathresolver
-    site_path = pathresolver.b_path("../../example_userfiles/index.bpr")
+    site_path = pathresolver.b_path("../../example_userfiles/test.bpr")
     config_path = pathresolver.b_path("../../example_userfiles/config/")
     __env = environment.Environment()
     __env.config = config.ConfigLoader(config_path)
-    __env.export_manager = export.ExportManager('', '')
+    __env.export_mngr = export.ExportManager('', '')
     t_pp = PreParser(site_path, __env)
     out = t_pp.do_replacements()
-
-    # rich.print(michel.rich_tree())
-    string_to_match = r'@[bite]{id=2}[saucisse=13] @[chaussette] @[bermuda]{tomate=tomate}[12] @[pasteque]'
-    rich.print(out.readlines())
+    rich.print(t_pp.get_all_lines())
