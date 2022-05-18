@@ -1,5 +1,4 @@
 # Module for final generation of the translated website
-
 from bootstraparse.modules import config, pathresolver, error_mngr
 from collections import namedtuple
 
@@ -23,13 +22,15 @@ def format_optionals(optionals):
     on one hand and var on the other hand.
     rtype: str
     """
-    if optionals != '':
-        h, c = optionals.content.html_insert, optionals.content.class_insert
+    if optionals:
+        h, c = optionals.content.html_insert, optionals.content.class_insert  # TODO : Simplify this
     else:
         return ''
     if h != '':
         h = h.content.html_insert
-    output = f'''{' '.join(h)}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''
+    if c != '':
+        c = " ".join(c.content.class_insert)  # TODO : Simplify this (sic.)
+    output = f'''{' '.join(h)}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''  # The inconsistency is here with " and '
     return output
 
 
