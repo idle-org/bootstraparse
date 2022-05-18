@@ -3,6 +3,7 @@ import os
 import pathlib
 import tempfile
 from io import StringIO
+from itertools import zip_longest
 
 import pytest
 import rich
@@ -102,10 +103,14 @@ website_tree = {
     "pages/subpages/spage6.bpr": content_sub_page6,
 }
 
-get_from_config = '''
-@{shortcut}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]{{classinsert
-@[picture]{class="picture", type=2, name="picture"}[type=33, name="picture"]{{hello}}
+get_from_config = '''@{whatever_picture} {whatever_picture}
+@{picture}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]{{classinsert}}
+@[shortcut]{class="picture", type=2, name="picture"}[type=33, name="picture"]{{hello}}
 '''
+final_from_config = """<img src='whatever_picture' whatever_picture/>
+<img src='picture' class="shortcut", type=2, name="shortcut" class="classinsert"/>
+<h1>shortcut</h1>
+"""
 
 
 @pytest.fixture(autouse=True)
@@ -129,7 +134,7 @@ def make_new_file(path, content="", mode="w+"):
 
 
 def assert_readlines_equals(lines1, lines2):
-    for line1, line2 in zip(lines1, lines2):
+    for line1, line2 in zip_longest(lines1, lines2):
         assert line1.strip("\n") == line2.strip("\n")
     return True
 
@@ -284,7 +289,7 @@ def test_get_all_lines():
     testfile = temp_name(os.path.join(_BASE_PATH_GIVEN, "index.bpr"))
     assert os.path.exists(testfile)
     pp = preparser.PreParser(testfile, env)
-    assert_readlines_equals(pp.get_all_lines(), content_index.split("\n"))
+    assert_readlines_equals(pp.get_all_lines(), content_index.split("\n")[:-1])
 
     # To test we are getting the right file
     pp.current_origin_for_read = StringIO("12")
@@ -307,13 +312,13 @@ def test_new_temporary_files():
     pp.do_imports()
     pp.do_replacements()
     pp.new_temporary_files()
-    assert_readlines_equals(pp.readlines(), content_index.split("\n"))
-    assert_readlines_equals(pp.get_all_lines(), final_content_index.split("\n"))
+    assert_readlines_equals(pp.readlines(), content_index.split("\n")[:-1])
+    assert_readlines_equals(pp.get_all_lines(), final_content_index.split("\n")[:-1])
     assert pp.file_with_all_imports.read() == ""
     assert pp.file_with_all_replacements.read() == ""
     pp.do_imports()
     pp.do_replacements()
-    assert_readlines_equals(pp.get_all_lines(), final_content_index.split("\n"))
+    assert_readlines_equals(pp.get_all_lines(), final_content_index.split("\n")[:-1])
 
 
 def test_errors():
@@ -354,9 +359,11 @@ def test_get_shortcut_from_config():
     make_new_file(from_config, get_from_config)
 
     pp = preparser.PreParser(from_config, env)
-    pp.make_import_list()
+    pp.do_imports()
+    pp.parse_shortcuts_and_images()
     assert pp.get_image_from_config("any_picture", "") == '''<img src='any_picture'/>'''
     assert pp.get_alias_from_config("any_shortcut", None) == "<h1>any_shortcut</h1>"
+    assert assert_readlines_equals(pp.do_replacements().readlines(), final_from_config.split("\n")[:-1])
 
 
 @pytest.mark.xfail(reason="Not implemented")
@@ -369,7 +376,6 @@ def test_replace():
     pp.export_with_imports()
     image_f = pp.parse_shortcuts_and_images()
     assert image_f.read() == """\n<img src="shortcut"/>\n<h1>picture</h1>\n"""
-
 
 
 def test_early_tree(base_architecture):
