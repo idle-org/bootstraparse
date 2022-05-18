@@ -106,20 +106,6 @@ class BaseContainerWithOptionals(BaseContainer):
                 rlist += [o]
         return rlist
 
-    # def all_html_insert(self):
-    #     """
-    #     Returns a list of all html_inserts, and an empty list if none exist.
-    #     :rtype: list
-    #     """
-    #     return [o.content for o in self.fetch_html_insert()]
-    #
-    # def all_class_insert(self):
-    #     """
-    #     Returns a list of all class_inserts, and an empty list if none exist.
-    #     :rtype: list
-    #     """
-    #     return [o.content for o in self.fetch_class_insert()]
-
 
 # Define containers all the Enhanced text elements, divs, headers, list and any element that can be a container
 class TextContainer(BaseContainer):
