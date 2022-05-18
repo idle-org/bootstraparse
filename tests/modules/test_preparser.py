@@ -103,8 +103,8 @@ website_tree = {
 }
 
 get_from_config = '''
-@{shortcut}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]
-@[picture]{class="picture", type=2, name="picture"}[type=33, name="picture"]
+@{shortcut}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]{{classinsert
+@[picture]{class="picture", type=2, name="picture"}[type=33, name="picture"]{{hello}}
 '''
 
 
@@ -348,15 +348,15 @@ def test_rich_tree():
     pp.rich_tree(force=False)
 
 
-@pytest.mark.xfail(reason="Not implemented")
+# @pytest.mark.xfail(reason="Not implemented")
 def test_get_shortcut_from_config():
-    from_config = temp_name("test_get_shortcut_from_config.bpr")
+    from_config = temp_name("get_from_config.bpr")
     make_new_file(from_config, get_from_config)
 
     pp = preparser.PreParser(from_config, env)
     pp.make_import_list()
+    assert pp.get_image_from_config("any_picture", "") == '''<img src='any_picture'/>'''
     assert pp.get_alias_from_config("any_shortcut", None) == "<h1>any_shortcut</h1>"
-    assert pp.get_image_from_config("any_picture", None) == '<img src="any_picture"/>'
 
 
 @pytest.mark.xfail(reason="Not implemented")
@@ -367,10 +367,9 @@ def test_replace():
 
     pp.make_import_list()
     pp.export_with_imports()
-    # pp.parse_import_list()
-    # pp.make_import_list()
     image_f = pp.parse_shortcuts_and_images()
     assert image_f.read() == """\n<img src="shortcut"/>\n<h1>picture</h1>\n"""
+
 
 
 def test_early_tree(base_architecture):
