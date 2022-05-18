@@ -3,7 +3,7 @@
 import logging
 import traceback
 import sys
-
+from bootstraparse.modules.tools import __GFi, __GFu, __GL, __GLk
 # Define the error codes
 
 
@@ -47,6 +47,8 @@ def log_message(message, level="ERROR"):
     """
     level = level.lower()
     logging.__getattribute__(level)(' ' + message)
+    logging.__getattribute__(level)(traceback.format_exc())
+    logging.__getattribute__(level)(__GLk())
     if level in ["critical"]:
         print("An unrecoverable error occurred, please check the log file for more information.")
 
@@ -61,7 +63,8 @@ def log_exception(exception, level="ERROR"):
     """
     level = level.lower()
     logging.__getattribute__(level)(traceback.format_exc())
-    for line in exception.__str__()[1:-1].split('\\n'):
+    logging.__getattribute__(level)(__GLk())
+    for line in exception.__str__()[0:-1].split('\\n'):
         logging.__getattribute__(level)(' ' + line)
     if level in ["critical", "error"]:
         print("An unrecoverable error occurred, please check the log file for more information.")
