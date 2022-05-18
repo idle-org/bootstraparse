@@ -1,10 +1,12 @@
 # Dedicated module for the syntax of all the parsing
 import os
 from itertools import zip_longest
+from collections import namedtuple
 
 import pyparsing as pp
 # import rich
 import regex  # future: remove regex
+import rich
 
 pps = pp.Suppress
 
@@ -218,6 +220,34 @@ def reparse(parse_element):
 
     return _reparse
 
+"""
+Tuple for readabilty of attributes over other modules.
+"""
+SplitOptionals = namedtuple(
+    "SplitOptionals", ['html_insert', 'class_insert', 'var_list', 'var_dict'], defaults=['', '', [], {}]
+)
+
+
+def split_optionals(optionals):
+    var_list = []
+    var_dict = {}
+    ci = ''
+    hi = ''
+    if not optionals:
+        return SplitOptionals()
+    for element in optionals.content:
+        if element.label == 'optional:class':
+            ci += " " + element.content[0]
+        elif element.label == 'optional:insert':
+            hi += " " + element.content[0]
+        elif element.label == 'optional:var':
+            for e in element.content.var:
+                if e.label == 'be:var':
+                    var_list.append(e.content.value[0])
+                elif e.label == 'be:assign':
+                    var_dict[e.content.assignation.var_name] = e.content.assignation.var_value[0]
+    return SplitOptionals(html_insert=hi[1:], class_insert=ci[1:], var_list=var_list, var_dict=var_dict)
+
 
 def readable_markup(list_of_tokens):
     """
@@ -252,15 +282,15 @@ assignation = pp.Group(
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
 url_characters = pp.common.url
 
-# Composite elements
+# Composite elements # TODO: stringed vars must accept space and underscore etc.
 var = pps('[') + pp.delimitedList(
     assignation.add_parse_action(of_type(BeAssignToken)) ^
     value.add_parse_action(of_type(BeValueToken))
 )("list_vars").set_name("list_vars") + pps(']')
 
 # Specific elements
-image_element = ('@{' + pp.common.identifier('image_name') + '}')("image_element")
-alias_element = ('@[' + pp.common.identifier('alias_name') + ']')("alias_element")
+image_element = ('@{' + pp.SkipTo('}')('image_name') + '}')("image_element")
+alias_element = ('@[' + pp.SkipTo(']')('alias_name') + ']')("alias_element")
 expression = pp.Word(pp.alphanums + r'=+-_\'",;:!\/\\. ')
 html_insert = pps('{') + expression('html_insert') + pps('}')
 class_insert = pps('{{') + expression('class_insert') + pps('}}')
