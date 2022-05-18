@@ -9,6 +9,7 @@ import re
 ###############################################################################
 # Paths
 ########################################
+import rich
 
 
 def __base():
@@ -17,7 +18,7 @@ def __base():
     :return: Path of the main module
     :rtype: str
     """
-    return "../../src/bootstraparse/"
+    return "."
 
 
 def __module_path(module_name):
@@ -28,15 +29,38 @@ def __module_path(module_name):
     :return: Path of the module
     :rtype: str
     """
-    return os.path.normpath(os.path.join(os.path.dirname(__file__), __base(), "modules", module_name))
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), __base(), module_name))
 
 
 ###############################################################################
 # Frame inspection
 ########################################
 # Cursed frame inspection
+def __prev_stack(nb=0):
+    """
+    Return the nth previous stack
+    :return: Previous stack
+    :rtype: inspect.Traceback
+    """
+    for frame in inspect.stack()[1 + nb:]:
+        return frame
+    return inspect.getframeinfo(inspect.currentframe().f_back)
+
+
 def __GL():
-    return inspect.getframeinfo(inspect.currentframe().f_back).lineno
+    return __prev_stack().lineno
+
+
+def __GFu():
+    return __prev_stack().function
+
+
+def __GFi():
+    return __prev_stack().filename
+
+
+def __GLk():
+    return f' File "{__prev_stack(2).filename}", line {max(__prev_stack(2).lineno, 1)}'.replace("\\", "/")
 
 
 ###############################################################################
