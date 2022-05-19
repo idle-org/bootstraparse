@@ -58,7 +58,7 @@ expressions_to_match = {
     # Base elements
     "quotes": ["'hi, there'", "'hi, there'"],
     "value": ["0.1", "'hello'"],
-    "assignation": ["a=1", "a=1.33", "tr2='hu'"],
+    "assignation": ["a=1", "a=1.33", "tr2='hu'", "val_2=2"],
 
     # Composite elements
     "var": ['["a"]',
@@ -86,7 +86,7 @@ expressions_to_match = {
 
 
     # Pre_parser elements
-    "image": ["@{image}{test=22}[a=12,22,c,d,ERE,r,3]", "@{image123_456}{a=12,22,c,d,ERE,r,3}",
+    "image": ["@{image.png}{test=22}[a=12,22,c,d,ERE,r,3]", "@{image123_456}{a=12,22,c,d,ERE,r,3}",
               "@{image123_456}[a=12,22,c,d,ERE,r,3]"],
     "alias": ["@[alias]{test=22}[a=12,22,c,d,ERE,r,3]", "@[alias123_456]{a=12,22,c,d,ERE,r,3}",
               "@[alias123_456]{a=12,22,c,d,ERE,r,3]"],
@@ -141,8 +141,8 @@ dict_advanced_syntax_input_and_expected_output = {
     ],
     "var": [
         # List of variables or assignations, should match "[a=12, b=13, 'c']"
-        ("[a=12, b=13, 'c']", [
-            sy.BeAssignToken([["a", 12]]),
+        ("[a_12=12, b=13, 'c']", [
+            sy.BeAssignToken([["a_12", 12]]),
             sy.BeAssignToken([["b", 13]]),
             sy.BeValueToken(["c"]),
         ], __GL()),
@@ -184,10 +184,10 @@ dict_advanced_syntax_input_and_expected_output = {
                 ]),
             ]),
         ), __GL()),
-        ("{aze,/.}[a=12]", (
+        ("{aze,/.__}[a=12]", (
             sy.OptionalToken([
                 sy.OptionalInsertToken([
-                    "aze,/.",
+                    "aze,/.__",
                 ]),
                 sy.OptionalVarToken([
                     sy.BeAssignToken([["a", 12]]),
@@ -218,7 +218,7 @@ dict_advanced_syntax_input_and_expected_output = {
                 ]),
             ]),
         ), __GL()),
-        ("{{aze!=}}{azett!=}[a=12]", (
+        ("{{aze!=}}{azett!=}[a_32=12]", (
             sy.OptionalToken([
                 sy.OptionalClassToken([
                     "aze!=",
@@ -227,14 +227,14 @@ dict_advanced_syntax_input_and_expected_output = {
                     "azett!=",
                 ]),
                 sy.OptionalVarToken([
-                    sy.BeAssignToken([["a", 12]]),
+                    sy.BeAssignToken([["a_32", 12]]),
                 ]),
             ]),
         ), __GL()),
-        ("[a=12]{aze,/.}{{azer!=}}", (
+        ("[_a=12]{aze,/.}{{azer!=}}", (
             sy.OptionalToken([
                 sy.OptionalVarToken([
-                    sy.BeAssignToken([["a", 12]]),
+                    sy.BeAssignToken([["_a", 12]]),
                 ]),
                 sy.OptionalInsertToken([
                     "aze,/.",

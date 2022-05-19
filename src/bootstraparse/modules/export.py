@@ -1,5 +1,4 @@
 # Module for final generation of the translated website
-import rich
 
 from bootstraparse.modules import config, pathresolver, error_mngr
 from collections import namedtuple
@@ -74,6 +73,7 @@ class ExportManager:
         Function for initializing other transform functions.
         :return: start, end, optionals
         """
+        start, end, optionals = None, None, []
         try:
             start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
         except KeyError:  # TODO: Test this in-depth

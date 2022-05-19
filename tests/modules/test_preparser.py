@@ -10,11 +10,13 @@ import rich
 
 from bootstraparse.modules import preparser
 from bootstraparse.modules import environment
+from bootstraparse.modules import export
 
 ###############################################################################
 # Environment variables
 
 env = environment.Environment()
+env.export_mngr = export.ExportManager('', '')
 _BASE_PATH_PREPARSER = "../../"
 _TEMP_DIRECTORY = tempfile.TemporaryDirectory()
 
@@ -103,12 +105,12 @@ website_tree = {
     "pages/subpages/spage6.bpr": content_sub_page6,
 }
 
-get_from_config = '''@{whatever_picture} {whatever_picture}
+get_from_config = '''@{whatever_picture} {whatever_picture} ["whateverpicture", i=42]
 @{picture}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]{{classinsert}}
 @[shortcut]{class="picture", type=2, name="picture"}[type=33, name="picture"]{{hello}}
 '''
-final_from_config = """<img src='whatever_picture' whatever_picture/>
-<img src='picture' class="shortcut", type=2, name="shortcut" class="classinsert"/>
+final_from_config = """<img src="whatever_picture" whatever_picture/>
+<img src="picture" class="shortcut", type=2, name="shortcut" class="classinsert"/>
 <h1>shortcut</h1>
 """
 
@@ -361,7 +363,7 @@ def test_get_shortcut_from_config():
     pp = preparser.PreParser(from_config, env)
     pp.do_imports()
     pp.parse_shortcuts_and_images()
-    assert pp.get_image_from_config("any_picture", "") == '''<img src='any_picture'/>'''
+    assert pp.get_image_from_config("any_picture", "") == '''<img src="any_picture"/>'''
     assert pp.get_alias_from_config("any_shortcut", None) == "<h1>any_shortcut</h1>"
     assert assert_readlines_equals(pp.do_replacements().readlines(), final_from_config.split("\n")[:-1])
 

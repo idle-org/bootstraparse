@@ -6,7 +6,6 @@ from collections import namedtuple
 import pyparsing as pp
 # import rich
 import regex  # future: remove regex
-import rich
 
 pps = pp.Suppress
 
@@ -220,6 +219,7 @@ def reparse(parse_element):
 
     return _reparse
 
+
 """
 Tuple for readabilty of attributes over other modules.
 """
@@ -274,7 +274,7 @@ rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+
 
 # Base elements
 quotes = pp.Word(r""""'""")
-value = (pps(quotes) + pp.Word(pp.alphanums + r'.') + pps(pp.match_previous_literal(quotes)) ^
+value = (pps(quotes) + pp.Word(pp.alphanums + r'\._') + pps(pp.match_previous_literal(quotes)) ^
          pp.common.fnumber)("value")
 assignation = pp.Group(
     pp.common.identifier('var_name') + pps('=') + value('var_value')
@@ -282,7 +282,7 @@ assignation = pp.Group(
 text = pp.OneOrMore(pp.Word(pp.alphanums))('text').add_parse_action(of_type(TextToken))
 url_characters = pp.common.url
 
-# Composite elements # TODO: stringed vars must accept space and underscore etc.
+# Composite elements
 var = pps('[') + pp.delimitedList(
     assignation.add_parse_action(of_type(BeAssignToken)) ^
     value.add_parse_action(of_type(BeValueToken))
