@@ -136,16 +136,17 @@ class PreParser:
                 )
             if e in self.global_dict_of_imports:
                 pp = self.global_dict_of_imports[e]
+                self.local_dict_of_imports[e] = pp
             else:
                 try:
                     pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
                     self.global_dict_of_imports[e] = pp
                     pp.make_import_list()
+                    self.local_dict_of_imports[e] = pp
                 except FileNotFoundError:
                     error_mngr.log_exception(
                         ImportError("The import {} in file {} line {} doesn't exist".format(e, self.name, l))
                     )
-            self.local_dict_of_imports[e] = pp
         self.is_global_dict_of_imports_initialized = True
         return self.local_dict_of_imports
 
