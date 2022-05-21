@@ -46,7 +46,7 @@ def log_message(message, level="ERROR"):
     :return: None
     """
     level = level.lower()
-    logging.__getattribute__(level)(' ' + message)
+    logging.__getattribute__(level)(' ' + message)  # TODO: Error handling on type error
     logging.__getattribute__(level)(traceback.format_exc())
     logging.__getattribute__(level)(__GLk())
     if level in ["critical"]:
