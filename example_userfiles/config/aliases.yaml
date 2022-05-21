@@ -1,10 +1,11 @@
 shortcuts:
-  copyright: Copyright (c) 2020 by Idle-Corp, all rights reserved.
-  website_url: https://idle-corp.com
-  website_name: Idle-Corp
-  cc_license: CC-BY-SA-4.0
-  replace: Test with {} and {}
+  copyright: 'Copyright (c) 2020 by Idle-Corp, all rights reserved.'
+  website_url: 'https://idle-corp.com'
+  website_name: 'Idle-Corp'
+  cc_license: 'CC-BY-SA-4.0'
+  replace: 'Test with {} and {}'
+  alias: 'test alias replacement with format {test}'
 
 images:
-  logo: ressources/images/logo.png
-  favicon: ressources/images/favicon.png
+  logo: 'resources/images/logo.png'
+  favicon: 'resources/images/favicon.png'
