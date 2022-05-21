@@ -108,6 +108,7 @@ class BaseContainerWithOptionals(BaseContainer):
 
 
 # Define containers all the Enhanced text elements, divs, headers, list and any element that can be a container
+# TODO: List all elements and their specialties (custom span id, header level, etc.)
 class TextContainer(BaseContainer):
     pass
 
