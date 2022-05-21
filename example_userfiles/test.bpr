@@ -1,1 +1,2 @@
-@{image1.png}{style="border:2px"}{{card red}}{{second class insert}}[i=2, 12, 'string', q=13, o='joli', 17][d="okboomer"]{target="_blank"}
+@[replace][1, 'chaussette', test='chauss', 2, 32]
+@{image.png}{style="border:2px"}{{card red}}{{second class insert}}[i=2, 12, 'string', q=13, o='joli', 17][d="okboomer"]{target="_blank"}
