@@ -227,15 +227,29 @@ class PreParser:
         self.replacements_done = True
         return self.file_with_all_replacements
 
-    def get_alias_from_config(self, shortcut, optional):
+    def get_alias_from_config(self, shortcut, optionals):
         """
         Fetches shortcut paths from aliases.yaml
         :return: the html to insert as a string
         :param shortcut: id of the shortcut to fetch
-        :param optional: optional parameters along with alias
+        :param optionals: optional parameters along with alias
         """
-        # return self.__env.config["aliases"][shortcut]
-        return f'<h1>{shortcut}</h1>'  # TODO : replace with actual alias
+        try:
+            output = self.__env.config.loaded_conf['aliases']['shortcuts'][shortcut]
+        except KeyError:
+            error_mngr.log_exception(
+                KeyError(
+                    f'Shortcut "{shortcut}" could not be found in {"; ".join(self.__env.config.config_folders)}.'
+                ), level='CRITICAL'
+            )
+        _, _, var_list, var_dict = export.split_optionals(optionals)
+        try:
+            output = output.format(*var_list, **var_dict)  # noqa
+        except KeyError:
+            error_mngr.log_message(
+                'Could not find appropriate replacement values in options provided', level='WARNING'
+            )
+        return output
 
     def get_image_from_config(self, shortcut, optionals):
         """
