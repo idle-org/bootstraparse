@@ -275,7 +275,7 @@ rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+
 # Base elements
 quotes = pp.Word(r""""'""")
 value = (pps(quotes) + pp.Word(pp.alphanums + r'\._') + pps(pp.match_previous_literal(quotes)) ^
-         pp.common.fnumber)("value")
+         pp.common.fnumber)("value")  # TODO: not every number is a float
 assignation = pp.Group(
     pp.common.identifier('var_name') + pps('=') + value('var_value')
 )("assignation")
