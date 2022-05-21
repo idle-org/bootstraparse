@@ -12,7 +12,7 @@ markup element and pass it over to ExportManager.
 ExportRequest = namedtuple("ExportRequest", ["type", "subtype", "optionals", "others"], defaults=[None, None, "", {}])
 
 """
-Class containing all necessary information to proceed with the
+Named tuple containing all necessary information to proceed with the
 final output.
 """
 ExportResponse = namedtuple("ExportResponse", ["start", "end"])
@@ -88,7 +88,7 @@ class ExportManager:
                 level='CRITICAL'
             )
         # future: allow for template selection
-        if export_request.optionals != '':
+        if export_request.optionals != '':  # TODO: Use format_optionals?
             optionals = " " + export_request.optionals
         else:
             optionals = ''
