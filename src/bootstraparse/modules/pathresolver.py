@@ -1,4 +1,6 @@
 # Module for resolving relative path problems
+# PathResolver takes a relative path in the module and outputs the absolute path,
+# BoostraPath can deal with relative paths in the installation folder.
 
 # import pathlib
 import os

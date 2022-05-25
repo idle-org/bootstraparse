@@ -1,4 +1,5 @@
 # Module for final generation of the translated website
+# Everything seems important :(
 
 from bootstraparse.modules import config, pathresolver, error_mngr
 from collections import namedtuple

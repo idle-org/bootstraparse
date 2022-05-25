@@ -1,4 +1,7 @@
 # Interprets config files
+# You probably want to go to environment to get the loaded config
+# The ConfigLoader class has load_from_file and load_from_folder methods and __getitem__ for accessing loaded elements
+
 import os
 import yaml
 from bootstraparse.modules import error_mngr

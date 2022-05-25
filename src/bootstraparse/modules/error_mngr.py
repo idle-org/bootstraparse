@@ -1,4 +1,7 @@
 # Dedicated module for defining and interpreting errors as well as generating error messages
+# You're probably here for log_message or log_exception.
+#   They take: message, level="ERROR, "INFO", "WARNING", "DEBUG", "CRITICAL"
+# There's also a dict_check(dic, *args) that returns true if all args are keys in the dict.
 
 import logging
 import traceback

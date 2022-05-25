@@ -1,4 +1,7 @@
 # Dedicated module for the syntax of all the parsing
+# All tokens inherit a SemanticType among SemanticType, ExplicitSemanticType and EmptySemanticType
+# All tokens have a label, and __eq__ and __ne__ methods.
+# Note: there is an UnimplementedToken
 import os
 from itertools import zip_longest
 from collections import namedtuple
@@ -192,6 +195,10 @@ class BlockQuoteToken(SemanticType):
 
 class BlockQuoteAuthorToken(SemanticType):
     label = "bq:author"
+
+
+class Linebreak(ExplicitSemanticType):
+    label = "linebreak"
 
 
 def of_type(token_class):

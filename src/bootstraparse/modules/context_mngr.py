@@ -1,4 +1,12 @@
 # Interprets where the parser is located and resolves errors
+# You're probably here for the ContextManager class.
+# Containers have class_name, debug_map and validate methods for debug,
+#   self.content: accessible via __getitem__, __setitem__, add, __len__, __iter__ and __getslice__.
+#   self.optionals: accessible via __rshift__ (remapped to return self.map[other]())
+#   and self.map: accessible via __invert__ (remapped to return self.optionals)
+import rich
+
+
 class BaseContainer:
     """
     Creates container holding all the elements from the start of a parsed element to its end.
@@ -117,7 +125,87 @@ class EtEmContainer(BaseContainer):
     pass
 
 
+class EtStrongContainer(BaseContainer):
+    pass
+
+
+class EtUnderlineContainer(BaseContainer):
+    pass
+
+
+class EtStrikethroughContainer(BaseContainer):
+    pass
+
+
+class IlLinkContainer(BaseContainer):
+    def __init__(self):
+        self.map += {'url': ""}
+    pass
+
+
+class IlImageContainer(BaseContainer):
+    pass
+
+
+class SeDivContainer(BaseContainer):
+    pass
+
+
+class SeArticleContainer(BaseContainer):
+    pass
+
+
+class SeAsideContainer(BaseContainer):
+    pass
+
+
+class SeSectionContainer(BaseContainer):
+    pass
+
+
+class SeHeaderContainer(BaseContainer):
+    def __init__(self):
+        self.map += {'header_level': ""}
+    pass
+
+
+class SeDisplayContainer(BaseContainer):
+    def __init__(self):
+        self.map += {'display_level': ""}
+    pass
+
+
+class TableMainContainer(BaseContainer):
+    pass
+
+
+class TableHeadContainer(BaseContainer):
+    def __init__(self):
+        self.map += {'colspan': ""}
+    pass
+
+
+class TableRowContainer(BaseContainer):
+    def __init__(self):
+        self.map += {'colspan': ""}
+    pass
+
+
+class TableCellContainer(BaseContainer):
+    def __init__(self):
+        self.map += {'colspan': ""}
+    pass
+
+
 class ContextManager:
     pass
 # Defines all methods to manage the context of the parser as a file is being parsed
 # Builds all containers as the parser is parsing the file
+
+
+if __name__ == "__main__":
+    from bootstraparse.modules import parser
+    from io import StringIO
+    io_string = StringIO('test')
+    test = parser.parse_line(io_string)
+    # rich.print(test)

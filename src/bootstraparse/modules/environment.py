@@ -1,4 +1,7 @@
 # Module for containing super important variables
+# Environment has self._mParams for mandatory parameters, self._sParams for secondary parameters and
+#   self.wasInitialised and integrity_check for debug.
+#   __getattr__ and __setattr__ check for existing super, s or m parameters, returns error if not found.
 from bootstraparse.modules import error_mngr
 
 

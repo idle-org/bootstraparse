@@ -1,4 +1,5 @@
 # Module for pre-parsing user files in preparation for the parser
+# the PreParser has all the methods you want and probably a lot more pls help
 import os
 import regex  # future: remove regex
 from io import StringIO
