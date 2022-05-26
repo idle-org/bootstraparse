@@ -5,6 +5,9 @@
 #   self.optionals: accessible via __rshift__ (remapped to return self.map[other]())
 #   and self.map: accessible via __invert__ (remapped to return self.optionals)
 import rich
+from bootstraparse.modules import syntax
+from bootstraparse.modules.error_mngr import CannotBeContainedError
+from bootstraparse.modules.syntax import EncapsulatedSemanticType
 
 
 class BaseContainer:
@@ -198,7 +201,49 @@ class TableCellContainer(BaseContainer):
 
 
 class ContextManager:
-    pass
+    """
+    Class in charge of piling all the parsed elements and then encapsulating them inside one another.
+    """
+    def __init__(self, parsed_list):
+        """
+        Takes a list of parsed tokens.
+        Parameters
+        ----------
+            parsed_list : list[syntax.SemanticType]
+                List of parsed tokens output by our parser.
+        """
+        self.output = []
+        self.parsed_list = parsed_list
+
+    def __call__(self):
+        """
+        Interprets the list of tokens provided and deduces context, encapsulating them to their closest neighbour and
+        containing all tokens inbetween.
+        Returns
+        -------
+            list[BaseContainer]
+                Returns the pile entirely processed as a list of containers.
+        """
+        pile = []
+        matched_elements = {}
+        line_number = 0
+        for token in self.parsed_list:
+            try:
+                if token.counterpart():
+                    if token.counterpart() in matched_elements:
+                        self.encapsulate(pile[matched_elements[token.counterpart()]:])
+                    elif isinstance(token, EncapsulatedSemanticType):
+                        raise CannotBeContainedError
+                    else:
+                        pile += token
+                        matched_elements += token
+                else:
+                    pile += token
+
+            except CannotBeContainedError as e:
+                print(e)
+
+
 # Defines all methods to manage the context of the parser as a file is being parsed
 # Builds all containers as the parser is parsing the file
 
@@ -206,6 +251,15 @@ class ContextManager:
 if __name__ == "__main__":
     from bootstraparse.modules import parser
     from io import StringIO
-    io_string = StringIO('test')
+    io_string = StringIO(
+        """<<div
+        Hello world
+        *how do you do fellow **kids***
+        div>>
+        # header 1 #
+        ! display 1 !"""
+    )
     test = parser.parse_line(io_string)
+    ctx = ContextManager(test)
+    ctx()
     # rich.print(test)

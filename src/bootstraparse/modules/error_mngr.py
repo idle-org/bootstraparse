@@ -129,3 +129,12 @@ class ParsingError(Exception):
             return "[{}] Line {}:{} {}".format(self.file, self.line, self.column, self.args[0])
         else:
             return str(self.message)
+
+
+class CannotBeContainedError(Exception):
+    """
+    The token is not final and cannot be contained. Indicative of a mismatched token.
+    """
+    def __init__(self, token):
+        self.token = token
+        super().__init__(f"Could not process {token.label}")

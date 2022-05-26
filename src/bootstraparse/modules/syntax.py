@@ -5,6 +5,7 @@
 import os
 from itertools import zip_longest
 from collections import namedtuple
+from bootstraparse.modules.error_mngr import CannotBeContainedError
 
 import pyparsing as pp
 # import rich
@@ -61,16 +62,59 @@ class SemanticType:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def counterpart(self):  # noqa
+        return None
+
+    def to_container(self):
+        """
+        Function called by the context manager to know how to deal with the encapsulation of the token.
+        Returns
+        -------
+            SemanticType
+                Self if containable, the expected replacement token if it can, raises an error otherwise.
+        Raises
+        ------
+            CannotBeContainedError
+                Raises error if the token we were trying to encapsulate cannot be (probably mismatched).
+        """
+        raise CannotBeContainedError(self)
+
 
 class ExplicitSemanticType(SemanticType):
     """
     Explicit semantic type, the label is the only information we need.
     """
+    def counterpart(self):
+        return self.label
+
     def to_markup(self):
         return f'<{self.label} />'
 
+    def to_container(self):
+        return TextToken(self.content[0])
 
-class EmptySemanticType(SemanticType):
+
+class FinalSemanticType(SemanticType):
+    """
+    Semantic type used by the context manager to ascertain token is possible to encapsulate.
+    """
+
+    def counterpart(self):  # noqa
+        return None
+
+    def to_container(self):
+        return self
+
+
+class EncapsulatedSemanticType(SemanticType):
+    """
+    Semantic type used to signify it has a matching start component and needs to be matched.
+    """
+    # def counterpart(self):
+    #     return self.label[:-4]+'start'
+
+
+class EmptySemanticType(FinalSemanticType):
     """
     Empty semantic type, the content is the only information we need.
     """
@@ -96,53 +140,79 @@ class ImageToken(SemanticType):
 class TextToken(EmptySemanticType):
     label = "text"
 
+    def to_container(self):
+        return self
 
+
+# TODO: check tokens doc
+# TODO: all one-line elements need to inherit FinalSemanticType
 class EnhancedToken(ExplicitSemanticType):
+    """Mother of all EtTokens"""
     label = "text:enhanced"
 
 
 class EtEmToken(ExplicitSemanticType):
+    """*"""
     label = "text:em"
 
 
 class EtStrongToken(ExplicitSemanticType):
+    """**"""
     label = "text:strong"
 
 
 class EtUnderlineToken(ExplicitSemanticType):
+    """__"""
     label = "text:underline"
 
 
 class EtStrikethroughToken(ExplicitSemanticType):
+    """~~"""
     label = "text:strikethrough"
 
 
 class EtCustomSpanToken(SemanticType):
+    """(#int)"""
     label = "text:custom_span"
 
 
 class EtUlistToken(SemanticType):
+    """-"""
     label = "list:ulist"
 
 
 class EtOlistToken(SemanticType):
+    """#."""
     label = "list:olist"
 
 
 class HeaderToken(SemanticType):
+    """
+    # string #
+    number of # indicates level
+    """
     label = "header"
 
 
 class DisplayToken(SemanticType):
+    """
+    ! string !
+    number of ! indicates level
+    """
     label = "display"
 
 
 class StructuralElementStartToken(SemanticType):
+    """<<string"""
     label = "se:start"
 
 
-class StructuralElementEndToken(SemanticType):
+class StructuralElementEndToken(EncapsulatedSemanticType):
+    """string>>"""
     label = "se:end"
+
+    def counterpart(self):  # noqa
+        return "se:start"
 
 
 class HyperlinkToken(SemanticType):
@@ -199,6 +269,9 @@ class BlockQuoteAuthorToken(SemanticType):
 
 class Linebreak(ExplicitSemanticType):
     label = "linebreak"
+
+    def to_container(self):
+        return self
 
 
 def of_type(token_class):
