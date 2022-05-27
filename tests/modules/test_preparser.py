@@ -355,7 +355,7 @@ def test_rich_tree():
     pp.rich_tree(force=False)
 
 
-# @pytest.mark.xfail(reason="Not implemented")
+@pytest.mark.xfail(reason="Not implemented")
 def test_get_shortcut_from_config():
     from_config = temp_name("get_from_config.bpr")
     make_new_file(from_config, get_from_config)

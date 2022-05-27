@@ -605,8 +605,10 @@ list_add_tag_input_and_expected_output = [
     (sy.EtStrongToken(["**"]), "<text:strong />"),
     (sy.EtUnderlineToken(["__"]), "<text:underline />"),
     (sy.EtStrikethroughToken(["~~"]), "<text:strikethrough />"),
-    (sy.StructuralElementStartToken(["div"]), "<se:start = 'div' />"),
-    (sy.StructuralElementEndToken(["div"]), "<se:end = 'div' />"),
+    (sy.StructuralElementStartToken(["div"]), "<se:start:div = 'div' />"),
+    (sy.StructuralElementEndToken(["div"]), "<se:end:div = 'div' />"),
+    (sy.StructuralElementStartToken(["span"]), "<se:start:span = 'span' />"),
+    (sy.StructuralElementEndToken(["span"]), "<se:end:span = 'span' />"),
     (sy.EtCustomSpanToken(["(#12)"]), "<text:custom_span = '(#12)' />"),
     (sy.HeaderToken(["#", "Text"]), "<header = '#,Text' />"),
 ]
@@ -631,8 +633,14 @@ list_of_text_input_and_readable_output = [
      "Reverse order: <text:custom_span = '123' /> Span, <text:underline /> underline <text:underline /> <text:strikethrough /> strikethrough <text:strikethrough /> <text:strong /> emphasis <text:em /> Strong <text:strong />"), # noqa E501 (line too long)
 
     # Structural elements
-    ("<<div", "se", "<se:start = 'div' />"),
-    ("div>>", "se", "<se:end = 'div' />"),
+    ("<<div", "se", "<se:start:div = 'div' />"),
+    ("div>>", "se", "<se:end:div = 'div' />"),
+    ("<<article", "se", "<se:start:article = 'article' />"),
+    ("article>>", "se", "<se:end:article = 'article' />"),
+    ("<<aside", "se", "<se:start:aside = 'aside' />"),
+    ("aside>>", "se", "<se:end:aside = 'aside' />"),
+    ("<<section", "se", "<se:start:section = 'section' />"),
+    ("section>>", "se", "<se:end:section = 'section' />"),
 
     # Lists
     ("- Text", "one_ulist", "<list:ulist = 'Text' />"),
