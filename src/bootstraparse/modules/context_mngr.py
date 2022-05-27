@@ -11,10 +11,11 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
+
+
 import rich
 from bootstraparse.modules import syntax
-from bootstraparse.modules.error_mngr import CannotBeContainedError
-from bootstraparse.modules.syntax import EncapsulatedSemanticType
+from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message
 
 
 class BaseContainer:
@@ -95,6 +96,17 @@ class BaseContainer:
             )
         )
 
+    def print_all(self, ident=''):
+        print(ident + self.class_name())
+        for e in self:
+            if isinstance(e, BaseContainer):
+                e.print_all(ident + '  ')
+            else:
+                print(ident + str(e))
+
+    def to_container(self):
+        return self
+
 
 class BaseContainerWithOptionals(BaseContainer):
     def __init__(self):
@@ -126,7 +138,6 @@ class BaseContainerWithOptionals(BaseContainer):
 
 
 # Define containers all the Enhanced text elements, divs, headers, list and any element that can be a container
-# TODO: List all elements and their specialties (custom span id, header level, etc.)
 class TextContainer(BaseContainer):
     pass
 
@@ -147,41 +158,43 @@ class EtStrikethroughContainer(BaseContainer):
     pass
 
 
-class IlLinkContainer(BaseContainer):
+class EtCustomSpanContainer(BaseContainer):
+    pass
+
+
+class EtUlistContainer(BaseContainer):
+    pass
+
+
+class EtOlistContainer(BaseContainer):
+    pass
+
+
+class HyperLinkContainer(BaseContainer):
     def __init__(self):
         self.map += {'url': ""}
     pass
 
 
-class IlImageContainer(BaseContainer):
+# class IlImageContainer(BaseContainer):
+#     pass
+
+
+class SeContainer(BaseContainer):
     pass
 
 
-class SeDivContainer(BaseContainer):
-    pass
-
-
-class SeArticleContainer(BaseContainer):
-    pass
-
-
-class SeAsideContainer(BaseContainer):
-    pass
-
-
-class SeSectionContainer(BaseContainer):
-    pass
-
-
-class SeHeaderContainer(BaseContainer):
+class HeaderContainer(BaseContainer):
     def __init__(self):
-        self.map += {'header_level': ""}
+        super().__init__()
+        self.map['header_level'] = ''
     pass
 
 
-class SeDisplayContainer(BaseContainer):
+class DisplayContainer(BaseContainer):
     def __init__(self):
-        self.map += {'display_level': ""}
+        super().__init__()
+        self.map['display_level'] = ""
     pass
 
 
@@ -191,20 +204,45 @@ class TableMainContainer(BaseContainer):
 
 class TableHeadContainer(BaseContainer):
     def __init__(self):
-        self.map += {'colspan': ""}
+        super().__init__()
+        self.map['colspan'] = ""
     pass
 
 
 class TableRowContainer(BaseContainer):
     def __init__(self):
-        self.map += {'colspan': ""}
+        super().__init__()
+        self.map['colspan'] = ""
     pass
 
 
 class TableCellContainer(BaseContainer):
     def __init__(self):
-        self.map += {'colspan': ""}
+        super().__init__()
+        self.map['colspan'] = ""
     pass
+
+
+"""
+Dictionary of all correspondences between tokens and containers.
+"""
+_to_container = {
+    "text": TextContainer,
+    "text:em": EtEmContainer,
+    "text:strong": EtStrongContainer,
+    "text:underline": EtUnderlineContainer,
+    "text:strikethrough": EtStrikethroughContainer,
+    "text:custom_span": EtCustomSpanContainer,
+    "list:ulist": EtUlistContainer,
+    "list:olist": EtOlistContainer,
+    "header": HeaderContainer,
+    "display": DisplayContainer,
+    "se:start:div": SeContainer,
+    "se:start:article": SeContainer,
+    "se:start:aside": SeContainer,
+    "se:start:section": SeContainer,
+    "hyperlink": HyperLinkContainer,
+}
 
 
 class ContextManager:
@@ -221,6 +259,54 @@ class ContextManager:
         """
         self.output = []
         self.parsed_list = parsed_list
+        self.pile = []
+        self.matched_elements = {}
+
+    def __iter__(self):
+        for e in self.pile:
+            if e:
+                yield e
+
+    def encapsulate(self, start, end):
+        """
+        Method to encapsulate a number of tokens together as a final container object
+        and replace all elements in the pile with None, except the first one which becomes the container.
+        Parameters
+        ----------
+            start : int
+                Index of the pile where the encapsulation must begin.
+            end : int
+                Index of the pile where the encapsulation must end.
+        """
+        try:
+            pile_start = self.pile[start]
+        except KeyError:
+            log_exception(
+                KeyError(f"Index {start} not in pile range."),
+                level="CRITICAL"
+            )
+        try:
+            container = _to_container[pile_start.label]()
+        except KeyError:
+            log_exception(
+                KeyError(f"Element {self.pile[start].label} not in dictionary of tokens-containers correspondences."),
+                level="CRITICAL"
+            )
+        for i in range(start, end):
+            if self.pile[i]:
+                container.add(self.pile[i].to_container())
+                self.pile[i] = None
+        container.add(self.pile[end])
+        self.pile[end] = None
+        self.pile[start] = container
+
+    def _add_matched(self, label, index):
+        if label not in self.matched_elements:
+            self.matched_elements[label] = []
+        self.matched_elements[label] += [index]
+
+    def _get_matched(self, label):
+        return self.matched_elements[label].pop()
 
     def __call__(self):
         """
@@ -231,24 +317,31 @@ class ContextManager:
             list[BaseContainer]
                 Returns the pile entirely processed as a list of containers.
         """
-        pile = []
-        matched_elements = {}
-        line_number = 0
-        for token in self.parsed_list:
+        # self.pile = self.parsed_list.copy()
+        line_number = 1
+        for index, token in enumerate(self.parsed_list):
+            self.pile.append(token)
             try:
-                if token.counterpart():
-                    if token.counterpart() in matched_elements:
-                        self.encapsulate(pile[matched_elements[token.counterpart()]:])
-                    elif isinstance(token, EncapsulatedSemanticType):
-                        raise CannotBeContainedError
-                    else:
-                        pile += token
-                        matched_elements += token
+                if isinstance(token, syntax.Linebreak):
+                    line_number += 1
+                elif isinstance(token, syntax.FinalSemanticType):
+                    self.encapsulate(index, index)
+                elif token.counterpart() in self.matched_elements:
+                    self.encapsulate(self._get_matched(token.counterpart()), index)
+                elif isinstance(token, syntax.ClosedSemanticType):
+                    raise MismatchedContainerError(token, line_number)
                 else:
-                    pile += token
+                    self._add_matched(token.label, index)
 
-            except CannotBeContainedError as e:
+            except MismatchedContainerError as e:
                 print(e)
+
+    def print_all(self):
+        for e in self:
+            if isinstance(e, BaseContainer):
+                e.print_all()
+            else:
+                print(str(e))
 
 
 # Defines all methods to manage the context of the parser as a file is being parsed
@@ -266,7 +359,9 @@ if __name__ == "__main__":
         # header 1 #
         ! display 1 !"""
     )
+
     test = parser.parse_line(io_string)
     ctx = ContextManager(test)
     ctx()
-    # rich.print(test)
+    print('----------------------------------')
+    ctx.print_all()
