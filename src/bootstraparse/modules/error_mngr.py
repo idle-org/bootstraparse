@@ -136,10 +136,11 @@ class ParsingError(Exception):
             return str(self.message)
 
 
-class CannotBeContainedError(Exception):
+class MismatchedContainerError(Exception):
     """
     The token is not final and cannot be contained. Indicative of a mismatched token.
     """
-    def __init__(self, token):
+    def __init__(self, token, line=-1):  # TODO: context_manager needs to pass over line for error handling
         self.token = token
-        super().__init__(f"Could not process {token.label}")
+        self.line = line
+        super().__init__(f"Could not process {token.label} in line {line}.")
