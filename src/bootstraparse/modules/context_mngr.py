@@ -4,6 +4,13 @@
 #   self.content: accessible via __getitem__, __setitem__, add, __len__, __iter__ and __getslice__.
 #   self.optionals: accessible via __rshift__ (remapped to return self.map[other]())
 #   and self.map: accessible via __invert__ (remapped to return self.optionals)
+# Usage:
+#   from bootstraparse.modules.context_mngr import ContextManager
+#   ctx = ContextManager()
+#   ctx.???
+#   container = BaseContainer()
+#   container[number] -> The number element in the content
+#   "class_insert" >> container[number] -> Get an element from one of the mapped methods
 import rich
 from bootstraparse.modules import syntax
 from bootstraparse.modules.error_mngr import CannotBeContainedError

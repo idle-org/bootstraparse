@@ -1,5 +1,10 @@
 # Module for final generation of the translated website
-# Everything seems important :(
+# Usage:
+#  from bootstraparse.modules.export import ExportManager, ExportRequest, ExportResponse
+#  rqs = ExportRequest("strucural_elements", "div", "optionals", {"id": "my_id", "class": "my_class"})
+#  rsp = ExportResponse("start_string", "end_string")
+#  em = ExportManager(config_file, template_file)
+#  em(ExportRequest()) -> ExportResponse()
 
 from bootstraparse.modules import config, pathresolver, error_mngr
 from collections import namedtuple
