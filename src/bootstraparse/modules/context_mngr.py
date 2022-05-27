@@ -325,6 +325,7 @@ class ContextManager:
         # self.pile = self.parsed_list.copy()
         line_number = 1
         for index, token in enumerate(self.parsed_list):
+            token.line_number = line_number
             self.pile.append(token)
             try:
                 if isinstance(token, syntax.Linebreak):
@@ -335,7 +336,7 @@ class ContextManager:
                 elif token.counterpart() in self.matched_elements:
                     self.encapsulate(self._get_matched(token.counterpart()), index)
                 elif isinstance(token, syntax.ClosedSemanticType):
-                    raise MismatchedContainerError(token, line_number)
+                    raise MismatchedContainerError(token)
                 else:
                     self._add_matched(token.label, index)
 

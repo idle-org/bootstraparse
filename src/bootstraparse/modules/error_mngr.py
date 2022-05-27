@@ -15,7 +15,7 @@ from bootstraparse.modules.tools import __GLk  # __GFi, __GFu, __GL
 
 
 # Define the error codes
-_ERRORS = ["ParsingError"]
+_ERRORS = ["ParsingError", "MismatchedContainerError"]
 __all__ = _ERRORS+[]
 
 
@@ -143,4 +143,4 @@ class MismatchedContainerError(Exception):
     def __init__(self, token, line=-1):  # TODO: context_manager needs to pass over line for error handling
         self.token = token
         self.line = line
-        super().__init__(f"Could not process {token.label} in line {line}.")
+        super().__init__(f"Could not process {token.label} in line {token.line_number}.")
