@@ -5,6 +5,9 @@
 import os
 from itertools import zip_longest
 from collections import namedtuple
+
+import rich
+
 from bootstraparse.modules.error_mngr import CannotBeContainedError
 
 import pyparsing as pp
@@ -78,6 +81,12 @@ class SemanticType:
                 Raises error if the token we were trying to encapsulate cannot be (probably mismatched).
         """
         raise CannotBeContainedError(self)
+
+
+class AddFirstElementToLabel(SemanticType):
+    def __init__(self, content):
+        super().__init__(content)
+        self.label += ":" + content[0]
 
 
 class ExplicitSemanticType(SemanticType):
@@ -202,12 +211,12 @@ class DisplayToken(SemanticType):
     label = "display"
 
 
-class StructuralElementStartToken(SemanticType):
+class StructuralElementStartToken(AddFirstElementToLabel, SemanticType):
     """<<string"""
-    label = "se:start"
+    label = 'se:start'
 
 
-class StructuralElementEndToken(EncapsulatedSemanticType):
+class StructuralElementEndToken(AddFirstElementToLabel, EncapsulatedSemanticType):
     """string>>"""
     label = "se:end"
 
