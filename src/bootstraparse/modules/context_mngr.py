@@ -223,6 +223,10 @@ class TableCellContainer(BaseContainer):
     pass
 
 
+class LinebreakContainer(BaseContainer):
+    pass
+
+
 """
 Dictionary of all correspondences between tokens and containers.
 """
@@ -242,6 +246,7 @@ _to_container = {
     "se:start:aside": SeContainer,
     "se:start:section": SeContainer,
     "hyperlink": HyperLinkContainer,
+    "linebreak": LinebreakContainer,
 }
 
 
@@ -323,6 +328,7 @@ class ContextManager:
             self.pile.append(token)
             try:
                 if isinstance(token, syntax.Linebreak):
+                    self.encapsulate(index, index)
                     line_number += 1
                 elif isinstance(token, syntax.FinalSemanticType):
                     self.encapsulate(index, index)
