@@ -1,18 +1,19 @@
 # Testing the error manager
 import logging
+from collections import namedtuple
 from importlib import reload
 from unittest import TestCase
 import pytest
 import bootstraparse.modules.error_mngr as error_mngr
-from bootstraparse.modules.error_mngr import ParsingError
+from bootstraparse.modules.error_mngr import ParsingError, MismatchedContainerError
 
 all_logging_tests = [(i, j, k) for i in [None, "test.log"]
                      for j in ["DEBUG", "INFO",  "WARNING", "ERROR", "CRITICAL", "NOPE_PARAM"]
                      for k in ["rich", None]]
 all_non_blocking_exception_tests = [
     (ParsingError("test error", 10, 10, "testfile.bpr")),
-    (ParsingError())
-
+    (ParsingError()),
+    (MismatchedContainerError(namedtuple("Test", ["label", "line_number"])("test", 10),)),
 ]
 all_blocking_exception_tests = [
 
@@ -40,7 +41,7 @@ class TestLogging(TestCase):
         for exception in all_non_blocking_exception_tests:
             with self.assertLogs() as captured:
                 error_mngr.log_exception(exception, level="Warning")
-            self.assertGreaterEqual(len(captured.records), 4)
+            self.assertGreaterEqual(len(captured.records), 3)
 
         for exception in all_blocking_exception_tests:
             with self.assertLogs() as captured:
