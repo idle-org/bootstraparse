@@ -8,7 +8,7 @@ from collections import namedtuple
 
 import rich
 
-from bootstraparse.modules.error_mngr import CannotBeContainedError
+from bootstraparse.modules.error_mngr import MismatchedContainerError
 
 import pyparsing as pp
 # import rich
@@ -80,7 +80,7 @@ class SemanticType:
             CannotBeContainedError
                 Raises error if the token we were trying to encapsulate cannot be (probably mismatched).
         """
-        raise CannotBeContainedError(self)
+        raise MismatchedContainerError(self)
 
 
 class AddFirstElementToLabel(SemanticType):
@@ -115,7 +115,15 @@ class FinalSemanticType(SemanticType):
         return self
 
 
-class EncapsulatedSemanticType(SemanticType):
+class OpenedSemanticType(SemanticType):
+    """
+    Semantic type used to signify it has a matching end component and needs to be matched.
+    """
+    def to_container(self):
+        return self
+
+
+class ClosedSemanticType(SemanticType):
     """
     Semantic type used to signify it has a matching start component and needs to be matched.
     """
@@ -195,7 +203,7 @@ class EtOlistToken(SemanticType):
     label = "list:olist"
 
 
-class HeaderToken(SemanticType):
+class HeaderToken(FinalSemanticType):
     """
     # string #
     number of # indicates level
@@ -203,7 +211,7 @@ class HeaderToken(SemanticType):
     label = "header"
 
 
-class DisplayToken(SemanticType):
+class DisplayToken(FinalSemanticType):
     """
     ! string !
     number of ! indicates level
@@ -211,17 +219,18 @@ class DisplayToken(SemanticType):
     label = "display"
 
 
-class StructuralElementStartToken(AddFirstElementToLabel, SemanticType):
+class StructuralElementStartToken(AddFirstElementToLabel, OpenedSemanticType):
     """<<string"""
     label = 'se:start'
 
 
-class StructuralElementEndToken(AddFirstElementToLabel, EncapsulatedSemanticType):
+class StructuralElementEndToken(AddFirstElementToLabel, ClosedSemanticType):
     """string>>"""
     label = "se:end"
 
-    def counterpart(self):  # noqa
-        return "se:start"
+    def counterpart(self):
+        return f"se:start:{self.content[0]}"
+        # TODO : correct this monstrosity
 
 
 class HyperlinkToken(SemanticType):
