@@ -5,7 +5,11 @@ shortcuts:
   cc_license: 'CC-BY-SA-4.0'
   replace: 'Test with {} and {}'
   alias: 'test alias replacement with format {test}'
+  do_not_remove_s: 'This is a test'
+  do_not_remove_f: 'This is a test {} {} {a} {b}'
 
 images:
   logo: 'resources/images/logo.png'
   favicon: 'resources/images/favicon.png'
+  do_not_remove_p: 'This is a test'
+  do_not_remove_f: 'This is a test {} {} {a} {b}'
