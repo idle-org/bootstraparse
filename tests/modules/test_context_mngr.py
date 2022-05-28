@@ -206,7 +206,7 @@ def test_container():
 
 @pytest.mark.parametrize("init_list, expected, file_line", _zipped_token_list_with_expected_result)
 def test_context_call(init_list, expected, file_line):
-    ctx = context_mngr.ContextManager(init_list)
+    ctx = context_mngr.ContextManager(init_list)  # noqa : F841
     assert ctx() == expected
 
 
