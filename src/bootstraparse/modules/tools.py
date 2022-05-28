@@ -56,8 +56,8 @@ def __GFi():  # pragma: no cover (Cursed frame inspection)
     return __prev_stack().filename
 
 
-def __GLk():  # pragma: no cover (Cursed frame inspection)
-    return f' File "{__prev_stack(2).filename}", line {max(__prev_stack(2).lineno, 1)}'.replace("\\", "/")
+def __GLk(n=2):  # pragma: no cover (Cursed frame inspection)
+    return f' File "{__prev_stack(n).filename}", line {max(__prev_stack(n).lineno, 1)}'.replace("\\", "/")
 
 
 ###############################################################################
