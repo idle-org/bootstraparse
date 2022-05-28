@@ -101,6 +101,16 @@ def dict_check(dic, *args):
     return output
 
 
+def str_dict_check(dic, *args):
+    """
+    Helper function to test existence within a dictionary and return a string of the values.
+    'arg[0]' : True or False
+
+    """
+    out = dict_check(dic, *args)
+    return "\n".join([f"{args[i]}: {out[i]}" for i in range(len(out))])
+
+
 class ParsingError(Exception):
     """
     Exception class for parsing errors

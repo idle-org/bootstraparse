@@ -96,5 +96,11 @@ def test_dict_check_2():
     assert(error_mngr.dict_check({"test": "test"}, "test", "test2", "test3") == [True, False, False])
 
 
+def test_dict_str():
+    assert error_mngr.str_dict_check({"test": "test"}, "test") == "test: True"
+    assert error_mngr.str_dict_check({"test": "test"}, "test2") == "test2: False"
+    assert error_mngr.str_dict_check({"test": {"test3": "test5"}}, "test", "test3") == "test: True\ntest3: True"
+
+
 if __name__ == '__main__':
     TestLogging().test_init_logging()
