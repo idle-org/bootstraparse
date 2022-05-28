@@ -1,5 +1,13 @@
 # Module for pre-parsing user files in preparation for the parser
-# the PreParser has all the methods you want and probably a lot more pls help
+# Usage:
+#   from bootstraparse.modules.preparser import preparser
+#   pp = preparser(file, enviroment)
+#   pp.do_import() # imports all the modules and adds them to the file, do the same for all the files that are to be imported
+#   pp.do_replacements() # replaces all images and shortcuts in the file
+#   pp.readlines() # returns the lines of ORIGINAL file
+#   pp.get_all_lines() # returns the lines of the file after replacements and imports
+
+
 import os
 import regex  # future: remove regex
 from io import StringIO

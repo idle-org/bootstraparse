@@ -2,6 +2,13 @@
 # All tokens inherit a SemanticType among SemanticType, ExplicitSemanticType and EmptySemanticType
 # All tokens have a label, and __eq__ and __ne__ methods.
 # Note: there is an UnimplementedToken
+# Usage:
+#   from bootstraparse.modules.syntax import line
+#   line.parse_line('string') # returns a List of tokens
+#   line_to_replace.parse_line('string') # returns a List of tokens parsed for replacements
+#   imports.parse_line('string', True) # returns a List of tokens parsed for imports # FUTURE: Not implemented yet
+#   any_token.create_diagram("filename") # Debugging
+
 import os
 from itertools import zip_longest
 from collections import namedtuple
