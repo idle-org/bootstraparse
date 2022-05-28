@@ -13,7 +13,7 @@
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
 
 
-from bootstraparse.modules import syntax
+from bootstraparse.modules import syntax, error_mngr
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
 
 
@@ -21,8 +21,10 @@ class BaseContainer:
     """
     Creates container holding all the elements from the start of a parsed element to its end.
     """
-    def __init__(self):
-        self.content = []
+    def __init__(self, content=None):
+        if content is None:
+            content = []
+        self.content = content
         self.optionals = []
         self.map = {}
 
@@ -174,7 +176,7 @@ class EtOlistContainer(BaseContainer):
 class HyperLinkContainer(BaseContainer):
     def __init__(self):
         super().__init__()
-        self.map['url']: ""
+        self.map['url'] = ""
     pass
 
 
@@ -344,9 +346,10 @@ class ContextManager:
                     raise MismatchedContainerError(token)
                 else:
                     self._add_matched(token.label, index)
-
             except MismatchedContainerError as e:
-                print(e)
+                error_mngr.log_exception(e, level="CRITICAL")  # TODO: Be more specific.
+
+        return self.pile  # TODO: Cleanse the pile of None values
 
     def print_all(self):
         for e in self:

@@ -1,8 +1,9 @@
 import pytest
-import rich
 
 from bootstraparse.modules import context_mngr
-from bootstraparse.modules.syntax import SemanticType, TextToken
+from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken
+from bootstraparse.modules.tools import __GLk
+__XF = pytest.mark.xfail
 
 _list_classes = [
     context_mngr.TextContainer,
@@ -24,6 +25,43 @@ _list_classes = [
     context_mngr.LinebreakContainer,
 ]
 _base_list = [TextToken([1]), TextToken([2]), TextToken([3]), TextToken([4])]
+
+_token_list_with_expected_result = [
+    [
+        [TextToken([1])],
+        [context_mngr.TextContainer([TextToken([1])])],
+        __GLk(1),
+    ],
+    [
+        [TextToken([1]), Linebreak([])],
+        [
+            context_mngr.TextContainer([TextToken([1])]),
+            context_mngr.LinebreakContainer([Linebreak([])])
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            StructuralElementStartToken(["div"]),
+            TextToken([1]),
+            StructuralElementEndToken(["div"]),
+        ],
+        [
+            context_mngr.SeContainer([
+                StructuralElementStartToken(["div"]),
+                context_mngr.TextContainer([TextToken([1])]),
+                StructuralElementEndToken(["div"])
+            ]),
+            None,
+            None,
+        ],
+        __GLk(1),
+    ],
+]  # TODO: Test a lot more thouroughly
+
+_zipped_token_list_with_expected_result = [
+    pytest.param(*c[:3], marks=c[3:]) for c in _token_list_with_expected_result
+]
 
 
 @pytest.fixture
@@ -116,6 +154,7 @@ def test_context_mngr():
     assert ~base == []
     base.map = {'test': lambda: "test3"}
     assert base >> "test" == 'test3'
+    assert base != 1
 
 
 def test_base_container_with_optionals():
@@ -153,7 +192,9 @@ def test_print():
 
 def test_print_cm(base_cm):
     base_cm.print_all()
-    base_cm.pile = [context_mngr.BaseContainer(), context_mngr.BaseContainer(), "test", 3, context_mngr.BaseContainer()]
+    bc = context_mngr.BaseContainer()
+    bc.add('test')
+    base_cm.pile = [bc, bc, "test", 3, bc]
     base_cm.print_all()
 
 
@@ -161,3 +202,15 @@ def test_container():
     base = context_mngr.BaseContainer()
     assert base is not None
     assert base.to_container() == base
+
+
+@pytest.mark.parametrize("init_list, expected, file_line", _zipped_token_list_with_expected_result)
+def test_context_call(init_list, expected, file_line):
+    ctx = context_mngr.ContextManager(init_list)
+    assert ctx() == expected
+
+
+def test_content_call_raises():
+    ctx = context_mngr.ContextManager([StructuralElementEndToken(["1"])])
+    with pytest.raises(SystemExit):
+        ctx()
