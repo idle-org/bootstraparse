@@ -67,6 +67,8 @@ class BaseContainer:
         return self.map[other]()
 
     def __eq__(self, other):
+        if not hasattr(other, "__len__"):
+            return False
         if len(self) != len(other):
             return False
         for e, f in zip(self, other):
@@ -171,7 +173,8 @@ class EtOlistContainer(BaseContainer):
 
 class HyperLinkContainer(BaseContainer):
     def __init__(self):
-        self.map += {'url': ""}
+        super().__init__()
+        self.map['url']: ""
     pass
 
 
@@ -284,9 +287,12 @@ class ContextManager:
         """
         try:
             pile_start = self.pile[start]
-        except KeyError:
+            _ = self.pile[end]
+            if start > end:
+                raise IndexError("Start index must be lower than end index")
+        except IndexError:
             log_exception(
-                KeyError(f"Index {start} not in pile range."),
+                KeyError(f"Indexes ({start}:{end}) must be in the pile range ({len(self.pile)})."),
                 level="CRITICAL"
             )
         try:
@@ -354,7 +360,7 @@ class ContextManager:
 # Builds all containers as the parser is parsing the file
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     from bootstraparse.modules import parser
     from io import StringIO
     io_string = StringIO(
