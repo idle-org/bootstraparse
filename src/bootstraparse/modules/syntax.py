@@ -11,7 +11,6 @@ import rich
 from bootstraparse.modules.error_mngr import MismatchedContainerError
 
 import pyparsing as pp
-# import rich
 import regex  # future: remove regex
 
 pps = pp.Suppress
