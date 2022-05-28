@@ -55,6 +55,6 @@ expected_list = [
 
 
 def test_parse_line():
-    list_parsed=parser.parse_line(complete_list)
+    list_parsed = parser.parse_line(complete_list)
     for element, expected in zip_longest(list_parsed, expected_list):
         assert element.__class__ == expected

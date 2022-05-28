@@ -6,8 +6,6 @@ import os
 from itertools import zip_longest
 from collections import namedtuple
 
-import rich
-
 from bootstraparse.modules.error_mngr import MismatchedContainerError
 
 import pyparsing as pp

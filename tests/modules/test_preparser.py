@@ -416,4 +416,3 @@ def test_make_replacement_errors():
     assert pp.make_replacements("This is a test {}", "images") == "This is a test images"
     assert pp.make_replacements("This is a test {} {} {image} {b}", 1, 2, image="images", b="b") == "This is a test 1 2 images b"
     assert pp.make_replacements("This is a test {} {} {image} {b}", karm=3) == "This is a test {} {} {image} {b}"
-

@@ -13,9 +13,8 @@
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
 
 
-import rich
 from bootstraparse.modules import syntax
-from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message
+from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
 
 
 class BaseContainer:

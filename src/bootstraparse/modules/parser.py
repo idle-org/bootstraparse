@@ -3,8 +3,6 @@
 # TODO: decide the parser scope
 from io import StringIO
 
-import rich
-
 import bootstraparse.modules.syntax as syntax
 
 
