@@ -8,7 +8,7 @@ from itertools import zip_longest
 import pytest
 import rich
 
-from bootstraparse.modules import preparser
+from bootstraparse.modules import preparser, config, pathresolver
 from bootstraparse.modules import environment
 from bootstraparse.modules import export
 
@@ -16,6 +16,8 @@ from bootstraparse.modules import export
 # Environment variables
 
 env = environment.Environment()
+env.export_mngr = export.ExportManager('', '')
+env.config = config.ConfigLoader(pathresolver.b_path("../../example_userfiles/config/"))
 env.export_mngr = export.ExportManager('', '')
 _BASE_PATH_PREPARSER = "../../"
 _TEMP_DIRECTORY = tempfile.TemporaryDirectory()
@@ -105,14 +107,19 @@ website_tree = {
     "pages/subpages/spage6.bpr": content_sub_page6,
 }
 
-get_from_config = '''@{whatever_picture} {whatever_picture} ["whateverpicture", i=42]
-@{picture}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]{{classinsert}}
-@[shortcut]{class="picture", type=2, name="picture"}[type=33, name="picture"]{{hello}}
+get_from_config = '''@{do_not_remove_p} {whatever_picture} ["whateverpicture", i=42]
+@{do_not_remove_p}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]{{classinsert}}
+@[do_not_remove_s]{class="picture", type=2, name="picture"}[type=33, name="picture"]{{hello}}
+@[do_not_remove_f]{class="picture", type=2, name="picture"}[12,1222, a=33, b="picture"]{{hello}}
+@{do_not_remove_f}[a=33, b="picture", 42, 4242]{{hello}}
 '''
-final_from_config = """<img src="whatever_picture" whatever_picture/>
-<img src="picture" class="shortcut", type=2, name="shortcut" class="classinsert"/>
-<h1>shortcut</h1>
+final_from_config = """<img src="This is a test" whatever_picture/>
+<img src="This is a test" class="shortcut", type=2, name="shortcut" class="classinsert"/>
+This is a test
+This is a test 12.0 1222.0 33.0 picture
+<img src="This is a test 42.0 4242.0 33.0 picture" class="hello"/>
 """
+# TODO: Fix images
 
 
 @pytest.fixture(autouse=True)
@@ -355,16 +362,17 @@ def test_rich_tree():
     pp.rich_tree(force=False)
 
 
-@pytest.mark.xfail(reason="Not implemented")
+# @pytest.mark.xfail(reason="Not implemented")
 def test_get_shortcut_from_config():
     from_config = temp_name("get_from_config.bpr")
     make_new_file(from_config, get_from_config)
+    assert os.path.exists(from_config)
 
     pp = preparser.PreParser(from_config, env)
     pp.do_imports()
     pp.parse_shortcuts_and_images()
-    assert pp.get_image_from_config("any_picture", "") == '''<img src="any_picture"/>'''
-    assert pp.get_alias_from_config("any_shortcut", None) == "<h1>any_shortcut</h1>"
+    assert pp.get_image_from_config("do_not_remove_p", "") == '''<img src="This is a test"/>'''
+    assert pp.get_alias_from_config("do_not_remove_s", None) == "This is a test"
     assert assert_readlines_equals(pp.do_replacements().readlines(), final_from_config.split("\n")[:-1])
 
 
@@ -386,3 +394,26 @@ def test_early_tree(base_architecture):
     pp = preparser.PreParser(tree_file, env)
 
     rich.print(pp.rich_tree())
+
+
+def test_get_errors():
+    from_config = temp_name("test_get_errors.bpr")
+    pp = preparser.PreParser(from_config, env)
+    assert pp.get_element_from_config("aliases", "shortcuts", "do_not_remove_s") == "This is a test"
+    assert pp.get_element_from_config("aliases", "images", "do_not_remove_p") == 'This is a test'
+    with pytest.raises(SystemExit):
+        pp.get_element_from_config("aliases", "not_existing", "do_not_remove_s")
+    with pytest.raises(SystemExit):
+        pp.get_element_from_config("images", "not_existing", "do_not_remove_p")
+
+
+def test_make_replacement_errors():
+    from_config = temp_name("test_get_errors.bpr")
+    pp = preparser.PreParser(from_config, env)
+    assert pp.make_replacements("This is a test") == "This is a test"
+    assert pp.make_replacements("This is a test", "not_existing") == "This is a test"
+    assert pp.make_replacements("This is a test {}", "shortcuts") == "This is a test shortcuts"
+    assert pp.make_replacements("This is a test {}", "images") == "This is a test images"
+    assert pp.make_replacements("This is a test {} {} {image} {b}", 1, 2, image="images", b="b") == "This is a test 1 2 images b"
+    assert pp.make_replacements("This is a test {} {} {image} {b}", karm=3) == "This is a test {} {} {image} {b}"
+

@@ -228,6 +228,38 @@ class PreParser:
         self.replacements_done = True
         return self.file_with_all_replacements
 
+    def get_element_from_config(self, *list_keys):
+        """
+        Fetches an element from the config
+        """
+        sub_dict = self.__env.config.loaded_conf
+        validated_elements = []
+        for key in list_keys:
+            try:
+                sub_dict = sub_dict[key]
+                validated_elements.append(f'[{key}]')
+            except KeyError:
+                error_mngr.log_exception(
+                    KeyError(f"Could not find key {key} in dict config{''.join(validated_elements)} in configs {'; '.join(self.__env.config.config_folders)}"),
+                    level='CRITICAL'
+                )
+        return sub_dict
+
+    @staticmethod
+    def make_replacements(message, *var_list, **var_dict):
+        """
+        Tries to format the message or give an error message and return the original message
+        """
+        try:
+            return message.format(*var_list, **var_dict)
+        except (KeyError, IndexError) as e:
+            error_mngr.log_message(
+                'Could not find appropriate replacement values in options provided'
+                f'"{message}" : {var_list}, {var_dict}'
+                f"{str(e)}", level='WARNING'
+            )
+            return message
+
     def get_alias_from_config(self, shortcut, optionals):
         """
         Fetches shortcut paths from aliases.yaml
@@ -235,22 +267,10 @@ class PreParser:
         :param shortcut: id of the shortcut to fetch
         :param optionals: optional parameters along with alias
         """
-        try:
-            output = self.__env.config.loaded_conf['aliases']['shortcuts'][shortcut]
-        except KeyError:
-            error_mngr.log_exception(
-                KeyError(
-                    f'Shortcut "{shortcut}" could not be found in {"; ".join(self.__env.config.config_folders)}.'
-                ), level='CRITICAL'
-            )
+        output = self.get_element_from_config('aliases', 'shortcuts', shortcut)
         _, _, var_list, var_dict = export.split_optionals(optionals)
-        try:
-            output = output.format(*var_list, **var_dict)  # noqa
-        except KeyError:
-            error_mngr.log_message(
-                'Could not find appropriate replacement values in options provided', level='WARNING'
-            )
-        return output
+
+        return self.make_replacements(output, *var_list, **var_dict)
 
     def get_image_from_config(self, shortcut, optionals):
         """
@@ -259,9 +279,13 @@ class PreParser:
         :param shortcut: the id of the picture to fetch
         :param optionals: optional parameters along with image
         """
+        shortcut_s = self.get_element_from_config('aliases', 'images', shortcut)
+
+        _, _, var_list, var_dict = export.split_optionals(optionals)
         request = export.ExportRequest('inline_elements', 'image', export.format_optionals(optionals))
         output = self.__env.export_mngr(request)
-        return output.start + shortcut + output.end
+
+        return output.start + self.make_replacements(shortcut_s, *var_list, **var_dict) + output.end
 
     def __repr__(self):
         """
