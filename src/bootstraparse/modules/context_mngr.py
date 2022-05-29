@@ -11,7 +11,7 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
-
+import rich
 
 from bootstraparse.modules import syntax, error_mngr
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
@@ -105,7 +105,8 @@ class BaseContainer:
             if isinstance(e, BaseContainer):
                 e.print_all(ident + '  ')
             else:
-                print(ident + str(e))
+                print(ident + "> " + str(e))
+        print("")
 
     def to_container(self):
         return self
@@ -270,6 +271,11 @@ class ContextManager:
         self.parsed_list = parsed_list
         self.pile = []
         self.matched_elements = {}
+        self.dict_lookahead = {
+            "list:ulist": ["list:ulist"],
+            "list:olist": ["list:olist"],
+            "table:row": ["table:separator", "table:row"]  # TODO: Implement tables
+        }
 
     def __iter__(self):
         for e in self.pile:
@@ -287,6 +293,7 @@ class ContextManager:
             end : int
                 Index of the pile where the encapsulation must end.
         """
+        # print(start, end, self.pile[start:end+1])
         try:
             pile_start = self.pile[start]
             _ = self.pile[end]
@@ -304,6 +311,16 @@ class ContextManager:
                 KeyError(f"Element {self.pile[start].label} not in dictionary of tokens-containers correspondences."),
                 level="CRITICAL"
             )
+        except AttributeError as error:
+            if pile_start is None:
+                for e, r in zip(self.pile, self.parsed_list):
+                    log_message(f'{e} - {r}')
+                log_exception(
+                    AttributeError("Expected token, found None in pile."),
+                    level="CRITICAL"
+                )
+            else:
+                raise error
         for i in range(start, end):
             if self.pile[i]:
                 container.add(self.pile[i].to_container())
@@ -330,33 +347,70 @@ class ContextManager:
                 Returns the pile entirely processed as a list of containers.
         """
         # self.pile = self.parsed_list.copy()
+        index = 0
         line_number = 1
-        for index, token in enumerate(self.parsed_list):
+        while index < len(self.parsed_list):
+            token = self.parsed_list[index]
             token.line_number = line_number
             self.pile.append(token)
             try:
-                if isinstance(token, syntax.Linebreak):
+                if isinstance(token, syntax.Linebreak):  # linebreaks
                     self.encapsulate(index, index)
                     line_number += 1
-                elif isinstance(token, syntax.FinalSemanticType):
+
+                elif token.label in self.dict_lookahead:  # group together multiple one-lines
+                    index += self.lookahead(token, index)
+                    #  TODO : update line number (on top of index)
+
+                # elif token.label in self.dict_advanced_lookahead:  # TODO: advanced lookahead for * logic
+
+                elif isinstance(token, syntax.FinalSemanticType):  # one-liners
                     self.encapsulate(index, index)
-                elif token.counterpart() in self.matched_elements:
+
+                elif token.counterpart() in self.matched_elements:  # found a matching token in encountered tokens
                     self.encapsulate(self._get_matched(token.counterpart()), index)
-                elif isinstance(token, syntax.ClosedSemanticType):
+
+                elif isinstance(token, syntax.ClosedSemanticType):  # error if closing token does not have a start
                     raise MismatchedContainerError(token)
-                else:
+
+                else:  # starting token by default (can cause unintended behaviours on bad implementations)
                     self._add_matched(token.label, index)
             except MismatchedContainerError as e:
                 error_mngr.log_exception(e, level="CRITICAL")  # TODO: Be more specific.
+            index += 1
 
         return self.pile  # TODO: Cleanse the pile of None values
+
+    def lookahead(self, token, index):
+        """
+        Iterates the pile beginning from index and looks for all tokens matching labels with token.
+        """
+        range_to_encapsulate = 0
+        i = index + 1
+        # print(self.parsed_list)
+        while i < len(self.parsed_list):
+            # print(token.label, " -- ", self.parsed_list[i].label)
+            if self.parsed_list[i].label in self.dict_lookahead[token.label]:
+                self.pile.append(self.parsed_list[i])
+                range_to_encapsulate += 1
+            elif self.parsed_list[i].label == "linebreak":
+                if self.parsed_list[i-1].label == "linebreak":
+                    break
+                else:
+                    self.pile.append(self.parsed_list[i])
+                    range_to_encapsulate += 1
+            else:
+                break
+            i += 1
+        self.encapsulate(index, index + range_to_encapsulate)
+        return range_to_encapsulate
 
     def print_all(self):
         for e in self:
             if isinstance(e, BaseContainer):
                 e.print_all()
             else:
-                print(str(e))
+                print("> " + str(e))
 
 
 # Defines all methods to manage the context of the parser as a file is being parsed
@@ -366,17 +420,30 @@ class ContextManager:
 if __name__ == "__main__":  # pragma: no cover
     from bootstraparse.modules import parser
     from io import StringIO
+    # io_string = StringIO(
+    #     """<<div
+    #     Hello world
+    #     *how do you do fellow **kids***
+    #     div>>
+    #     # header 1 #
+    #     ! display 1 !"""
+    # )
     io_string = StringIO(
-        """<<div
-        Hello world
-        *how do you do fellow **kids***
-        div>>
-        # header 1 #
-        ! display 1 !"""
+        """- item 0
+        #. item 1
+        #. item 2
+        #. item 3
+        - item 4
+        - item 5
+        
+        pog"""
     )
 
     test = parser.parse_line(io_string)
     ctx = ContextManager(test)
     ctx()
     print('----------------------------------')
+    # for e in ctx.pile:
+    #     rich.inspect(e)
     ctx.print_all()
+    # rich.print(ctx.matched_elements)
