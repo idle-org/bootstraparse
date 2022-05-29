@@ -55,9 +55,9 @@ def log_message(message, level="ERROR"):
     """
     level = level.lower()
     logging.__getattribute__(level)(' ' + message)  # TODO: Error handling on type error
-    logging.__getattribute__(level)(traceback.format_exc())
-    logging.__getattribute__(level)(__GLk())
     if level in ["critical"]:
+        # logging.__getattribute__(level)(traceback.format_exc())
+        # logging.__getattribute__(level)(__GLk())
         print("An unrecoverable error occurred, please check the log file for more information.")
 
 
