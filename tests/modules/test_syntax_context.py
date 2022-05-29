@@ -20,8 +20,8 @@ _type_counterpart_container = [
     (syntax.EtUnderlineToken, 'text:underline', "token", tools.__GLk(1)),
     (syntax.EtStrikethroughToken, 'text:strikethrough', "token", tools.__GLk(1)),
     (syntax.EtCustomSpanToken, None, "self", tools.__GLk(1), __XF),  # Not sure what to do with custom spans
-    (syntax.EtUlistToken, None, "self", tools.__GLk(1), __XF),  # Shouldn't be an error
-    (syntax.EtOlistToken, None, "self", tools.__GLk(1), __XF),  # Shouldn't be an error
+    (syntax.EtUlistToken, None, "self", tools.__GLk(1)),
+    (syntax.EtOlistToken, None, "self", tools.__GLk(1)),
     (syntax.HeaderToken, None, "self", tools.__GLk(1)),
     (syntax.DisplayToken, None, "self", tools.__GLk(1)),
     (syntax.StructuralElementStartToken, None, "self", tools.__GLk(1)),
