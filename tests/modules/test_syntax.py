@@ -304,9 +304,15 @@ dict_advanced_syntax_input_and_expected_output = {
     "se_start": [
         # Matches a start of a structural element
         ("<<div", (sy.StructuralElementStartToken(["div"]),), __GL()),
+        ("<<aside", (sy.StructuralElementStartToken(["aside"]),), __GL()),
+        ("<<article", (sy.StructuralElementStartToken(["article"]),), __GL()),
+        ("<<section", (sy.StructuralElementStartToken(["section"]),), __GL()),
     ],
     "se_end": [
         ("div>>", (sy.StructuralElementEndToken(["div"]),), __GL()),
+        ("aside>>", (sy.StructuralElementEndToken(["aside"]),), __GL()),
+        ("article>>", (sy.StructuralElementEndToken(["article"]),), __GL()),
+        ("section>>", (sy.StructuralElementEndToken(["section"]),), __GL()),
     ],
     "se": [
         # Matches a div element, must be at the beginning of the line, the closing div can be with arguments

@@ -69,7 +69,7 @@ class SemanticType:
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def counterpart(self):  # noqa
+    def counterpart(self):  # noqa # FUTURE: Check for static counterpart implementation
         return None
 
     def to_container(self):
@@ -91,6 +91,7 @@ class AddFirstElementToLabel(SemanticType):
     def __init__(self, content):
         super().__init__(content)
         self.label += ":" + content[0]
+        self._addentum = content[0]
 
 
 class ExplicitSemanticType(SemanticType):
@@ -233,8 +234,7 @@ class StructuralElementEndToken(AddFirstElementToLabel, ClosedSemanticType):
     label = "se:end"
 
     def counterpart(self):
-        return f"se:start:{self.content[0]}"
-        # TODO : correct this monstrosity
+        return f"se:start:{self._addentum}"
 
 
 class HyperlinkToken(SemanticType):
@@ -377,7 +377,7 @@ rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+
 # Base elements
 quotes = pp.Word(r""""'""")
 value = (pps(quotes) + pp.Word(pp.alphanums + r'\._') + pps(pp.match_previous_literal(quotes)) ^
-         pp.common.fnumber)("value")  # TODO: not every number is a float
+         pp.common.number ^ pp.common.fnumber)("value")
 assignation = pp.Group(
     pp.common.identifier('var_name') + pps('=') + value('var_value')
 )("assignation")
