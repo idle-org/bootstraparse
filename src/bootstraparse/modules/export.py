@@ -59,7 +59,7 @@ class ExportManager:
     def __call__(self, export_request):
         return self.transform(export_request)
 
-    def transform(self, export_request):  # TODO: test all return values
+    def transform(self, export_request):
         """
         Transformation function to magically poof ExportRequest tuples into
         ExportResponse tuples using the loaded config.
@@ -82,7 +82,7 @@ class ExportManager:
         start, end, optionals = None, None, []
         try:
             start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
-        except KeyError:  # TODO: Test this in-depth
+        except KeyError:
             log_entries = ["bootstrap", export_request.type, export_request.subtype]
             log_ = error_mngr.dict_check(self.templates, *log_entries)
             print()
@@ -94,7 +94,7 @@ class ExportManager:
                 level='CRITICAL'
             )
         # future: allow for template selection
-        if export_request.optionals != '':  # TODO: Use format_optionals?
+        if export_request.optionals != '':  # FUTURE: Use format_optionals?
             optionals = " " + export_request.optionals
         else:
             optionals = ''

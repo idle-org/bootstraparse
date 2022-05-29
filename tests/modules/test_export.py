@@ -1,5 +1,43 @@
+from itertools import zip_longest
+
 import bootstraparse.modules.export as export
 import pytest
+
+from bootstraparse.modules.tools import __GLk
+
+
+__XF = pytest.mark.xfail
+_all_templates = {
+    "structural_elements": [
+        ["div", __GLk(1)],
+        ["article", __GLk(1)],
+        ["aside", __GLk(1)],
+        ["section", __GLk(1)],
+        ["header", __GLk(1)],
+        ["display", __GLk(1)],
+    ],
+    "inline_elements": [
+        ["link", __GLk(1)],
+        ["em", __GLk(1)],
+        ["strong", __GLk(1)],
+        ["underline", __GLk(1)],
+        ["strikethrough", __GLk(1)],
+        ["image", __GLk(1)],
+        ["custom_0", __GLk(1)],
+    ],
+    "table": [
+        ["table", __GLk(1)],
+        ["t_head", __GLk(1)],
+        ["t_row", __GLk(1)],
+        ["t_cell", __GLk(1)],
+    ],
+}
+
+zipped_templates = [
+    pytest.param(item[0], item[1][0], item[1][1], marks=item[1][2:], id=f"{item[0][0]} : {item[1][0]}")
+    for sublist in [zip_longest([key], value, fillvalue=key) for key, value in _all_templates.items()]
+    for item in sublist
+]
 
 
 def test_export():
@@ -87,3 +125,19 @@ def test_bad_header():
     em = export.ExportManager("test", "test")
     with pytest.raises(KeyError):
         em(export.ExportRequest("structural_elements", "header", "", {}))
+
+
+@pytest.mark.parametrize("export_type, export_subtype, line", zipped_templates)
+def test_get_templates(export_type, export_subtype, line):
+    em = export.ExportManager("test", "test")
+    # assert type(em.get_templates()) is dict
+    print(export_type, export_subtype)
+    r = em(export.ExportRequest(export_type, export_subtype, "", {
+        "header_level": "1",
+        "url": "1",
+        "col_span": "1",
+        "row_span": "1",
+        "display_level": "1"
+
+    }))
+    assert isinstance(r, export.ExportResponse)
