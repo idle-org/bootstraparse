@@ -91,7 +91,7 @@ class AddFirstElementToLabel(SemanticType):
     def __init__(self, content):
         super().__init__(content)
         self.label += ":" + content[0]
-        self._addentum = content[0]
+        self._addendum = content[0]
 
 
 class ExplicitSemanticType(SemanticType):
@@ -198,12 +198,12 @@ class EtCustomSpanToken(SemanticType):
     label = "text:custom_span"
 
 
-class EtUlistToken(SemanticType):
+class EtUlistToken(FinalSemanticType):
     """-"""
     label = "list:ulist"
 
 
-class EtOlistToken(SemanticType):
+class EtOlistToken(FinalSemanticType):
     """#."""
     label = "list:olist"
 
@@ -225,16 +225,16 @@ class DisplayToken(FinalSemanticType):
 
 
 class StructuralElementStartToken(AddFirstElementToLabel, OpenedSemanticType):
-    """<<string"""
+    """<<div|article|section|aside"""
     label = 'se:start'
 
 
 class StructuralElementEndToken(AddFirstElementToLabel, ClosedSemanticType):
-    """string>>"""
+    """div|article|section|aside>>"""
     label = "se:end"
 
     def counterpart(self):
-        return f"se:start:{self._addentum}"
+        return f"se:start:{self._addendum}"
 
 
 class HyperlinkToken(SemanticType):
