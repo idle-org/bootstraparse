@@ -111,15 +111,14 @@ get_from_config = '''@{do_not_remove_p} {whatever_picture} ["whateverpicture", i
 @{do_not_remove_p}{class="shortcut", type=2, name="shortcut"}[type=33, name="shortcut"]{{classinsert}}
 @[do_not_remove_s]{class="picture", type=2, name="picture"}[type=33, name="picture"]{{hello}}
 @[do_not_remove_f]{class="picture", type=2, name="picture"}[12,1222, a=33, b="picture"]{{hello}}
-@{do_not_remove_f}[a=33, b="picture", 42, 4242]{{hello}}
+@{do_not_remove_f}[a=33, b="picture", 42, 4242.477]{{hello}}
 '''
 final_from_config = """<img src="This is a test" whatever_picture/>
 <img src="This is a test" class="shortcut", type=2, name="shortcut" class="classinsert"/>
 This is a test
-This is a test 12.0 1222.0 33.0 picture
-<img src="This is a test 42.0 4242.0 33.0 picture" class="hello"/>
+This is a test 12 1222 33 picture
+<img src="This is a test 42 4242.477 33 picture" class="hello"/>
 """
-# TODO: Fix images
 
 
 @pytest.fixture(autouse=True)
@@ -275,6 +274,7 @@ def test_do_imports():
     testfile = temp_name("index.bpr")
     assert os.path.exists(testfile)
     pp = preparser.PreParser(testfile, env)
+    pp.do_imports()
     f = pp.do_replacements()
     assert f.read() == final_content_index
 
@@ -362,7 +362,6 @@ def test_rich_tree():
     pp.rich_tree(force=False)
 
 
-# @pytest.mark.xfail(reason="Not implemented")
 def test_get_shortcut_from_config():
     from_config = temp_name("get_from_config.bpr")
     make_new_file(from_config, get_from_config)
@@ -376,7 +375,6 @@ def test_get_shortcut_from_config():
     assert assert_readlines_equals(pp.do_replacements().readlines(), final_from_config.split("\n")[:-1])
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_replace():
     replace_file = temp_name("test_preparse.bpr")
     make_new_file(replace_file, get_from_config)
@@ -385,7 +383,7 @@ def test_replace():
     pp.make_import_list()
     pp.export_with_imports()
     image_f = pp.parse_shortcuts_and_images()
-    assert image_f.read() == """\n<img src="shortcut"/>\n<h1>picture</h1>\n"""
+    assert assert_readlines_equals(image_f.readlines(), final_from_config.split("\n")[:-1])
 
 
 def test_early_tree(base_architecture):
