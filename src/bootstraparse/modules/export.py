@@ -16,7 +16,7 @@ from bootstraparse.modules.syntax import split_optionals
 Named tuple containing all necessary information to select the appropriate
 markup element and pass it over to ExportManager.
 """
-ExportRequest = namedtuple("ExportRequest", ["type", "subtype", "optionals", "others"], defaults=[None, None, "", {}])
+ExportRequest = namedtuple("ExportRequest", ["type", "subtype", "optionals", "others"], defaults=[None, None, None, {}])
 
 """
 Named tuple containing all necessary information to proceed with the
@@ -34,7 +34,7 @@ def format_optionals(optionals):
     split = split_optionals(optionals)
     h = split.html_insert
     c = split.class_insert
-    output = f'''{h}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''
+    output = f'''{' ' if h or c else ''}{h}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''
     return output
 
 
@@ -80,7 +80,7 @@ class ExportManager:
         Function for initializing other transform functions.
         :return: start, end, optionals
         """
-        start, end, optionals = None, None, ''
+        start, end = None, None
         try:
             start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
         except KeyError:
@@ -95,10 +95,12 @@ class ExportManager:
                 level='CRITICAL'
             )
         # future: allow for template selection
-        if export_request.optionals != '':  # TODO: Use format_optionals  # error when not giving ""
-            optionals = " "  # + export_request.optionals  # causes error, TODO: investigate
-        else:
-            optionals = ''
+        rich.inspect(export_request.optionals)
+        optionals = format_optionals(export_request.optionals)
+        # if export_request.optionals != '':  # TODO: Use format_optionals  # error when not giving ""
+        #     optionals = " " + export_request.optionals  # causes error, TODO: investigate
+        # else:
+        #     optionals = ''
         return start, end, optionals
 
     def basic_transform(self, export_request):
