@@ -359,8 +359,9 @@ class ContextManager:
                     line_number += 1
 
                 elif token.label in self.dict_lookahead:  # group together multiple one-lines
-                    index += self.lookahead(token, index)
-                    #  TODO : update line number (on top of index)
+                    lookahead_return = self.lookahead(token, index)
+                    index += lookahead_return[0]
+                    line_number += lookahead_return[1]
 
                 # elif token.label in self.dict_advanced_lookahead:  # TODO: advanced lookahead for * logic
 
@@ -386,6 +387,7 @@ class ContextManager:
         Iterates the pile beginning from index and looks for all tokens matching labels with token.
         """
         range_to_encapsulate = 0
+        line_skipped = 0
         i = index + 1
         # print(self.parsed_list)
         while i < len(self.parsed_list):
@@ -399,11 +401,12 @@ class ContextManager:
                 else:
                     self.pile.append(self.parsed_list[i])
                     range_to_encapsulate += 1
+                    line_skipped += 1
             else:
                 break
             i += 1
         self.encapsulate(index, index + range_to_encapsulate)
-        return range_to_encapsulate
+        return range_to_encapsulate, line_skipped
 
     def print_all(self):
         for e in self:
