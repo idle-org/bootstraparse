@@ -1,7 +1,7 @@
 import pytest
 
 from bootstraparse.modules import context_mngr
-from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken, EtUlistToken, EtOlistToken
+from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken, EtUlistToken, EtOlistToken # noqa
 from bootstraparse.modules.tools import __GLk
 __XF = pytest.mark.xfail
 
@@ -52,8 +52,6 @@ _token_list_with_expected_result = [
                 context_mngr.TextContainer([TextToken([1])]),
                 StructuralElementEndToken(["div"])
             ]),
-            None,
-            None,
         ],
         __GLk(1),
     ],
@@ -85,11 +83,6 @@ _token_list_with_expected_result = [
                 EtUlistToken(["c"]),
                 EtUlistToken(["d"]),
                 ]),
-            None,
-            None,
-            None,
-            None,
-            None,
             context_mngr.EtUlistContainer([
                 EtOlistToken(["aa"]),
                 EtOlistToken(["bb"]),
@@ -98,11 +91,6 @@ _token_list_with_expected_result = [
                 EtOlistToken(["dd"]),
                 Linebreak([]),
                 ]),
-            None,
-            None,
-            None,
-            None,
-            None,
             context_mngr.LinebreakContainer([Linebreak([])]),
             context_mngr.TextContainer([TextToken([1])]),
             context_mngr.LinebreakContainer([Linebreak([])]),
