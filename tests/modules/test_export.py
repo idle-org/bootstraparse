@@ -112,8 +112,10 @@ def test_with_optionnals():
 
 @pytest.mark.xfail(reason="Not implemented")
 def test_format_optionnals():
+    import rich
     from bootstraparse.modules import syntax # noqa E402
     export.format_optionals("")
+    rich.inspect(export.format_optionals(""))
     assert False
 
 

@@ -1,7 +1,7 @@
 import pytest
 
 from bootstraparse.modules import context_mngr
-from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken
+from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken, EtUlistToken, EtOlistToken
 from bootstraparse.modules.tools import __GLk
 __XF = pytest.mark.xfail
 
@@ -57,6 +57,59 @@ _token_list_with_expected_result = [
         ],
         __GLk(1),
     ],
+    [
+        [
+            EtUlistToken(["a"]),
+            Linebreak([]),
+            EtUlistToken(["b"]),
+            Linebreak([]),
+            EtUlistToken(["c"]),
+            EtUlistToken(["d"]),
+            EtOlistToken(["aa"]),
+            EtOlistToken(["bb"]),
+            EtOlistToken(["cc"]),
+            Linebreak([]),
+            EtOlistToken(["dd"]),
+            Linebreak([]),
+            Linebreak([]),
+            TextToken([1]),
+            Linebreak([]),
+            TextToken([2]),
+        ],
+        [
+            context_mngr.EtUlistContainer([
+                EtUlistToken(["a"]),
+                Linebreak([]),
+                EtUlistToken(["b"]),
+                Linebreak([]),
+                EtUlistToken(["c"]),
+                EtUlistToken(["d"]),
+                ]),
+            None,
+            None,
+            None,
+            None,
+            None,
+            context_mngr.EtUlistContainer([
+                EtOlistToken(["aa"]),
+                EtOlistToken(["bb"]),
+                EtOlistToken(["cc"]),
+                Linebreak([]),
+                EtOlistToken(["dd"]),
+                Linebreak([]),
+                ]),
+            None,
+            None,
+            None,
+            None,
+            None,
+            context_mngr.LinebreakContainer([Linebreak([])]),
+            context_mngr.TextContainer([TextToken([1])]),
+            context_mngr.LinebreakContainer([Linebreak([])]),
+            context_mngr.TextContainer([TextToken([2])]),
+        ],
+        __GLk(1),
+    ],
 ]  # TODO: Test a lot more thouroughly
 
 _zipped_token_list_with_expected_result = [
@@ -104,6 +157,14 @@ def test_encapsulate_bad_index(base_cm):
 
     with pytest.raises(SystemExit):
         base_cm.encapsulate(2, 1)
+
+    base_cm.encapsulate(1, 2)
+    with pytest.raises(SystemExit):
+        base_cm.encapsulate(2, 2)
+
+    base_cm.pile[0] = {}
+    with pytest.raises(AttributeError):
+        base_cm.encapsulate(0, 0)
 
 
 def test_encapsulate_bad_cm(base_cm):

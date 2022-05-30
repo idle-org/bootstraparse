@@ -266,27 +266,14 @@ def test_subfolder_parsing():
     assert pp.export_with_imports().read() == final_content_superimports
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_do_imports():
     """
     Test the full export function
     """
-    testfile = temp_name("index.bpr")
+    testfile = temp_name(os.path.join(_BASE_PATH_GIVEN, "index.bpr"))
     assert os.path.exists(testfile)
     pp = preparser.PreParser(testfile, env)
     pp.do_imports()
-    f = pp.do_replacements()
-    assert f.read() == final_content_index
-
-
-@pytest.mark.xfail(reason="Not implemented")
-def test_do_replacements():
-    """
-    Test the full replacement function
-    """
-    testfile = temp_name("index.bpr")
-    assert os.path.exists(testfile)
-    pp = preparser.PreParser(testfile, env)
     f = pp.do_replacements()
     assert f.read() == final_content_index
 
