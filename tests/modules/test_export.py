@@ -107,7 +107,7 @@ def test_get_template_error():
 
 def test_with_optionnals():
     em = export.ExportManager("test", "test")
-    em(export.ExportRequest("structural_elements", "div", "boo")) # noqa E741
+    em(export.ExportRequest("structural_elements", "div")) # noqa E741
 
 
 @pytest.mark.xfail(reason="Not implemented")
