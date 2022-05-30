@@ -277,11 +277,6 @@ class ContextManager:
             "table:row": ["table:separator", "table:row"]  # TODO: Implement tables
         }
 
-    def __iter__(self):
-        for e in self.pile:
-            if e:
-                yield e
-
     def encapsulate(self, start, end):
         """
         Method to encapsulate a number of tokens together as a final container object
@@ -380,7 +375,18 @@ class ContextManager:
                 error_mngr.log_exception(e, level="CRITICAL")  # TODO: Be more specific.
             index += 1
 
-        return self.pile  # TODO: Cleanse the pile of None values
+        final_pile = []
+        for p in self.pile:   # cleanses the pile from Nones
+            if p is not None:
+                final_pile.append(p)
+
+        self.pile = final_pile
+        return self.pile
+
+    def __iter__(self):
+        for e in self.pile:
+            if e:
+                yield e
 
     def lookahead(self, token, index):
         """
@@ -448,5 +454,5 @@ if __name__ == "__main__":  # pragma: no cover
     print('----------------------------------')
     # for e in ctx.pile:
     #     rich.inspect(e)
-    ctx.print_all()
-    # rich.print(ctx.matched_elements)
+    # ctx.print_all()
+    rich.print(ctx.pile)
