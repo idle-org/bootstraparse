@@ -109,7 +109,7 @@ class ExportManager:
             )
         # future: allow for template selection
         rich.inspect(export_request.optionals)
-        optionals = format_optionals(export_request.optionals) # TODO : Extensive testing
+        optionals = format_optionals(export_request.optionals)  # TODO : Extensive testing
 
         return start, end, optionals
 

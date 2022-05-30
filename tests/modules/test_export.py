@@ -3,6 +3,7 @@ from itertools import zip_longest
 import bootstraparse.modules.export as export
 import pytest
 
+from bootstraparse.modules import context_mngr, syntax
 from bootstraparse.modules.tools import __GLk
 
 
@@ -143,3 +144,19 @@ def test_get_templates(export_type, export_subtype, line):
 
     }))
     assert isinstance(r, export.ExportResponse)
+
+
+def test_context_cov():
+    em = export.ExportManager("test", "test")
+    lst = [context_mngr.TextContainer([syntax.TextToken("test")])]
+
+    # base = context_mngr.ContextManager(lst)
+    # base.pile = lst
+    # return base
+    convr = export.ContextConverter(lst, em)
+    convr.process_pile()
+    convr.__repr__()
+    convr.readlines()
+    convr.__str__()
+    convr.printall()
+    _ = convr == convr

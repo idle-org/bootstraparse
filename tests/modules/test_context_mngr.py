@@ -1,5 +1,5 @@
 import pytest
-import rich
+
 
 from bootstraparse.modules import context_mngr, export
 from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken, EtUlistToken, EtOlistToken # noqa
@@ -68,8 +68,8 @@ _list_classes_expected_value = [
         context_mngr.EtUlistContainer([
             EtUlistToken([
                 context_mngr.TextContainer([
-                TextToken(['test7']),
-            ]),
+                    TextToken(['test7']),
+                ]),
             ]),
         ]),
         "<ul><li>test7</li></ul>",
@@ -80,8 +80,8 @@ _list_classes_expected_value = [
         context_mngr.EtOlistContainer([
             EtOlistToken([
                 context_mngr.TextContainer([
-                TextToken(['test8']),
-            ]),
+                    TextToken(['test8']),
+                ]),
             ]),
         ]),
         "<ol><li>test8</li></ol>",
@@ -134,23 +134,23 @@ _list_classes_expected_value = [
                 context_mngr.TableRowContainer([
                     context_mngr.TableCellContainer([
                         context_mngr.TextContainer([
-                TextToken(['test13']),
-            ]),
+                            TextToken(['test13']),
+                        ]),
                     ]),
                 ]),
             ]),
             context_mngr.TableRowContainer([
                 context_mngr.TableCellContainer([
                     context_mngr.TextContainer([
-                TextToken(['test14']),
-            ]),
+                        TextToken(['test14']),
+                    ]),
                 ]),
             ]),
             context_mngr.TableRowContainer([
                 context_mngr.TableCellContainer([
                     context_mngr.TextContainer([
-                TextToken(['test15']),
-            ]),
+                        TextToken(['test15']),
+                    ]),
                 ]),
             ]),
         ]),
