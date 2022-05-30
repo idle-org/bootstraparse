@@ -431,7 +431,7 @@ et_custom_span = (
 # markup sums up all in-line elements
 markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
 enhanced_text = pp.ZeroOrMore(
-    markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
+    markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup  # TODO: error when matching *pog*
 ) + pp.Opt(pp.Regex(r'.+')("text").add_parse_action(of_type(TextToken)))
 
 # Multiline elements
