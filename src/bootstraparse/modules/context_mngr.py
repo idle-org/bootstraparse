@@ -13,7 +13,7 @@
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
 import rich
 
-from bootstraparse.modules import syntax, error_mngr
+from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
 
 
@@ -48,6 +48,9 @@ class BaseContainer:
         print(f'Debug for {self.class_name()} <{id(self)}>')
         for k, v in self.map.items():
             print(f'{k} = {v}')
+
+    def export(self, exm):
+        pass
 
     def __len__(self):
         return len(self.content)
@@ -143,11 +146,35 @@ class BaseContainerWithOptionals(BaseContainer):
 
 # Define containers all the Enhanced text elements, divs, headers, list and any element that can be a container
 class TextContainer(BaseContainer):
-    pass
+    def export(self, _):
+        output = ""
+        for element in self.content:
+            if isinstance(element, syntax.TextToken):
+                output += element.content[0]
+            else:
+                log_exception(TypeError(f"{type(element)} found in TextContainer."), level="CRITICAL")
+        return output
 
 
-class EtEmContainer(BaseContainer):
-    pass
+class EtEmContainer(BaseContainer):  # TODO: move methods to BaseContainer, deal with attributes individually
+    type = "inline_elements"
+    subtype = "em"
+    optionals = ''
+    others = ''
+
+    def get_content(self, exm):
+        output = ""
+        for element in self.content:
+            if isinstance(element, BaseContainer):
+                output += element.export(exm)
+        return output
+
+    def export(self, exm):
+        start, end = exm(export.ExportRequest(self.type, self.subtype, self.optionals, self.others))
+
+        output = start + self.get_content(exm) + end
+
+        return output
 
 
 class EtStrongContainer(BaseContainer):
@@ -229,7 +256,8 @@ class TableCellContainer(BaseContainer):
 
 
 class LinebreakContainer(BaseContainer):
-    pass
+    def export(self, _):  # TODO: Observe behaviour when we'll be done, might cause unintended side-effects
+        return "<br/>\n"
 
 
 """
@@ -445,7 +473,7 @@ if __name__ == "__main__":  # pragma: no cover
         - item 4
         - item 5
 
-        pog"""
+         * pog *"""
     )
 
     test = parser.parse_line(io_string)
@@ -454,5 +482,5 @@ if __name__ == "__main__":  # pragma: no cover
     print('----------------------------------')
     # for e in ctx.pile:
     #     rich.inspect(e)
-    # ctx.print_all()
-    rich.print(ctx.pile)
+    ctx.print_all()
+    # rich.print(ctx.pile)
