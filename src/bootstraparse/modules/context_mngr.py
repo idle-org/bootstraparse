@@ -50,7 +50,7 @@ class BaseContainer:
             print(f'{k} = {v}')
 
     def export(self, exm):
-        pass
+        return ""
 
     def __len__(self):
         return len(self.content)
@@ -202,8 +202,8 @@ class EtOlistContainer(BaseContainer):
 
 
 class HyperLinkContainer(BaseContainer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, content=None):
+        super().__init__(content)
         self.map['url'] = ""
     pass
 
@@ -217,15 +217,15 @@ class SeContainer(BaseContainer):
 
 
 class HeaderContainer(BaseContainer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, content=None):
+        super().__init__(content)
         self.map['header_level'] = ''
     pass
 
 
 class DisplayContainer(BaseContainer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, content=None):
+        super().__init__(content)
         self.map['display_level'] = ""
     pass
 
@@ -235,22 +235,22 @@ class TableMainContainer(BaseContainer):
 
 
 class TableHeadContainer(BaseContainer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, content=None):
+        super().__init__(content)
         self.map['colspan'] = ""
     pass
 
 
 class TableRowContainer(BaseContainer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, content=None):
+        super().__init__(content)
         self.map['colspan'] = ""
     pass
 
 
 class TableCellContainer(BaseContainer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, content=None):
+        super().__init__(content)
         self.map['colspan'] = ""
     pass
 

@@ -1,9 +1,174 @@
 import pytest
+import rich
 
-from bootstraparse.modules import context_mngr
+from bootstraparse.modules import context_mngr, export
 from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken, EtUlistToken, EtOlistToken # noqa
 from bootstraparse.modules.tools import __GLk
 __XF = pytest.mark.xfail
+
+
+_list_classes_expected_value = [
+    [
+        context_mngr.TextContainer([
+            TextToken(['test']),
+        ]),
+        "test",
+        __GLk(1),
+    ],
+    [
+        context_mngr.EtEmContainer([
+            context_mngr.TextContainer([
+                TextToken(['test2']),
+            ]),
+        ]),
+        "<em>test2</em>",
+        __GLk(1),
+    ],
+    [
+        context_mngr.EtStrongContainer([
+            context_mngr.TextContainer([
+                TextToken(['test3']),
+            ]),
+        ]),
+        "<strong>test3</strong>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.EtUnderlineContainer([
+            context_mngr.TextContainer([
+                TextToken(['test4']),
+            ]),
+        ]),
+        "<u>test4</u>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.EtStrikethroughContainer([
+            context_mngr.TextContainer([
+                TextToken(['test5']),
+            ]),
+        ]),
+        "<s>test5</s>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.EtCustomSpanContainer([
+            context_mngr.TextContainer([
+                TextToken(['test6']),
+            ]),
+        ]),
+        "<span>test6</span>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.EtUlistContainer([
+            EtUlistToken([
+                context_mngr.TextContainer([
+                TextToken(['test7']),
+            ]),
+            ]),
+        ]),
+        "<ul><li>test7</li></ul>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.EtOlistContainer([
+            EtOlistToken([
+                context_mngr.TextContainer([
+                TextToken(['test8']),
+            ]),
+            ]),
+        ]),
+        "<ol><li>test8</li></ol>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.HyperLinkContainer([
+            context_mngr.TextContainer([
+                TextToken(['test9']),
+            ]),
+        ]),
+        "<a href=\"test9\">test9</a>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.SeContainer([
+            context_mngr.TextContainer([
+                TextToken(['test10']),
+            ]),
+        ]),
+        "<div>test10</div>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.HeaderContainer([
+            context_mngr.TextContainer([
+                TextToken(['test11']),
+            ]),
+        ]),
+        "<h1>test11</h1>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.DisplayContainer([
+            context_mngr.TextContainer([
+                TextToken(['test12']),
+            ]),
+        ]),
+        "<display>test12</display>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.TableMainContainer([
+            context_mngr.TableHeadContainer([
+                context_mngr.TableRowContainer([
+                    context_mngr.TableCellContainer([
+                        context_mngr.TextContainer([
+                TextToken(['test13']),
+            ]),
+                    ]),
+                ]),
+            ]),
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([
+                TextToken(['test14']),
+            ]),
+                ]),
+            ]),
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([
+                TextToken(['test15']),
+            ]),
+                ]),
+            ]),
+        ]),
+        "<table><thead><tr><td>test13</td></tr></thead><tbody><tr><td>test14</td></tr><tr><td>test15</td></tr></tbody></table>",
+        __GLk(1),
+        __XF,
+    ],
+    [
+        context_mngr.LinebreakContainer([]),
+        "<br/>",
+        __GLk(1),
+        __XF,
+    ],
+]
+
+_zipped_list_classes_expected_value = [
+    pytest.param(*elt[:3], marks=elt[3:], id=f"{elt[1]}") for elt in _list_classes_expected_value
+]
 
 _list_classes = [
     context_mngr.TextContainer,
@@ -24,6 +189,7 @@ _list_classes = [
     context_mngr.TableCellContainer,
     context_mngr.LinebreakContainer,
 ]
+
 _base_list = [TextToken([1]), TextToken([2]), TextToken([3]), TextToken([4])]
 
 _token_list_with_expected_result = [
@@ -263,3 +429,22 @@ def test_content_call_raises():
     ctx = context_mngr.ContextManager([StructuralElementEndToken(["1"])])
     with pytest.raises(SystemExit):
         ctx()
+
+
+@pytest.mark.parametrize("container", _list_classes)
+def test_container_export(container, base_cm):
+    em = export.ExportManager(None, None)
+    assert type(container().export(em)) == str
+
+
+@pytest.mark.parametrize("container, export_v, line", _zipped_list_classes_expected_value)
+def test_container_export_value(container, export_v, line):
+    em = export.ExportManager(None, None)
+    assert isinstance(container, context_mngr.BaseContainer)
+    assert container.export(em) == export_v
+
+
+def test_export_error():
+    em = export.ExportManager(None, None)
+    with pytest.raises(SystemExit):
+        context_mngr.TextContainer([TextToken(['e']), None]).export(em)
