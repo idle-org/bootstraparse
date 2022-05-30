@@ -78,8 +78,21 @@ class ExportManager:
     def _get_template(self, export_request):
         """
         Function for initializing other transform functions.
-        :return: start, end, optionals
+
+        Parameters:
+        ----------
+            export_request: ExportRequest tuples
+
+        Returns:
+        -------
+            start: str
+                Start string of the markup element
+            end: str
+                End string of the markup element
+            optionals: syntax.Optionals
+                Optionals object containing html_insert and class_insert
         """
+
         start, end = None, None
         try:
             start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
@@ -96,11 +109,8 @@ class ExportManager:
             )
         # future: allow for template selection
         rich.inspect(export_request.optionals)
-        optionals = format_optionals(export_request.optionals)
-        # if export_request.optionals != '':  # TODO: Use format_optionals  # error when not giving ""
-        #     optionals = " " + export_request.optionals  # causes error, TODO: investigate
-        # else:
-        #     optionals = ''
+        optionals = format_optionals(export_request.optionals) # TODO : Extensive testing
+
         return start, end, optionals
 
     def basic_transform(self, export_request):
