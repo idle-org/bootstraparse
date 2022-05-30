@@ -5,8 +5,9 @@
 #  rsp = ExportResponse("start_string", "end_string")
 #  em = ExportManager(config_file, template_file)
 #  em(ExportRequest()) -> ExportResponse()
+import rich
 
-from bootstraparse.modules import config, pathresolver, error_mngr
+from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
 
 from bootstraparse.modules.syntax import split_optionals
@@ -79,7 +80,7 @@ class ExportManager:
         Function for initializing other transform functions.
         :return: start, end, optionals
         """
-        start, end, optionals = None, None, []
+        start, end, optionals = None, None, ''
         try:
             start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
         except KeyError:
@@ -94,8 +95,8 @@ class ExportManager:
                 level='CRITICAL'
             )
         # future: allow for template selection
-        if export_request.optionals != '':  # FUTURE: Use format_optionals?
-            optionals = " " + export_request.optionals
+        if export_request.optionals != '':  # TODO: Use format_optionals  # error when not giving ""
+            optionals = " "  # + export_request.optionals  # causes error, TODO: investigate
         else:
             optionals = ''
         return start, end, optionals
@@ -163,7 +164,61 @@ class ExportManager:
         return ExportResponse(start, end)
 
 
+class ContextConverter:
+    """
+    Transforms output form context manager into final, printable versions of the containers.
+    """
+    def __init__(self, pile, exporter):
+        """
+        Takes a pile and the exporter object
+        Parameters
+        ----------
+            pile : list[context_mngr.BaseContainer]
+                pile output from the context manager.
+            exporter : ExportManager
+                Our ExportManager
+        """
+        self.pile = pile
+        self.exporter = exporter
+
+    def process_pile(self):
+        """
+        Main method processing the given pile.
+        """
+        for container in self.pile:
+            print(container.export(self.exporter))
+
+    def __str__(self):
+        """
+        Stringifies the entirety of the converted pile
+        """
+        pass
+
+    def readlines(self):
+        """
+        Yields the converted pile line after line
+        """
+        pass
+
+    def __repr__(self):
+        pass
+
+    def printall(self):
+        pass
+
+    def __eq__(self, other):
+        pass
+
+
 if __name__ == '__main__':  # pragma: no cover
-    herbert = ExportManager(cnoifg=None, templates=None)
-    # herbert._get_template(ExportRequest('b', 'c', 'class="hugues"')) # noqa
-    print(herbert.transform(ExportRequest('structural_elements', 'div', 'class="card"')))
+    from bootstraparse.modules import parser
+    from io import StringIO
+
+    io_string = StringIO(
+        """*pog*"""
+    )
+    test = parser.parse_line(io_string)
+    exm = ExportManager(None, None)
+    cxm = context_mngr.ContextManager(test)
+    cxc = ContextConverter(cxm(), exm)
+    cxc.process_pile()
