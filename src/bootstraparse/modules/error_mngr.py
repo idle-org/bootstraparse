@@ -111,6 +111,10 @@ def str_dict_check(dic, *args):
     return "\n".join([f"{args[i]}: {out[i]}" for i in range(len(out))])
 
 
+class BootstraparseError(Exception):
+    pass
+
+
 class ParsingError(Exception):
     """
     Exception class for parsing errors
@@ -146,11 +150,25 @@ class ParsingError(Exception):
             return str(self.message)
 
 
-class MismatchedContainerError(Exception):
+class MismatchedContainerError(BootstraparseError):
     """
     The token is not final and cannot be contained. Indicative of a mismatched token.
     """
-    def __init__(self, token, line=-1):  # FUTURE : Add file name to error
+    def __init__(self, token):  # FUTURE : Add file name to error
         self.token = token
-        self.line = line
+        self.line = token.line_number
         super().__init__(f"Could not process {token.label} at line {token.line_number}.")
+
+
+class LonelyOptionalError(BootstraparseError):
+    """
+    Optional token could not be matched with last element in pile (not a container).
+    """
+    def __init__(self, token, last_in_pile):
+        self.token = token
+        if last_in_pile:
+            super().__init__(f"Could not match token {token} at line {token.line_number} with "
+                             f"last element in pile {last_in_pile} at line {last_in_pile.line_number} (not a container).")
+        else:
+            super().__init__(f"Could not match token {token} at line {token.line_number} "
+                             f"as there was nothing in the pile.")
