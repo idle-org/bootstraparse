@@ -403,6 +403,7 @@ class ContextManager:
                 error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.
             index += 1
 
+        # TODO : make this cleanup in a separate function
         final_pile = []
         for p in self.pile:   # cleanses the pile from Nones
             if p is not None:
