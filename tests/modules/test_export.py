@@ -40,6 +40,14 @@ zipped_templates = [
     for item in sublist
 ]
 
+_opts = syntax.OptionalToken([
+    syntax.OptionalVarToken([
+        syntax.BeAssignToken([["class", "blue"]]),
+        syntax.BeValueToken([123]),
+    ]),
+    syntax.OptionalInsertToken(["var='test', number=11"]),
+])
+
 
 def test_export():
     """
@@ -108,15 +116,13 @@ def test_get_template_error():
 
 def test_with_optionnals():
     em = export.ExportManager("test", "test")
-    em(export.ExportRequest("structural_elements", "div")) # noqa E741
+    em(export.ExportRequest("structural_elements", "div", _opts)) # noqa E741
 
 
 @pytest.mark.xfail(reason="Not implemented")
 def test_format_optionnals():
-    import rich
     from bootstraparse.modules import syntax # noqa E402
-    export.format_optionals("")
-    rich.inspect(export.format_optionals(""))
+    export.format_optionals(_opts)
     assert False
 
 
@@ -141,9 +147,9 @@ def test_get_templates(export_type, export_subtype, line):
         "col_span": "1",
         "row_span": "1",
         "display_level": "1"
-
     }))
     assert isinstance(r, export.ExportResponse)
+    # TODO : Add optional
 
 
 def test_context_cov():

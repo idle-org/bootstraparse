@@ -525,7 +525,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),), __GL()),
         ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),), __GL()),
         ("div>>", (sy.StructuralElementEndToken(["div"]),), __GL()),
-        ("#. Text with *em* and __underline__ and {arguments}{{super-arguments}}[a=1,'ui']", (
+        ("#. Text with *em* and __underline__ and {arguments}{{super-arguments}}[a=1, c=2,'ui']", (
             sy.EtOlistToken([
                 sy.TextToken(["Text with"]),
                 sy.EtEmToken(["*"]),
@@ -545,6 +545,7 @@ dict_advanced_syntax_input_and_expected_output = {
                         ]),
                     sy.OptionalVarToken([
                         sy.BeAssignToken([["a", 1]]),
+                        sy.BeAssignToken([["c", 2]]),
                         sy.BeValueToken(["ui"]),
                         ]),
                     ]),

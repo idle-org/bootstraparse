@@ -10,7 +10,7 @@
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
 
-from bootstraparse.modules.syntax import split_optionals
+from bootstraparse.modules.syntax import split_optionals, OptionalToken
 
 """
 Named tuple containing all necessary information to select the appropriate
@@ -29,7 +29,10 @@ def format_optionals(optionals):
     """
     Function handling parser output optional object, splitting it between html_insert and class_insert
     on one hand and var on the other hand.
-    rtype: str
+    :param optionals: SplitToken namedtuple
+    :type optionals: OptionalToken
+    :return: The formatted optionals (With the pretty whitespace)
+    :rtype: str
     """
     split = split_optionals(optionals)
     h = split.html_insert
@@ -42,9 +45,9 @@ class ExportManager:
     """
     Transforms ExportRequest tuples to ExportResponse tuples with the config-provided appropriate markup.
     """
-    def __init__(self, cnoifg, templates):
+    def __init__(self, cnoifg, templates):  # noqa
         #  self.config = cnoifg  TODO: actually import config
-        #  self.templates = templates  TODO: actually import templates
+        #  self.templates = templates # noqa TODO: actually import templates
         self.config = config.ConfigLoader(pathresolver.b_path("configs/"))
         self.templates = config.ConfigLoader(pathresolver.b_path("templates/"))
         self.advanced_export = {
@@ -127,6 +130,8 @@ class ExportManager:
     def header_transform(self, export_request):
         """
         Specific template for headers.
+        :type export_request: ExportRequest
+        :rtype: ExportResponse
         """
         start, end, optionals = self._get_template(export_request)
         try:
@@ -145,6 +150,7 @@ class ExportManager:
     def display_transform(self, export_request):
         """
         Specific template for display.
+        :type export_request: ExportRequest
         """
         start, end, optionals = self._get_template(export_request)
         start = start.format(optionals=optionals, display_level=export_request.others["display_level"])
@@ -153,6 +159,7 @@ class ExportManager:
     def link_transform(self, export_request):
         """
         Specific template for link.
+        :type export_request: ExportRequest
         """
         start, end, _ = self._get_template(export_request)
         start = start.format(url=export_request.others["url"])
@@ -161,6 +168,7 @@ class ExportManager:
     def t_transform(self, export_request):
         """
         Specific template for table content.
+        :type export_request: ExportRequest
         """
         start, end, _ = self._get_template(export_request)
         start = start.format(col_span=export_request.others["col_span"])
@@ -169,6 +177,7 @@ class ExportManager:
     def image_transform(self, export_request):
         """
         Specific template for images.
+        :type export_request: ExportRequest
         """
         start, end, optionals = self._get_template(export_request)
         end = end.format(optionals=optionals)
@@ -197,7 +206,7 @@ class ContextConverter:
         Main method processing the given pile.
         """
         for container in self.pile:
-            print(container.export(self.exporter))
+            print(container.export(self.exporter))  # TODO : Finish this
 
     def __str__(self):
         """

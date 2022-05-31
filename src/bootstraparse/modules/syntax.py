@@ -13,6 +13,8 @@ import os
 from itertools import zip_longest
 from collections import namedtuple
 
+import rich
+
 from bootstraparse.modules.error_mngr import MismatchedContainerError
 
 import pyparsing as pp
@@ -330,6 +332,13 @@ SplitOptionals = namedtuple(
 
 
 def split_optionals(optionals):
+    """
+    Splits the optional attributes into separate lists.
+    :param optionals: list of optional attributes
+    :type optionals: OptionalToken
+    :return: SplitOptionals object containing the split optionals
+    :rtype: SplitOptionals
+    """
     var_list = []
     var_dict = {}
     ci = ''
@@ -342,11 +351,12 @@ def split_optionals(optionals):
         elif element.label == 'optional:insert':
             hi += " " + element.content[0]
         elif element.label == 'optional:var':
-            for e in element.content.var:
+            rich.inspect(optionals)
+            for e in element.content:
                 if e.label == 'be:var':
-                    var_list.append(e.content.value[0])
+                    var_list.append(e.content[0])
                 elif e.label == 'be:assign':
-                    var_dict[e.content.assignation.var_name] = e.content.assignation.var_value[0]
+                    var_dict[e.content[0][0]] = e.content[0][1]  # Using the names makes it hard to debug
     return SplitOptionals(html_insert=hi[1:], class_insert=ci[1:], var_list=var_list, var_dict=var_dict)
 
 
