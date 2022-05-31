@@ -11,6 +11,7 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
+import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
@@ -20,12 +21,35 @@ class BaseContainer:
     """
     Creates container holding all the elements from the start of a parsed element to its end.
     """
+    type = None
+    subtype = None
+
     def __init__(self, content=None):
         if content is None:
             content = []
         self.content = content
-        self.optionals = []
         self.map = {}
+        self.optionals = None
+
+    def get_content(self, exm):
+        output = ""
+        for element in self.content:
+            if isinstance(element, BaseContainer):
+                output += element.export(exm)
+        return output
+
+    def get_optionals(self):
+        return self.optionals
+
+    def get_others(self):  # noqa
+        return {}
+
+    def export(self, exm):
+        start, end = exm(export.ExportRequest(self.type, self.subtype, self.get_optionals(), self.get_others()))
+
+        output = start + self.get_content(exm) + end
+
+        return output
 
     def add(self, other):
         self.content.append(other)
@@ -47,9 +71,6 @@ class BaseContainer:
         print(f'Debug for {self.class_name()} <{id(self)}>')
         for k, v in self.map.items():
             print(f'{k} = {v}')
-
-    def export(self, exm):
-        return ""
 
     def __len__(self):
         return len(self.content)
@@ -81,11 +102,11 @@ class BaseContainer:
         return True
 
     def __invert__(self):
-        return self.optionals
+        return self.get_optionals()
 
     def __str__(self):
         return '{} ({})'.format(", ".join(map(str, self.content)),
-                                ", ".join(map(str, self.optionals)) if self.optionals != [] else "")
+                                ", ".join(map(str, self.get_optionals())) if self.get_optionals() != [] else "")
 
     def __repr__(self):
         representation = {}
@@ -110,7 +131,7 @@ class BaseContainer:
                 print(ident + "> " + str(e))
         print("")
 
-    def to_container(self):
+    def to_container(self):  # idea: additional parameters for encapsulation
         return self
 
 
@@ -120,13 +141,21 @@ class BaseContainerWithOptionals(BaseContainer):
         self.map['html_insert'] = self.fetch_html_insert
         self.map['class_insert'] = self.fetch_class_insert
 
+    def get_optionals(self):
+        rich.inspect(self.content)
+        rich.inspect(self.content[0])
+        return []
+
+    def get_others(self):
+        return None
+
     def fetch_html_insert(self):
         """
         Returns a list of all html_inserts, and an empty list if none exist.
         :rtype: list
         """
         rlist = []
-        for o in self.optionals:
+        for o in self.get_optionals():
             if o.label == 'optional:insert':
                 rlist += [o]
         return rlist
@@ -137,7 +166,7 @@ class BaseContainerWithOptionals(BaseContainer):
         :rtype: list
         """
         rlist = []
-        for o in self.optionals:
+        for o in self.get_optionals():
             if o.label == 'optional:class':
                 rlist += [o]
         return rlist
@@ -155,52 +184,47 @@ class TextContainer(BaseContainer):
         return output
 
 
-class EtEmContainer(BaseContainer):  # TODO: move methods to BaseContainer, deal with attributes individually
+class EtEmContainer(BaseContainer):
     type = "inline_elements"
     subtype = "em"
-    optionals = ''
-    others = ''
-
-    def get_content(self, exm):
-        output = ""
-        for element in self.content:
-            if isinstance(element, BaseContainer):
-                output += element.export(exm)
-        return output
-
-    def export(self, exm):
-        start, end = exm(export.ExportRequest(self.type, self.subtype, self.optionals, self.others))
-
-        output = start + self.get_content(exm) + end
-
-        return output
 
 
 class EtStrongContainer(BaseContainer):
-    pass
+    type = "inline_elements"
+    subtype = "strong"
 
 
 class EtUnderlineContainer(BaseContainer):
-    pass
+    type = "inline_elements"
+    subtype = "underline"
 
 
 class EtStrikethroughContainer(BaseContainer):
-    pass
+    type = "inline_elements"
+    subtype = "strikethrough"
 
 
 class EtCustomSpanContainer(BaseContainer):
-    pass
+    type = "inline_elements"
+    subtype = "custom_0"  # future: add logic
 
 
 class EtUlistContainer(BaseContainer):
-    pass
+    type = "oneline_elements"
+    subtype = "ulist"
+    children = "list_line"
 
 
 class EtOlistContainer(BaseContainer):
-    pass
+    type = "oneline_elements"
+    subtype = "olist"
+    children = "list_line"
 
 
 class HyperLinkContainer(BaseContainer):
+    type = "inline_elements"
+    subtype = "link"
+
     def __init__(self, content=None):
         super().__init__(content)
         self.map['url'] = ""
@@ -212,10 +236,14 @@ class HyperLinkContainer(BaseContainer):
 
 
 class SeContainer(BaseContainer):
-    pass
+    type = "structural_elements"
+    subtype = "div"  # TODO: add logic
 
 
 class HeaderContainer(BaseContainer):
+    type = "structural_elements"
+    subtype = "header"
+
     def __init__(self, content=None):
         super().__init__(content)
         self.map['header_level'] = ''
@@ -223,6 +251,9 @@ class HeaderContainer(BaseContainer):
 
 
 class DisplayContainer(BaseContainer):
+    type = "structural_elements"
+    subtype = "display"
+
     def __init__(self, content=None):
         super().__init__(content)
         self.map['display_level'] = ""
@@ -234,6 +265,9 @@ class TableSeparatorContainer(BaseContainer):
 
 
 # class TableHeadContainer(BaseContainer):
+#     type = "table"
+#     subtype = "t_head"
+#
 #     def __init__(self, content=None):
 #         super().__init__(content)
 #         self.map['colspan'] = ""
@@ -241,6 +275,9 @@ class TableSeparatorContainer(BaseContainer):
 
 
 class TableRowContainer(BaseContainer):
+    type = "table"
+    subtype = "t_row"
+
     def __init__(self, content=None):
         super().__init__(content)
         self.map['colspan'] = ""
@@ -248,6 +285,9 @@ class TableRowContainer(BaseContainer):
 
 
 class TableCellContainer(BaseContainer):
+    type = "table"
+    subtype = "t_cell"
+
     def __init__(self, content=None):
         super().__init__(content)
         self.map['colspan'] = ""
@@ -302,7 +342,7 @@ class ContextManager:
         self.pile = []
         self.matched_elements = {}
         self.dict_lookahead = {
-            "list:ulist": ["list:ulist"],
+            # "list:ulist": ["list:ulist"],
             "list:olist": ["list:olist"],
             "table:row": ["table:separator", "table:row"]  # TODO: Implement tables
         }
@@ -348,8 +388,8 @@ class ContextManager:
                 raise error
         for i in range(start, end):
             if self.pile[i]:
-                # container.add(self.pile[i].to_container()) # This line transform the self modifiying containers # MONITOR
-                container.add(self.pile[i])  # Could also ignore the first and last element, or ignore the self modifying tokens # noqa : F821
+                # container.add(self.pile[i].to_container()) # This line transform the self modifiying containers # MONITOR # noqa
+                container.add(self.pile[i])  # TODO: ignore the first and last element, or ignore the self modifying tokens # noqa : F821
                 self.pile[i] = None
         container.add(self.pile[end])
         self.pile[end] = None
@@ -384,6 +424,10 @@ class ContextManager:
                     self.encapsulate(index, index)
                     line_number += 1
 
+                elif isinstance(token, syntax.OptionalToken):
+                    self.get_last_container_in_pile(index).optionals = token
+                    self.pile[index] = None
+
                 elif token.label in self.dict_lookahead:  # group together multiple one-lines
                     lookahead_return = self.lookahead(token, index)
                     index += lookahead_return[0]
@@ -406,19 +450,27 @@ class ContextManager:
                 error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.
             index += 1
 
-        # TODO : make this cleanup in a separate function
-        final_pile = []
-        for p in self.pile:   # cleanses the pile from Nones
-            if p is not None:
-                final_pile.append(p)
-
-        self.pile = final_pile
-        return self.pile
+        return self.finalize_pile()
 
     def __iter__(self):
         for e in self.pile:
             if e:
                 yield e
+
+    def finalize_pile(self):
+        """
+        Function for cleaning up of the pile after full contextualisation.
+        Removes Nones and checks for any errors or illogical containers.
+        """
+        final_pile = []
+        for p in self.pile:
+            if p is not None:
+                final_pile.append(p)
+
+        self.pile = final_pile
+
+        # TODO: add cleanup of non-matched elements
+        return self.pile
 
     def lookahead(self, token, index):
         """
@@ -444,6 +496,27 @@ class ContextManager:
             i += 1
         self.encapsulate(index, index + range_to_encapsulate)
         return range_to_encapsulate, line_skipped
+
+    def get_last_container_in_pile(self, index):
+        """
+        Returns the last element in the pile if it is a Container, raises an error otherwise.
+        Return
+        ------
+            BaseContainer
+
+        Raises
+        ------
+            error_mngr.LonelyOptionalError
+        """
+        i = index-1  # skip last token as it is self
+        while i >= 0:
+            if self.pile[i]:
+                if isinstance(self.pile[i], BaseContainer):
+                    return self.pile[i]
+                else:
+                    log_exception(LonelyOptionalError(self.pile[index], self.pile[i]), level="CRITICAL")
+            i -= 1
+        log_exception(LonelyOptionalError(self.pile[index], None), level="CRITICAL")
 
     def print_all(self):
         for e in self:
