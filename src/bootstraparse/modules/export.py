@@ -247,8 +247,14 @@ if __name__ == '__main__':  # pragma: no cover
     from io import StringIO
 
     io_string = StringIO(
-        """<<div
-        div>>{{zob}}"""
+        """<<section
+        <<div
+        <<article
+        <<aside
+        aside>>
+        div>>
+        article>>
+        section>>{{zpb}}"""
     )
     test = parser.parse_line(io_string)
     exm = ExportManager(None, None)
