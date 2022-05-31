@@ -54,7 +54,7 @@ def log_message(message, level="ERROR"):
     :return: None
     """
     level = level.lower()
-    logging.__getattribute__(level)(' ' + message)  # TODO: Error handling on type error
+    logging.__getattribute__(level)(' ' + message)
     if level in ["critical"]:
         # logging.__getattribute__(level)(traceback.format_exc())
         # logging.__getattribute__(level)(__GLk())
@@ -150,7 +150,7 @@ class MismatchedContainerError(Exception):
     """
     The token is not final and cannot be contained. Indicative of a mismatched token.
     """
-    def __init__(self, token, line=-1):  # TODO: context_manager needs to pass over line for error handling
+    def __init__(self, token, line=-1):  # FUTURE : Add file name to error
         self.token = token
         self.line = line
-        super().__init__(f"Could not process {token.label} in line {token.line_number}.")
+        super().__init__(f"Could not process {token.label} at line {token.line_number}.")
