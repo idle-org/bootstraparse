@@ -6,6 +6,7 @@
 #  em = ExportManager(config_file, template_file)
 #  em(ExportRequest()) -> ExportResponse()
 # import rich
+import rich
 
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
@@ -198,36 +199,47 @@ class ContextConverter:
             exporter : ExportManager
                 Our ExportManager
         """
+        self.io_output = StringIO()
         self.pile = pile
         self.exporter = exporter
+        self.io_initialized = False
 
     def process_pile(self):
         """
         Main method processing the given pile.
         """
+        rich.print(self.pile)
         for container in self.pile:
-            print(container.export(self.exporter))  # TODO : Finish this
+            self.io_output.write(container.export(self.exporter))
+        self.io_initialized = True
+        self.io_output.seek(0)
+
+        return self.io_output
 
     def __str__(self):
         """
         Stringifies the entirety of the converted pile
         """
-        pass
+        return str(self.io_output.read())
 
     def readlines(self):
         """
         Yields the converted pile line after line
         """
-        pass
+        return self.io_output.readlines()
 
     def __repr__(self):
-        pass
+        return f"ContextConverter[FileName] <{len(self.pile)}> " \
+               f"Status: {'initialized' if self.io_initialized else 'uninitialized'}"
+        # TODO: deal with filename
 
-    def printall(self):
-        pass
+    def print_all(self):
+        print(self)
 
     def __eq__(self, other):
-        pass
+        if hasattr(other, "__str__"):
+            return str(self) == str(other)
+        return False
 
 
 if __name__ == '__main__':  # pragma: no cover
@@ -235,10 +247,12 @@ if __name__ == '__main__':  # pragma: no cover
     from io import StringIO
 
     io_string = StringIO(
-        """*pog*"""
+        """<<div
+        div>>{{zob}}"""
     )
     test = parser.parse_line(io_string)
     exm = ExportManager(None, None)
     cxm = context_mngr.ContextManager(test)
     cxc = ContextConverter(cxm(), exm)
     cxc.process_pile()
+    cxc.print_all()
