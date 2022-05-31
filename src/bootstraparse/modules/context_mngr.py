@@ -346,7 +346,8 @@ class ContextManager:
                 raise error
         for i in range(start, end):
             if self.pile[i]:
-                container.add(self.pile[i].to_container())
+                # container.add(self.pile[i].to_container()) # This line transform the self modifiying containers # MONITOR
+                container.add(self.pile[i])  # Could also ignore the first and last element, or ignore the self modifying tokens
                 self.pile[i] = None
         container.add(self.pile[end])
         self.pile[end] = None
