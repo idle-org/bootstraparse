@@ -229,15 +229,15 @@ class DisplayContainer(BaseContainer):
     pass
 
 
-class TableMainContainer(BaseContainer):
+class TableSeparatorContainer(BaseContainer):
     pass
 
 
-class TableHeadContainer(BaseContainer):
-    def __init__(self, content=None):
-        super().__init__(content)
-        self.map['colspan'] = ""
-    pass
+# class TableHeadContainer(BaseContainer):
+#     def __init__(self, content=None):
+#         super().__init__(content)
+#         self.map['colspan'] = ""
+#     pass
 
 
 class TableRowContainer(BaseContainer):
@@ -279,6 +279,9 @@ _to_container = {
     "se:start:section": SeContainer,
     "hyperlink": HyperLinkContainer,
     "linebreak": LinebreakContainer,
+    "table:row": TableRowContainer,
+    "table:cell": TableCellContainer,
+    "table:separator": TableSeparatorContainer,
 }
 
 

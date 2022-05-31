@@ -127,38 +127,43 @@ _list_classes_expected_value = [
         __XF,
     ],
     [
-        context_mngr.TableMainContainer([
-            context_mngr.TableHeadContainer([
-                context_mngr.TableRowContainer([
-                    context_mngr.TableCellContainer([
-                        context_mngr.TextContainer([
-                            sy.TextToken(['test13']),
-                        ]),
-                    ]),
-                ]),
-            ]),
+        [
             context_mngr.TableRowContainer([
                 context_mngr.TableCellContainer([
-                    context_mngr.TextContainer([
-                        sy.TextToken(['test14']),
-                    ]),
+                    context_mngr.TextContainer([sy.TextToken(["a"])]),
                 ]),
-            ]),
-            context_mngr.TableRowContainer([
                 context_mngr.TableCellContainer([
-                    context_mngr.TextContainer([
-                        sy.TextToken(['test15']),
-                    ]),
+                    context_mngr.TextContainer([sy.TextToken(["b"])]),
                 ]),
             ]),
-        ]),
-        "<table><thead><tr><td>test13</td></tr></thead><tbody><tr><td>test14</td></tr><tr><td>test15</td></tr></tbody></table>",
+        ],
+        "<table><tr><td>a</td><td>b</td></tr></table>",
         __GLk(1),
         __XF,
     ],
     [
-        context_mngr.LinebreakContainer([]),
-        "<br/>",
+        [
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["a"])]),
+                ]),
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["b"])]),
+                ]),
+            ]),
+            context_mngr.TableSeparatorContainer([
+                sy.TableSeparatorToken(["---", "---"]),
+            ]),
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["c"])]),
+                ]),
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["d"])]),
+                ]),
+            ]),
+        ],
+        "<table><tr><td>a</td><td>b</td></tr><tr></tr><tr><td>c</td><td>d</td></tr></table>",
         __GLk(1),
         __XF,
     ],

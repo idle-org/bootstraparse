@@ -20,14 +20,20 @@ _list_classes = [
     context_mngr.SeContainer,
     context_mngr.HeaderContainer,
     context_mngr.DisplayContainer,
-    context_mngr.TableMainContainer,
-    context_mngr.TableHeadContainer,
+    context_mngr.TableSeparatorContainer,
     context_mngr.TableRowContainer,
     context_mngr.TableCellContainer,
     context_mngr.LinebreakContainer,
 ]
 
 _base_list = [sy.TextToken([1]), sy.TextToken([2]), sy.TextToken([3]), sy.TextToken([4])]
+_opts = sy.OptionalToken([
+    sy.OptionalVarToken([
+        sy.BeAssignToken([["class", "blue"]]),
+        sy.BeValueToken([123]),
+    ]),
+    sy.OptionalInsertToken(["var='test', number=11"]),
+])
 
 _token_list_with_expected_result = [
     [
@@ -233,69 +239,163 @@ _token_list_with_expected_result = [
     ],
     [
         [
-            sy.HeaderToken(["h1"]),
+            sy.HeaderToken(["#", "h1"]),
             sy.TextToken(["a"]),
-            sy.HeaderToken(["h2"]),
+            sy.HeaderToken(["##", "h2"]),
             sy.TextToken(["b"]),
-            sy.HeaderToken(["h3"]),
+            sy.HeaderToken(["###", "h3"]),
             sy.TextToken(["c"]),
-            sy.HeaderToken(["h4"]),
+            sy.HeaderToken(["####", "h4"]),
             sy.TextToken(["d"]),
-            sy.HeaderToken(["h5"]),
+            sy.HeaderToken(["#####", "h5"]),
             sy.TextToken(["e"]),
-            sy.HeaderToken(["h6"]),
+            sy.HeaderToken(["######", "h6"]),
         ],
         [
             context_mngr.HeaderContainer([
-                sy.HeaderToken(["h1"]),
+                sy.HeaderToken(["#", "h1"]),
             ]),
             context_mngr.TextContainer([sy.TextToken(["a"])]),
             context_mngr.HeaderContainer([
-                sy.HeaderToken(["h2"]),
+                sy.HeaderToken(["##", "h2"]),
             ]),
             context_mngr.TextContainer([sy.TextToken(["b"])]),
             context_mngr.HeaderContainer([
-                sy.HeaderToken(["h3"]),
+                sy.HeaderToken(["###", "h3"]),
             ]),
             context_mngr.TextContainer([sy.TextToken(["c"])]),
             context_mngr.HeaderContainer([
-                sy.HeaderToken(["h4"]),
+                sy.HeaderToken(["####", "h4"]),
             ]),
             context_mngr.TextContainer([sy.TextToken(["d"])]),
             context_mngr.HeaderContainer([
-                sy.HeaderToken(["h5"]),
+                sy.HeaderToken(["#####", "h5"]),
             ]),
             context_mngr.TextContainer([sy.TextToken(["e"])]),
             context_mngr.HeaderContainer([
-                sy.HeaderToken(["h6"]),
+                sy.HeaderToken(["######", "h6"]),
             ]),
         ],
         __GLk(1),
     ],
     [
         [
-            sy.DisplayToken(["Display"]),
+            sy.DisplayToken(["!", "Display"]),
             sy.TextToken(["a"]),
         ],
         [
             context_mngr.DisplayContainer([
-                sy.DisplayToken(["Display"]),
+                sy.DisplayToken(["!", "Display"]),
             ]),
             context_mngr.TextContainer([sy.TextToken(["a"])]),
         ],
         __GLk(1),
     ],
-    # context_mngr.TableMainContainer,
-    # context_mngr.TableHeadContainer,
-    # context_mngr.TableRowContainer,
-    # context_mngr.TableCellContainer,
     [
-        [sy.TextToken([1]), sy.Linebreak([])],
         [
-            context_mngr.TextContainer([sy.TextToken([1])]),
-            context_mngr.LinebreakContainer([sy.Linebreak([])])
+            sy.TableRowToken([
+                sy.TableCellToken([
+                    sy.TextToken(["a"]),
+                ]),
+                sy.TableCellToken([
+                    sy.TextToken(["b"]),
+                ]),
+            ]),
+        ],
+        [
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["a"])]),
+                ]),
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["b"])]),
+                ]),
+            ]),
         ],
         __GLk(1),
+        __XF,
+    ],
+    [
+        [
+            sy.TableRowToken([
+                "2",
+                sy.TableCellToken([
+                    sy.TextToken(["a"]),
+                ]),
+                "3",
+                sy.TableCellToken([
+                    sy.TextToken(["b"]),
+                ]),
+            ]),
+        ],
+        [
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([  # MONITOR # The colspan must be taken into account
+                    context_mngr.TextContainer([sy.TextToken(["a"])]),
+                ]),
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["b"])]),
+                ]),
+            ]),
+        ],
+        __GLk(1),
+        __XF,
+    ],
+    [
+        [
+            sy.TableSeparatorToken(["---", "---"]),
+        ],
+        [
+            context_mngr.TableSeparatorContainer([
+                sy.TableSeparatorToken(["---", "---"]),
+            ]),
+        ],
+        __GLk(1),
+        __XF,
+    ],
+    [
+        [
+            sy.TableRowToken([
+                sy.TableCellToken([
+                    sy.TextToken(["a"]),
+                ]),
+                sy.TableCellToken([
+                    sy.TextToken(["b"]),
+                ]),
+            ]),
+            sy.TableSeparatorToken(["---", "---"]),
+            sy.TableRowToken([
+                sy.TableCellToken([
+                    sy.TextToken(["c"]),
+                ]),
+                sy.TableCellToken([
+                    sy.TextToken(["d"]),
+                ]),
+            ]),
+        ],
+        [
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["a"])]),
+                ]),
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["b"])]),
+                ]),
+            ]),
+            context_mngr.TableSeparatorContainer([
+                sy.TableSeparatorToken(["---", "---"]),
+            ]),
+            context_mngr.TableRowContainer([
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["c"])]),
+                ]),
+                context_mngr.TableCellContainer([
+                    context_mngr.TextContainer([sy.TextToken(["d"])]),
+                ]),
+            ]),
+        ],
+        __GLk(1),
+        __XF,
     ],
 ]
 
