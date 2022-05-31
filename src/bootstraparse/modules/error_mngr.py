@@ -156,8 +156,11 @@ class MismatchedContainerError(BootstraparseError):
     """
     def __init__(self, token):  # FUTURE : Add file name to error
         self.token = token
-        self.line = token.line_number
-        super().__init__(f"Could not process {token.label} at line {token.line_number}.")
+        if token:
+            self.line = token.line_number
+        else:
+            self.line = None
+        super().__init__(f"Could not process {token.label} at line {self.line}.")
 
 
 class LonelyOptionalError(BootstraparseError):
@@ -166,9 +169,13 @@ class LonelyOptionalError(BootstraparseError):
     """
     def __init__(self, token, last_in_pile):
         self.token = token
+        if token:
+            self.line = token.line_number
+        else:
+            self.line = None
         if last_in_pile:
-            super().__init__(f"Could not match token {token} at line {token.line_number} with "
+            super().__init__(f"Could not match token {token} at line {self.line} with "
                              f"last element in pile {last_in_pile} at line {last_in_pile.line_number} (not a container).")
         else:
-            super().__init__(f"Could not match token {token} at line {token.line_number} "
+            super().__init__(f"Could not match token {token} at line {self.line} "
                              f"as there was nothing in the pile.")

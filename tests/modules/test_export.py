@@ -171,5 +171,5 @@ def test_context_cov():
     convr.__repr__()
     convr.readlines()
     convr.__str__()
-    convr.printall()
+    convr.print_all()
     _ = convr == convr

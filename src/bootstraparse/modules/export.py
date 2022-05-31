@@ -8,6 +8,7 @@
 # import rich
 import rich
 
+from io import StringIO
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
 
@@ -244,7 +245,6 @@ class ContextConverter:
 
 if __name__ == '__main__':  # pragma: no cover
     from bootstraparse.modules import parser
-    from io import StringIO
 
     io_string = StringIO(
         """<<section
