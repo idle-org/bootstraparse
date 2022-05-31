@@ -45,6 +45,10 @@ class BaseContainer:
         return {}
 
     def export(self, exm):
+        """
+        :type exm: export.ExportManager
+        :rtype : str
+        """
         start, end = exm(export.ExportRequest(self.type, self.subtype, self.get_optionals(), self.get_others()))
 
         output = start + self.get_content(exm) + end
@@ -237,7 +241,9 @@ class HyperLinkContainer(BaseContainer):
 
 class SeContainer(BaseContainer):
     type = "structural_elements"
-    subtype = "div"  # TODO: add logic
+    def export(self, exm):
+        self.subtype = self[0].content[0]
+        return super().export(exm)
 
 
 class HeaderContainer(BaseContainer):
@@ -370,7 +376,7 @@ class ContextManager:
                 level="CRITICAL"
             )
         try:
-            container = _to_container[pile_start.label]()  # noqa : F821
+            container = _to_container[pile_start.label]()  # noqa : F821 # TODO: fix bad error handling on missmatched SE
         except KeyError:
             log_exception(
                 KeyError(f"Element {self.pile[start].label} not in dictionary of tokens-containers correspondences."),
