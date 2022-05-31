@@ -255,7 +255,7 @@ class TableCellContainer(BaseContainer):
 
 
 class LinebreakContainer(BaseContainer):
-    def export(self, _):  # MONITOR: Observe behaviour when we'll be done, might cause unintended side-effects
+    def export(self, _):  # MONITOR: Observe behaviour when we'll be done, might cause unintended side effects
         return "<br/>\n"
 
 
@@ -327,7 +327,7 @@ class ContextManager:
                 level="CRITICAL"
             )
         try:
-            container = _to_container[pile_start.label]()
+            container = _to_container[pile_start.label]()  # noqa : F821
         except KeyError:
             log_exception(
                 KeyError(f"Element {self.pile[start].label} not in dictionary of tokens-containers correspondences."),
@@ -346,7 +346,7 @@ class ContextManager:
         for i in range(start, end):
             if self.pile[i]:
                 # container.add(self.pile[i].to_container()) # This line transform the self modifiying containers # MONITOR
-                container.add(self.pile[i])  # Could also ignore the first and last element, or ignore the self modifying tokens
+                container.add(self.pile[i])  # Could also ignore the first and last element, or ignore the self modifying tokens # noqa : F821
                 self.pile[i] = None
         container.add(self.pile[end])
         self.pile[end] = None

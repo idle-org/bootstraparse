@@ -311,7 +311,7 @@ def of_type(token_class):
 
 def reparse(parse_element):
     """
-    Creates a function which re-parses given match with specified parsing element.
+    Creates a function which reparses given match with specified parsing element.
     :param parse_element: pp object defining desired match
     :return: returns a function parsing given match with specified parsing element
     """
@@ -335,7 +335,7 @@ def split_optionals(optionals):
     ci = ''
     hi = ''
     if not optionals:
-        return SplitOptionals()
+        return SplitOptionals()  # noqa : E741
     for element in optionals.content:
         if element.label == 'optional:class':
             ci += " " + element.content[0]

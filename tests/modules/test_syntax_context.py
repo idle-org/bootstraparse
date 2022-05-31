@@ -45,7 +45,7 @@ _zipped_type_counterpart_container = [
 def test_counterpart_container(type_n, expected_counterpart, expected_container, file_n):
     """Test the .counterpart() and .to_container() method of SemanticTypes."""
     try:
-        token = type_n(["test"])
+        token = type_n(["test"])  # noqa
         token.line_number = 1
         assert token.counterpart() == expected_counterpart
         if expected_container == "error":

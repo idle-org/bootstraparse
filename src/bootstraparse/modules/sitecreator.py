@@ -58,7 +58,7 @@ def env_checker():
     pass
 
 
-def begin_crawling(p_env):
+def begin_crawling(p_env):  # noqa : F811
     """
     Starts reading every file in the userfiles and
     adds them to the crawler object progressively.
@@ -66,7 +66,7 @@ def begin_crawling(p_env):
     pass
 
 
-def begin_pre_parsing(p_env):
+def begin_pre_parsing(p_env):  # noqa : F811
     """
     Create an importTree and checks for conflicts or loops;
     then replaces imports with their contents,
@@ -75,7 +75,7 @@ def begin_pre_parsing(p_env):
     pass
 
 
-def begin_parsing(p_env):
+def begin_parsing(p_env):  # noqa : F811
     """
     For each of the generated files,
     parses element after element and creates
@@ -86,7 +86,7 @@ def begin_parsing(p_env):
     pass
 
 
-def begin_export(p_env):
+def begin_export(p_env):  # noqa : F811
     """
     Replaces all parsed values with their attributed
     correspondences as per the template_manager

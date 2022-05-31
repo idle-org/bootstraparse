@@ -893,7 +893,7 @@ def test_reparse(original_string, reparse_with, expected_output, line_test):
     """
     print()
     print(f"Reparsing string: '{original_string}'")
-    print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': int(line_test)})
+    print("Defined at %(filename)s:%(lineno)d" % {'filename': __file__, 'lineno': int(line_test)}) # noqa
     print(f"With expression: '{reparse_with}'")
     print("Defined at %(filename)s:%(lineno)d" % {'filename': __syntax_file,
                                                   'lineno': __definition_of_syntax_elements[reparse_with]})

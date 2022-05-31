@@ -290,7 +290,7 @@ class PreParser:
         shortcut_s = self.get_element_from_config('aliases', 'images', shortcut)
 
         _, _, var_list, var_dict = export.split_optionals(optionals)
-        request = export.ExportRequest('inline_elements', 'image', optionals)
+        request = export.ExportRequest('inline_elements', 'image', optionals)  # noqa : F841
         output = self.__env.export_mngr(request)
 
         return output.start + self.make_replacements(shortcut_s, *var_list, **var_dict) + output.end

@@ -5,7 +5,7 @@
 #   from bootstraparse.modules.tools import __GLk, __GL, find_*_in_file
 #   __GLk(n) # Returns a file link n traceback objects back
 #   __GL() # Returns a line number at current position
-#   find_*_in_file(file)  # Try to find (class, function or variable) in file and return it's line number
+#   find_*_in_file(file)  # Try to find (class, function or variable) in file and return its line number
 
 import inspect
 import os
@@ -106,7 +106,7 @@ def find_functions_in_file(file_path, list_function_name):  # pragma: no cover (
     :return: Dict of function found and line number
     :rtype: dict
     """
-    return find_string_in_file(file_path, [re.compile(f"$def ({function_name})") for function_name in list_function_name])
+    return find_string_in_file(file_path, [re.compile(f"$def ({function_name})") for function_name in list_function_name])  # noqa
 
 
 def find_classes_in_file(file_path, list_class_name):  # pragma: no cover (Cursed code inspection)
