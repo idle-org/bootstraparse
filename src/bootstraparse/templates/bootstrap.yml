@@ -8,10 +8,10 @@ structural_elements:
 
 inline_elements:
   link: ["<a href=\"{url}\">", "</a>"]
-  em: ["<em{optionals}>", "</em>"]
-  strong: ["<strong{optionals}>", "</strong>"]
-  underline: ["<u{optionals}>", "</u>"]
-  strikethrough: ["<s{optionals}>", "</s>"]
+  em: ["<em>", "</em>"]
+  strong: ["<strong>", "</strong>"]
+  underline: ["<u>", "</u>"]
+  strikethrough: ["<s>", "</s>"]
   image: ["<img src=\"", "\"{optionals}/>"]
   #  future: small
   custom_0: ["<span{optionals}>", "</span>"]
