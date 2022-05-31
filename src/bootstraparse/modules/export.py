@@ -5,7 +5,7 @@
 #  rsp = ExportResponse("start_string", "end_string")
 #  em = ExportManager(config_file, template_file)
 #  em(ExportRequest()) -> ExportResponse()
-import rich
+# import rich
 
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
@@ -108,7 +108,6 @@ class ExportManager:
                 level='CRITICAL'
             )
         # future: allow for template selection
-        rich.inspect(export_request.optionals)
         optionals = format_optionals(export_request.optionals)  # TODO : Extensive testing
 
         return start, end, optionals

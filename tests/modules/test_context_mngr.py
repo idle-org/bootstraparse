@@ -1,8 +1,8 @@
 import pytest
-
+# import rich
 
 from bootstraparse.modules import context_mngr, export
-from bootstraparse.modules.syntax import SemanticType, TextToken, Linebreak, StructuralElementStartToken, StructuralElementEndToken, EtUlistToken, EtOlistToken # noqa
+from bootstraparse.modules import syntax as sy #sy.SemanticType, sy.TextToken, sy.Linebreak, sy.StructuralElementStartToken, sy.StructuralElementEndToken, sy.EtUlistToken, sy.EtOlistToken # noqa
 from bootstraparse.modules.tools import __GLk
 __XF = pytest.mark.xfail
 
@@ -10,7 +10,7 @@ __XF = pytest.mark.xfail
 _list_classes_expected_value = [
     [
         context_mngr.TextContainer([
-            TextToken(['test']),
+            sy.TextToken(['test']),
         ]),
         "test",
         __GLk(1),
@@ -18,7 +18,7 @@ _list_classes_expected_value = [
     [
         context_mngr.EtEmContainer([
             context_mngr.TextContainer([
-                TextToken(['test2']),
+                sy.TextToken(['test2']),
             ]),
         ]),
         "<em>test2</em>",
@@ -27,7 +27,7 @@ _list_classes_expected_value = [
     [
         context_mngr.EtStrongContainer([
             context_mngr.TextContainer([
-                TextToken(['test3']),
+                sy.TextToken(['test3']),
             ]),
         ]),
         "<strong>test3</strong>",
@@ -37,7 +37,7 @@ _list_classes_expected_value = [
     [
         context_mngr.EtUnderlineContainer([
             context_mngr.TextContainer([
-                TextToken(['test4']),
+                sy.TextToken(['test4']),
             ]),
         ]),
         "<u>test4</u>",
@@ -47,7 +47,7 @@ _list_classes_expected_value = [
     [
         context_mngr.EtStrikethroughContainer([
             context_mngr.TextContainer([
-                TextToken(['test5']),
+                sy.TextToken(['test5']),
             ]),
         ]),
         "<s>test5</s>",
@@ -57,7 +57,7 @@ _list_classes_expected_value = [
     [
         context_mngr.EtCustomSpanContainer([
             context_mngr.TextContainer([
-                TextToken(['test6']),
+                sy.TextToken(['test6']),
             ]),
         ]),
         "<span>test6</span>",
@@ -66,9 +66,9 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.EtUlistContainer([
-            EtUlistToken([
+            sy.EtUlistToken([
                 context_mngr.TextContainer([
-                    TextToken(['test7']),
+                    sy.TextToken(['test7']),
                 ]),
             ]),
         ]),
@@ -78,9 +78,9 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.EtOlistContainer([
-            EtOlistToken([
+            sy.EtOlistToken([
                 context_mngr.TextContainer([
-                    TextToken(['test8']),
+                    sy.TextToken(['test8']),
                 ]),
             ]),
         ]),
@@ -91,7 +91,7 @@ _list_classes_expected_value = [
     [
         context_mngr.HyperLinkContainer([
             context_mngr.TextContainer([
-                TextToken(['test9']),
+                sy.TextToken(['test9']),
             ]),
         ]),
         "<a href=\"test9\">test9</a>",
@@ -101,7 +101,7 @@ _list_classes_expected_value = [
     [
         context_mngr.SeContainer([
             context_mngr.TextContainer([
-                TextToken(['test10']),
+                sy.TextToken(['test10']),
             ]),
         ]),
         "<div>test10</div>",
@@ -111,7 +111,7 @@ _list_classes_expected_value = [
     [
         context_mngr.HeaderContainer([
             context_mngr.TextContainer([
-                TextToken(['test11']),
+                sy.TextToken(['test11']),
             ]),
         ]),
         "<h1>test11</h1>",
@@ -121,7 +121,7 @@ _list_classes_expected_value = [
     [
         context_mngr.DisplayContainer([
             context_mngr.TextContainer([
-                TextToken(['test12']),
+                sy.TextToken(['test12']),
             ]),
         ]),
         "<display>test12</display>",
@@ -134,7 +134,7 @@ _list_classes_expected_value = [
                 context_mngr.TableRowContainer([
                     context_mngr.TableCellContainer([
                         context_mngr.TextContainer([
-                            TextToken(['test13']),
+                            sy.TextToken(['test13']),
                         ]),
                     ]),
                 ]),
@@ -142,14 +142,14 @@ _list_classes_expected_value = [
             context_mngr.TableRowContainer([
                 context_mngr.TableCellContainer([
                     context_mngr.TextContainer([
-                        TextToken(['test14']),
+                        sy.TextToken(['test14']),
                     ]),
                 ]),
             ]),
             context_mngr.TableRowContainer([
                 context_mngr.TableCellContainer([
                     context_mngr.TextContainer([
-                        TextToken(['test15']),
+                        sy.TextToken(['test15']),
                     ]),
                 ]),
             ]),
@@ -190,84 +190,281 @@ _list_classes = [
     context_mngr.LinebreakContainer,
 ]
 
-_base_list = [TextToken([1]), TextToken([2]), TextToken([3]), TextToken([4])]
+_base_list = [sy.TextToken([1]), sy.TextToken([2]), sy.TextToken([3]), sy.TextToken([4])]
 
 _token_list_with_expected_result = [
     [
-        [TextToken([1])],
-        [context_mngr.TextContainer([TextToken([1])])],
-        __GLk(1),
-    ],
-    [
-        [TextToken([1]), Linebreak([])],
-        [
-            context_mngr.TextContainer([TextToken([1])]),
-            context_mngr.LinebreakContainer([Linebreak([])])
-        ],
+        [sy.TextToken([1])],
+        [context_mngr.TextContainer([sy.TextToken([1])])],
         __GLk(1),
     ],
     [
         [
-            StructuralElementStartToken(["div"]),
-            TextToken([1]),
-            StructuralElementEndToken(["div"]),
+            sy.StructuralElementStartToken(["div"]),
+            sy.TextToken([1]),
+            sy.StructuralElementEndToken(["div"]),
         ],
         [
             context_mngr.SeContainer([
-                StructuralElementStartToken(["div"]),
-                context_mngr.TextContainer([TextToken([1])]),
-                StructuralElementEndToken(["div"])
+                sy.StructuralElementStartToken(["div"]),
+                context_mngr.TextContainer([sy.TextToken([1])]),
+                sy.StructuralElementEndToken(["div"])
             ]),
         ],
         __GLk(1),
     ],
     [
         [
-            EtUlistToken(["a"]),
-            Linebreak([]),
-            EtUlistToken(["b"]),
-            Linebreak([]),
-            EtUlistToken(["c"]),
-            EtUlistToken(["d"]),
-            EtOlistToken(["aa"]),
-            EtOlistToken(["bb"]),
-            EtOlistToken(["cc"]),
-            Linebreak([]),
-            EtOlistToken(["dd"]),
-            Linebreak([]),
-            Linebreak([]),
-            TextToken([1]),
-            Linebreak([]),
-            TextToken([2]),
+            sy.EtEmToken(["*"]),
+            sy.TextToken(["a"]),
+            sy.EtEmToken(["*"]),
         ],
         [
-            context_mngr.EtUlistContainer([
-                EtUlistToken(["a"]),
-                Linebreak([]),
-                EtUlistToken(["b"]),
-                Linebreak([]),
-                EtUlistToken(["c"]),
-                EtUlistToken(["d"]),
-                ]),
-            context_mngr.EtUlistContainer([
-                EtOlistToken(["aa"]),
-                EtOlistToken(["bb"]),
-                EtOlistToken(["cc"]),
-                Linebreak([]),
-                EtOlistToken(["dd"]),
-                Linebreak([]),
-                ]),
-            context_mngr.LinebreakContainer([Linebreak([])]),
-            context_mngr.TextContainer([TextToken([1])]),
-            context_mngr.LinebreakContainer([Linebreak([])]),
-            context_mngr.TextContainer([TextToken([2])]),
+            context_mngr.EtEmContainer([
+                sy.EtEmToken(["*"]),
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+                sy.EtEmToken(["*"]),
+            ]),
         ],
         __GLk(1),
     ],
-]  # TODO: Test a lot more thouroughly
+    [
+        [
+            sy.EtStrongToken(["**"]),
+            sy.TextToken(["a"]),
+            sy.EtStrongToken(["**"]),
+        ],
+        [
+            context_mngr.EtStrongContainer([
+                sy.EtStrongToken(["**"]),
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+                sy.EtStrongToken(["**"]),
+            ]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.EtUnderlineToken(["__"]),
+            sy.TextToken(["a"]),
+            sy.EtUnderlineToken(["__"]),
+        ],
+        [
+            context_mngr.EtUnderlineContainer([
+                sy.EtUnderlineToken(["__"]),
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+                sy.EtUnderlineToken(["__"]),
+            ]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.EtStrikethroughToken(["~~"]),
+            sy.TextToken(["a"]),
+            sy.EtStrikethroughToken(["~~"]),
+        ],
+        [
+            context_mngr.EtStrikethroughContainer([
+                sy.EtStrikethroughToken(["~~"]),
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+                sy.EtStrikethroughToken(["~~"]),
+            ]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.EtCustomSpanToken(["span", "class", "test"]),
+            sy.TextToken(["a"]),
+            sy.EtCustomSpanToken(["span", "class", "test"]),
+        ],
+        [
+            context_mngr.EtCustomSpanContainer([
+                sy.EtCustomSpanToken(["span", "class", "test"]),
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+                sy.EtCustomSpanToken(["span", "class", "test"]),
+            ]),
+        ],
+        __GLk(1),
+        __XF,
+    ],
+    [
+        [
+            sy.EtUlistToken(["a"]),
+            sy.Linebreak([]),
+            sy.EtUlistToken(["b"]),
+            sy.Linebreak([]),
+            sy.EtUlistToken(["c"]),
+            sy.EtUlistToken(["d"]),
+            sy.EtOlistToken(["aa"]),
+            sy.EtOlistToken(["bb"]),
+            sy.EtOlistToken(["cc"]),
+            sy.Linebreak([]),
+            sy.EtOlistToken(["dd"]),
+            sy.Linebreak([]),
+            sy.Linebreak([]),
+            sy.TextToken([1]),
+            sy.Linebreak([]),
+            sy.TextToken([2]),
+        ],
+        [
+            context_mngr.EtUlistContainer([
+                sy.EtUlistToken(["a"]),
+                sy.Linebreak([]),
+                sy.EtUlistToken(["b"]),
+                sy.Linebreak([]),
+                sy.EtUlistToken(["c"]),
+                sy.EtUlistToken(["d"]),
+                ]),
+            context_mngr.EtUlistContainer([
+                sy.EtOlistToken(["aa"]),
+                sy.EtOlistToken(["bb"]),
+                sy.EtOlistToken(["cc"]),
+                sy.Linebreak([]),
+                sy.EtOlistToken(["dd"]),
+                sy.Linebreak([]),
+                ]),
+            context_mngr.LinebreakContainer([sy.Linebreak([])]),
+            context_mngr.TextContainer([sy.TextToken([1])]),
+            context_mngr.LinebreakContainer([sy.Linebreak([])]),
+            context_mngr.TextContainer([sy.TextToken([2])]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.HyperlinkToken(["a", "href", "http://test.com"]),
+            sy.TextToken(["a"]),
+        ],
+        [
+            context_mngr.HyperLinkContainer([
+                sy.HyperlinkToken(["a", "href", "http://test.com"]),
+            ]),
+            sy.TextToken(["a"]),
+        ],
+        __GLk(1),
+        __XF,
+    ],
+    [
+        [
+            sy.StructuralElementStartToken(["div"]),
+            sy.TextToken(["a"]),
+            sy.StructuralElementEndToken(["div"]),
+        ],
+        [
+            context_mngr.SeContainer([
+                sy.StructuralElementStartToken(["div"]),
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+                sy.StructuralElementEndToken(["div"])
+            ]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.StructuralElementStartToken(["div"]),
+            sy.StructuralElementStartToken(["aside"]),
+            sy.StructuralElementStartToken(["section"]),
+            sy.StructuralElementStartToken(["article"]),
+            sy.TextToken(["a"]),
+            sy.StructuralElementEndToken(["article"]),
+            sy.StructuralElementEndToken(["section"]),
+            sy.StructuralElementEndToken(["aside"]),
+            sy.StructuralElementEndToken(["div"]),
+        ],
+        [
+            context_mngr.SeContainer([
+                sy.StructuralElementStartToken(["div"]),
+                context_mngr.SeContainer([
+                    sy.StructuralElementStartToken(["aside"]),
+                    context_mngr.SeContainer([
+                        sy.StructuralElementStartToken(["section"]),
+                        context_mngr.SeContainer([
+                            sy.StructuralElementStartToken(["article"]),
+                            context_mngr.TextContainer([sy.TextToken(["a"])]),
+                            sy.StructuralElementEndToken(["article"]),
+                        ]),
+                        sy.StructuralElementEndToken(["section"]),
+                    ]),
+                    sy.StructuralElementEndToken(["aside"]),
+                ]),
+                sy.StructuralElementEndToken(["div"]),
+            ]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.HeaderToken(["h1"]),
+            sy.TextToken(["a"]),
+            sy.HeaderToken(["h2"]),
+            sy.TextToken(["b"]),
+            sy.HeaderToken(["h3"]),
+            sy.TextToken(["c"]),
+            sy.HeaderToken(["h4"]),
+            sy.TextToken(["d"]),
+            sy.HeaderToken(["h5"]),
+            sy.TextToken(["e"]),
+            sy.HeaderToken(["h6"]),
+        ],
+        [
+            context_mngr.HeaderContainer([
+                sy.HeaderToken(["h1"]),
+            ]),
+            context_mngr.TextContainer([sy.TextToken(["a"])]),
+            context_mngr.HeaderContainer([
+                sy.HeaderToken(["h2"]),
+            ]),
+            context_mngr.TextContainer([sy.TextToken(["b"])]),
+            context_mngr.HeaderContainer([
+                sy.HeaderToken(["h3"]),
+            ]),
+            context_mngr.TextContainer([sy.TextToken(["c"])]),
+            context_mngr.HeaderContainer([
+                sy.HeaderToken(["h4"]),
+            ]),
+            context_mngr.TextContainer([sy.TextToken(["d"])]),
+            context_mngr.HeaderContainer([
+                sy.HeaderToken(["h5"]),
+            ]),
+            context_mngr.TextContainer([sy.TextToken(["e"])]),
+            context_mngr.HeaderContainer([
+                sy.HeaderToken(["h6"]),
+            ]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.DisplayToken(["Display"]),
+            sy.TextToken(["a"]),
+        ],
+        [
+            context_mngr.DisplayContainer([
+                sy.DisplayToken(["Display"]),
+            ]),
+            context_mngr.TextContainer([sy.TextToken(["a"])]),
+        ],
+        __GLk(1),
+    ],
+    # context_mngr.TableMainContainer,
+    # context_mngr.TableHeadContainer,
+    # context_mngr.TableRowContainer,
+    # context_mngr.TableCellContainer,
+    [
+        [sy.TextToken([1]), sy.Linebreak([])],
+        [
+            context_mngr.TextContainer([sy.TextToken([1])]),
+            context_mngr.LinebreakContainer([sy.Linebreak([])])
+        ],
+        __GLk(1),
+    ],
+]
 
 _zipped_token_list_with_expected_result = [
-    pytest.param(*c[:3], marks=c[3:]) for c in _token_list_with_expected_result
+    pytest.param(*c[:3], marks=c[3:], id=f"[{i}]: {c[1][0].__class__.__name__}")
+    for i, c in enumerate(_token_list_with_expected_result)
 ]
 
 
@@ -285,7 +482,7 @@ def test_container_init(cls):
 
 
 def test_context_manager(base_cm):
-    lst = [SemanticType([1]), SemanticType([2]), SemanticType([3])]
+    lst = [sy.SemanticType([1]), sy.SemanticType([2]), sy.SemanticType([3])]
     base = context_mngr.ContextManager(lst)
     base.pile = lst
 
@@ -322,7 +519,7 @@ def test_encapsulate_bad_index(base_cm):
 
 
 def test_encapsulate_bad_cm(base_cm):
-    base_cm.pile[1] = SemanticType([1])
+    base_cm.pile[1] = sy.SemanticType([1])
     with pytest.raises(SystemExit):
         base_cm.encapsulate(1, 2)
 
@@ -426,7 +623,7 @@ def test_context_call(init_list, expected, file_line):
 
 
 def test_content_call_raises():
-    ctx = context_mngr.ContextManager([StructuralElementEndToken(["1"])])
+    ctx = context_mngr.ContextManager([sy.StructuralElementEndToken(["1"])])
     with pytest.raises(SystemExit):
         ctx()
 
@@ -447,4 +644,4 @@ def test_container_export_value(container, export_v, line):
 def test_export_error():
     em = export.ExportManager(None, None)
     with pytest.raises(SystemExit):
-        context_mngr.TextContainer([TextToken(['e']), None]).export(em)
+        context_mngr.TextContainer([sy.TextToken(['e']), None]).export(em)

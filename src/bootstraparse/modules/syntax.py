@@ -503,6 +503,7 @@ line_to_replace = pp.OneOrMore(
     ^ alias.add_parse_action(of_type(AliasToken))
 ) ^ pp.rest_of_line('text').add_parse_action(of_type(TextToken))
 
+
 ##############################################################################
 # Temporary tests
 ##############################################################################

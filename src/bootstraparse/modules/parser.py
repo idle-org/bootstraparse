@@ -4,7 +4,6 @@
 #   from bootstraparse.modules.parser import parse_line
 #   parse_line(io) -> [element, element, element]
 
-# TODO: decide the parser scope
 from io import StringIO
 
 import bootstraparse.modules.syntax as syntax
