@@ -102,5 +102,18 @@ def test_dict_str():
     assert error_mngr.str_dict_check({"test": {"test3": "test5"}}, "test", "test3") == "test: True\ntest3: True"
 
 
+def test_weird_exception_cases():
+    with pytest.raises(error_mngr.MismatchedContainerError):
+        raise(error_mngr.MismatchedContainerError(None))
+
+    with pytest.raises(error_mngr.LonelyOptionalError):
+        raise(error_mngr.LonelyOptionalError(None, None))
+
+    from typing import NamedTuple
+    tk = NamedTuple("falsetoken", [("line_number", int), ("label", str)])(1, "test")
+    with pytest.raises(error_mngr.LonelyOptionalError):
+        raise(error_mngr.LonelyOptionalError(tk, None))
+
+
 if __name__ == '__main__':
     TestLogging().test_init_logging()

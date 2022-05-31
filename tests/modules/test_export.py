@@ -172,4 +172,9 @@ def test_context_cov():
     convr.readlines()
     convr.__str__()
     convr.print_all()
-    _ = convr == convr
+
+    class A:
+        pass
+
+    assert convr == convr
+    assert convr != A()

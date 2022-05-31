@@ -238,9 +238,7 @@ class ContextConverter:
         print(self)
 
     def __eq__(self, other):
-        if hasattr(other, "__str__"):
-            return str(self) == str(other)
-        return False
+        return str(self) == str(other)
 
 
 if __name__ == '__main__':  # pragma: no cover
