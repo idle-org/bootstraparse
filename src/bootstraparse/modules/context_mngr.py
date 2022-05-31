@@ -12,6 +12,7 @@
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
 # import rich
+import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
@@ -426,7 +427,6 @@ class ContextManager:
         i = index + 1
         # print(self.parsed_list)
         while i < len(self.parsed_list):
-            # print(token.label, " -- ", self.parsed_list[i].label)
             if self.parsed_list[i].label in self.dict_lookahead[token.label]:
                 self.pile.append(self.parsed_list[i])
                 range_to_encapsulate += 1
@@ -437,7 +437,7 @@ class ContextManager:
                     self.pile.append(self.parsed_list[i])
                     range_to_encapsulate += 1
                     line_skipped += 1
-            else:
+            else:  # pragma: no cover Python<3.10 doesn't see this as covered, but it actually is.
                 break
             i += 1
         self.encapsulate(index, index + range_to_encapsulate)
