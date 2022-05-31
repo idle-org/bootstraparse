@@ -134,17 +134,17 @@ _token_list_with_expected_result = [
     ],
     [
         [
-            sy.EtUlistToken(["a"]),
+            sy.EtUlistToken([sy.TextToken(["a"])]),
             sy.Linebreak([]),
-            sy.EtUlistToken(["b"]),
+            sy.EtUlistToken([sy.TextToken(["b"])]),
             sy.Linebreak([]),
-            sy.EtUlistToken(["c"]),
-            sy.EtUlistToken(["d"]),
-            sy.EtOlistToken(["aa"]),
-            sy.EtOlistToken(["bb"]),
-            sy.EtOlistToken(["cc"]),
+            sy.EtUlistToken([sy.TextToken(["c"])]),
+            sy.EtUlistToken([sy.TextToken(["d"])]),
+            sy.EtOlistToken([sy.TextToken(["aa"])]),
+            sy.EtOlistToken([sy.TextToken(["bb"])]),
+            sy.EtOlistToken([sy.TextToken(["cc"])]),
             sy.Linebreak([]),
-            sy.EtOlistToken(["dd"]),
+            sy.EtOlistToken([sy.TextToken(["dd"])]),
             sy.Linebreak([]),
             sy.Linebreak([]),
             sy.TextToken([1]),
@@ -153,19 +153,19 @@ _token_list_with_expected_result = [
         ],
         [
             context_mngr.EtUlistContainer([
-                sy.EtUlistToken(["a"]),
+                sy.EtUlistToken([sy.TextToken(["a"])]),
                 sy.Linebreak([]),
-                sy.EtUlistToken(["b"]),
+                sy.EtUlistToken([sy.TextToken(["b"])]),
                 sy.Linebreak([]),
-                sy.EtUlistToken(["c"]),
-                sy.EtUlistToken(["d"]),
+                sy.EtUlistToken([sy.TextToken(["c"])]),
+                sy.EtUlistToken([sy.TextToken(["d"])]),
                 ]),
             context_mngr.EtUlistContainer([
-                sy.EtOlistToken(["aa"]),
-                sy.EtOlistToken(["bb"]),
-                sy.EtOlistToken(["cc"]),
+                sy.EtOlistToken([sy.TextToken(["aa"])]),
+                sy.EtOlistToken([sy.TextToken(["bb"])]),
+                sy.EtOlistToken([sy.TextToken(["cc"])]),
                 sy.Linebreak([]),
-                sy.EtOlistToken(["dd"]),
+                sy.EtOlistToken([sy.TextToken(["dd"])]),
                 sy.Linebreak([]),
                 ]),
             context_mngr.LinebreakContainer([sy.Linebreak([])]),
@@ -397,6 +397,27 @@ _token_list_with_expected_result = [
         __GLk(1),
         __XF,
     ],
+    [
+        [
+            sy.EtOlistToken([
+                sy.TextToken(["a"]),
+                _opts,
+            ]),
+            sy.EtUlistToken([
+                sy.TextToken(["b"]),
+                _opts,
+            ]),
+        ],
+        [
+            context_mngr.EtOlistContainer([
+                sy.EtOlistToken([sy.TextToken(["a"]), _opts]),
+            ]),
+            context_mngr.EtOlistContainer([
+                sy.EtUlistToken([sy.TextToken(["b"]), _opts]),
+            ]),
+        ],
+        __GLk(1),  # TODO : Add all optionals
+    ],
 ]
 
 _zipped_token_list_with_expected_result = [
@@ -565,10 +586,12 @@ def test_content_call_raises():
         ctx()
 
 
+@pytest.mark.xfail(reason="Not implemented")
 @pytest.mark.parametrize("container", _list_classes)
 def test_container_export(container, base_cm):
     em = export.ExportManager(None, None)
     assert type(container().export(em)) == str
+    assert container(_base_list).export(em) == str
 
 
 def test_export_error():

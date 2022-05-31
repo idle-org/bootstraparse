@@ -4,6 +4,13 @@ from bootstraparse.modules import context_mngr, export
 from bootstraparse.modules import syntax as sy #sy.SemanticType, sy.TextToken, sy.Linebreak, sy.StructuralElementStartToken, sy.StructuralElementEndToken, sy.EtUlistToken, sy.EtOlistToken # noqa
 from bootstraparse.modules.tools import __GLk
 __XF = pytest.mark.xfail
+_opts = sy.OptionalToken([
+    sy.OptionalVarToken([
+        sy.BeAssignToken([["class", "blue"]]),
+        sy.BeValueToken([123]),
+    ]),
+    sy.OptionalInsertToken(["var='test', number=11"]),
+])
 
 _list_classes_expected_value = [
     [
@@ -167,6 +174,22 @@ _list_classes_expected_value = [
         __GLk(1),
         __XF,
     ],
+    [
+        [
+            context_mngr.EtOlistContainer([
+                sy.EtOlistToken([
+                    context_mngr.TextContainer([
+                        sy.TextToken(['test13']),
+                    ]),
+                    _opts,
+                ]),
+            ]),
+        ],
+        "<ol><li>test13</li></ol>",
+        __GLk(1),
+        __XF,
+    ],
+
 ]
 
 _zipped_list_classes_expected_value = [
