@@ -490,7 +490,7 @@ def test_context_manager(base_cm):
         assert e == v
 
 
-def test_encapsulate(base_cm):  # TODO : be more thourough
+def test_encapsulate(base_cm):  # Robustness is tested in test_container_export_value
     base_cm.encapsulate(1, 2)
     ctn = context_mngr.TextContainer()
     ctn.add(_base_list[1])

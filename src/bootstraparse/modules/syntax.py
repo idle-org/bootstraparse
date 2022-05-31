@@ -166,8 +166,7 @@ class TextToken(EmptySemanticType):
         return self
 
 
-# TODO: check tokens doc
-# TODO: all one-line elements need to inherit FinalSemanticType
+# FUTURE: all one-line elements should to inherit FinalSemanticType
 class EnhancedToken(ExplicitSemanticType):
     """Mother of all EtTokens"""
     label = "text:enhanced"

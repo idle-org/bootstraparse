@@ -11,8 +11,6 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
-# import rich
-import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
@@ -257,7 +255,7 @@ class TableCellContainer(BaseContainer):
 
 
 class LinebreakContainer(BaseContainer):
-    def export(self, _):  # TODO: Observe behaviour when we'll be done, might cause unintended side-effects
+    def export(self, _):  # MONITOR: Observe behaviour when we'll be done, might cause unintended side-effects
         return "<br/>\n"
 
 
@@ -402,7 +400,7 @@ class ContextManager:
                 else:  # starting token by default (can cause unintended behaviours on bad implementations)
                     self._add_matched(token.label, index)
             except MismatchedContainerError as e:
-                error_mngr.log_exception(e, level="CRITICAL")  # TODO: Be more specific.
+                error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.
             index += 1
 
         final_pile = []
