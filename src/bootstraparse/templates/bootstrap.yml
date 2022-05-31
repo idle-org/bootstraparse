@@ -16,6 +16,11 @@ inline_elements:
   #  future: small
   custom_0: ["<span{optionals}>", "</span>"]
 
+oneline_elements:
+  ulist: ["<ul{optionals}>", "</ul>"]
+  olist: ["<ol{optionals}>", "</ol>"]
+  list_line: ["<li{optionals}>", "</li>"]
+
 table:
   table: ["<table{optionals}>", "</table>"]
   t_head: ["<th{col_span}>", "</th>"]
