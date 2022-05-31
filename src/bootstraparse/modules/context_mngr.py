@@ -11,10 +11,9 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
-import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
-from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message  # noqa
+from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message, LonelyOptionalError # noqa
 
 
 class BaseContainer:
@@ -24,12 +23,14 @@ class BaseContainer:
     type = None
     subtype = None
 
-    def __init__(self, content=None):
+    def __init__(self, content=None, optionals=None, others=None):
         if content is None:
             content = []
+        if others is None:
+            self.others = {}
         self.content = content
         self.map = {}
-        self.optionals = None
+        self.optionals = optionals
 
     def get_content(self, exm):
         output = ""
@@ -41,8 +42,8 @@ class BaseContainer:
     def get_optionals(self):
         return self.optionals
 
-    def get_others(self):  # noqa
-        return {}
+    def get_others(self):
+        return self.others
 
     def export(self, exm):
         """
@@ -103,6 +104,17 @@ class BaseContainer:
         for e, f in zip(self, other):
             if e != f:
                 return False
+
+        if self.get_optionals() != other.get_optionals():
+            return False
+
+        if len(self.get_others()) != len(other.get_others()):
+            return False
+
+        for k, v in self.get_others().items():
+            if v != other.get_others()[k]:
+                return False
+
         return True
 
     def __invert__(self):
@@ -110,7 +122,7 @@ class BaseContainer:
 
     def __str__(self):
         return '{} ({})'.format(", ".join(map(str, self.content)),
-                                ", ".join(map(str, self.get_optionals())) if self.get_optionals() != [] else "")
+                                ", ".join(map(str, self.get_optionals())) if self.get_optionals() else "")
 
     def __repr__(self):
         representation = {}
@@ -119,11 +131,13 @@ class BaseContainer:
                 representation[type(content)] += 1
             else:
                 representation[type(content)] = 1
-        return "{}({})".format(
+        return "{}({}){}{}".format(
             self.class_name(),
             ", ".join(
                 [f'{index.__name__}: {value}' for index, value in representation.items()]
-            )
+            ),
+            f" Opts[{len(self.get_optionals().content)}]" if self.get_optionals() else "",
+            f" Otrs[{len(self.get_others())}]" if self.get_others() else ""
         )
 
     def print_all(self, ident=''):
@@ -137,43 +151,6 @@ class BaseContainer:
 
     def to_container(self):  # idea: additional parameters for encapsulation
         return self
-
-
-class BaseContainerWithOptionals(BaseContainer):
-    def __init__(self):
-        super().__init__()
-        self.map['html_insert'] = self.fetch_html_insert
-        self.map['class_insert'] = self.fetch_class_insert
-
-    def get_optionals(self):
-        rich.inspect(self.content)
-        rich.inspect(self.content[0])
-        return []
-
-    def get_others(self):
-        return None
-
-    def fetch_html_insert(self):
-        """
-        Returns a list of all html_inserts, and an empty list if none exist.
-        :rtype: list
-        """
-        rlist = []
-        for o in self.get_optionals():
-            if o.label == 'optional:insert':
-                rlist += [o]
-        return rlist
-
-    def fetch_class_insert(self):
-        """
-        Returns a list of all class_inserts, and an empty list if none exist.
-        :rtype: list
-        """
-        rlist = []
-        for o in self.get_optionals():
-            if o.label == 'optional:class':
-                rlist += [o]
-        return rlist
 
 
 # Define containers all the Enhanced text elements, divs, headers, list and any element that can be a container
@@ -229,8 +206,8 @@ class HyperLinkContainer(BaseContainer):
     type = "inline_elements"
     subtype = "link"
 
-    def __init__(self, content=None):
-        super().__init__(content)
+    def __init__(self, content=None, optionals=None, others=None):
+        super().__init__(content, optionals, others)
         self.map['url'] = ""
     pass
 
@@ -241,6 +218,7 @@ class HyperLinkContainer(BaseContainer):
 
 class SeContainer(BaseContainer):
     type = "structural_elements"
+
     def export(self, exm):
         self.subtype = self[0].content[0]
         return super().export(exm)
@@ -250,8 +228,8 @@ class HeaderContainer(BaseContainer):
     type = "structural_elements"
     subtype = "header"
 
-    def __init__(self, content=None):
-        super().__init__(content)
+    def __init__(self, content=None, optionals=None, others=None):
+        super().__init__(content, optionals, others)
         self.map['header_level'] = ''
     pass
 
@@ -260,8 +238,8 @@ class DisplayContainer(BaseContainer):
     type = "structural_elements"
     subtype = "display"
 
-    def __init__(self, content=None):
-        super().__init__(content)
+    def __init__(self, content=None, optionals=None, others=None):
+        super().__init__(content, optionals, others)
         self.map['display_level'] = ""
     pass
 
@@ -274,8 +252,8 @@ class TableSeparatorContainer(BaseContainer):
 #     type = "table"
 #     subtype = "t_head"
 #
-#     def __init__(self, content=None):
-#         super().__init__(content)
+#     def __init__(self, content=None, optionals=None, others=None):
+#         super().__init__(content, optionals, others)
 #         self.map['colspan'] = ""
 #     pass
 
@@ -284,8 +262,8 @@ class TableRowContainer(BaseContainer):
     type = "table"
     subtype = "t_row"
 
-    def __init__(self, content=None):
-        super().__init__(content)
+    def __init__(self, content=None, optionals=None, others=None):
+        super().__init__(content, optionals, others)
         self.map['colspan'] = ""
     pass
 
@@ -294,8 +272,8 @@ class TableCellContainer(BaseContainer):
     type = "table"
     subtype = "t_cell"
 
-    def __init__(self, content=None):
-        super().__init__(content)
+    def __init__(self, content=None, optionals=None, others=None):
+        super().__init__(content, optionals, others)
         self.map['colspan'] = ""
     pass
 
@@ -348,7 +326,7 @@ class ContextManager:
         self.pile = []
         self.matched_elements = {}
         self.dict_lookahead = {
-            # "list:ulist": ["list:ulist"],
+            "list:ulist": ["list:ulist"],
             "list:olist": ["list:olist"],
             "table:row": ["table:separator", "table:row"]  # TODO: Implement tables
         }

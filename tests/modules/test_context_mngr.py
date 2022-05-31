@@ -1,5 +1,6 @@
 import pytest
 # import rich
+import rich
 
 from bootstraparse.modules import context_mngr, export
 from bootstraparse.modules import syntax as sy #sy.SemanticType, sy.TextToken, sy.Linebreak, sy.StructuralElementStartToken, sy.StructuralElementEndToken, sy.EtUlistToken, sy.EtOlistToken # noqa
@@ -34,6 +35,14 @@ _opts = sy.OptionalToken([
     ]),
     sy.OptionalInsertToken(["var='test', number=11"]),
 ])
+_others = {
+    "header_level": "1",
+    "display_level": "1",
+    "col_span": "1",
+    "row_span": "1",
+    "url": "1",
+    "test": "1",
+}
 
 _token_list_with_expected_result = [
     [
@@ -401,20 +410,20 @@ _token_list_with_expected_result = [
         [
             sy.EtOlistToken([
                 sy.TextToken(["a"]),
-                _opts,
             ]),
+            _opts,
             sy.EtUlistToken([
                 sy.TextToken(["b"]),
-                _opts,
             ]),
+            _opts,
         ],
         [
             context_mngr.EtOlistContainer([
-                sy.EtOlistToken([sy.TextToken(["a"]), _opts]),
-            ]),
+                sy.EtOlistToken([sy.TextToken(["a"])]),
+            ], _opts),
             context_mngr.EtOlistContainer([
-                sy.EtUlistToken([sy.TextToken(["b"]), _opts]),
-            ]),
+                sy.EtUlistToken([sy.TextToken(["b"])]),
+            ], _opts),
         ],
         __GLk(1),  # TODO : Add all optionals
     ],
@@ -500,7 +509,6 @@ def test_matched_functions(base_cm):
 
 def test_context_mngr():
     base = context_mngr.BaseContainer()
-    assert base is not None
     assert base.class_name() == 'BaseContainer'
     base.add('test')
     assert base[0] == 'test'
@@ -516,44 +524,61 @@ def test_context_mngr():
     base.add("test4")
     assert base[0:2] == ['test3', 'test2']
     assert base.__getslice__(0, 2) == ['test3', 'test2']
-    assert base == ['test3', 'test2', 'test4']
+
+    base2 = context_mngr.BaseContainer(["test3", "test2", "test4"])
+    assert base == base2
     assert base != ['test3', 'test2', 'test5']
     assert base != ['test3', 'test2']
     assert type(repr(base)) == str
     assert type(str(base)) == str
-    assert ~base == []
+    assert ~base is None
     base.map = {'test': lambda: "test3"}
     assert base >> "test" == 'test3'
     assert base != 1
+    assert hasattr(base, "get_others")
+    assert hasattr(base, "get_optionals")
+    assert base.get_optionals() is None
+    assert base.get_others() is not None
+    base2.others = _others
+    assert base2 != base
+    base.others = _others.copy()
+    assert base == base2
+    base.optionals = _opts
+    assert base != base2
+    base2.optionals = _opts
+    assert base == base2
+    base.others["test"] = "test3"
+    assert base != base2
+    base.debug_map()
 
-
-def test_base_container_with_optionals():
-    base = context_mngr.BaseContainerWithOptionals()
-    assert base is not None
-
-    assert base.class_name() == 'BaseContainerWithOptionals'
-    assert base.debug_map() is None
-
-    base.add('test')
-    assert base[0] == 'test'
-    assert len(base) == 1
-
-    assert base.fetch_html_insert() == []
-
-    class OI:
-        label = 'optional:insert'
-
-    class CI:
-        label = 'optional:class'
-
-    i, c = OI(), CI()
-    base.optionals = [i, c]
-    assert base.fetch_html_insert() == [i]
-    assert base.fetch_class_insert() == [c]
+#
+# def test_base_container_with_optionals():
+#     base = context_mngr.BaseContainer()
+#     assert base is not None
+#
+#     assert base.class_name() == 'BaseContainerWithOptionals'
+#     assert base.debug_map() is None
+#
+#     base.add('test')
+#     assert base[0] == 'test'
+#     assert len(base) == 1
+#
+#     assert base.fetch_html_insert() == []
+#
+#     class OI:
+#         label = 'optional:insert'
+#
+#     class CI:
+#         label = 'optional:class'
+#
+#     i, c = OI(), CI()
+#     base.optionals = [i, c]
+#     assert base.fetch_html_insert() == [i]
+#     assert base.fetch_class_insert() == [c]
 
 
 def test_print():
-    base = context_mngr.BaseContainerWithOptionals()
+    base = context_mngr.BaseContainer()
     assert base is not None
     base.print_all()
     base.content = [context_mngr.BaseContainer(), context_mngr.BaseContainer(), "test", 3, context_mngr.BaseContainer()]
@@ -598,3 +623,32 @@ def test_export_error():
     em = export.ExportManager(None, None)
     with pytest.raises(SystemExit):
         context_mngr.TextContainer([sy.TextToken(['e']), None]).export(em)
+
+
+def test_get_last_container_in_pile(base_cm):
+    base_cm()
+    rich.inspect(base_cm.pile[3])
+    rich.inspect(base_cm.get_last_container_in_pile(3))
+    assert base_cm.get_last_container_in_pile(3) == base_cm.pile[2]  # Always returns element before
+    assert base_cm.get_last_container_in_pile(2) == base_cm.pile[1]
+    base_cm.pile[2] = None
+    assert base_cm.get_last_container_in_pile(2) == base_cm.pile[1]
+    assert base_cm.get_last_container_in_pile(3) == base_cm.pile[1]
+    base_cm.pile[1] = None
+    assert base_cm.get_last_container_in_pile(2) == base_cm.pile[0]
+    assert base_cm.get_last_container_in_pile(3) == base_cm.pile[0]
+    assert base_cm.get_last_container_in_pile(4) == base_cm.pile[3]
+    base_cm.pile[3] = None
+    assert base_cm.get_last_container_in_pile(3) == base_cm.pile[0]
+    assert base_cm.get_last_container_in_pile(4) == base_cm.pile[0]
+    assert base_cm.get_last_container_in_pile(2) == base_cm.pile[0]
+    tk = sy.TextToken(['e'])
+    tk.line_number = 1
+    base_cm.pile[1] = tk
+    with pytest.raises(SystemExit):
+        base_cm.get_last_container_in_pile(3)
+
+    base_cm.pile[1] = None
+    base_cm.pile[0] = None
+    with pytest.raises(SystemExit):
+        base_cm.get_last_container_in_pile(3)

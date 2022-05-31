@@ -37,7 +37,6 @@ _list_classes_expected_value = [
         ]),
         "<strong>test3</strong>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.EtUnderlineContainer([
@@ -47,7 +46,6 @@ _list_classes_expected_value = [
         ]),
         "<u>test4</u>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.EtStrikethroughContainer([
@@ -57,7 +55,6 @@ _list_classes_expected_value = [
         ]),
         "<s>test5</s>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.EtCustomSpanContainer([
@@ -67,7 +64,6 @@ _list_classes_expected_value = [
         ]),
         "<span>test6</span>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.EtUlistContainer([
@@ -199,6 +195,7 @@ _zipped_list_classes_expected_value = [
 
 @pytest.mark.parametrize("container, export_v, line", _zipped_list_classes_expected_value)
 def test_container_export_value(container, export_v, line):
+    print(line)
     em = export.ExportManager(None, None)
     assert isinstance(container, context_mngr.BaseContainer)
     assert container.export(em) == export_v
