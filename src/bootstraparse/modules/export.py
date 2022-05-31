@@ -10,7 +10,7 @@
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
 
-from bootstraparse.modules.syntax import split_optionals, OptionalToken
+from bootstraparse.modules.syntax import split_optionals, OptionalToken  # noqa F401
 
 """
 Named tuple containing all necessary information to select the appropriate

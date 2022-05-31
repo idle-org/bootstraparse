@@ -149,7 +149,14 @@ def test_get_templates(export_type, export_subtype, line):
         "display_level": "1"
     }))
     assert isinstance(r, export.ExportResponse)
-    # TODO : Add optional
+    r2 = em(export.ExportRequest(export_type, export_subtype, _opts, {
+        "header_level": "2",
+        "url": "2",
+        "col_span": "2",
+        "row_span": "2",
+        "display_level": "2"
+    }))
+    assert isinstance(r2, export.ExportResponse)
 
 
 def test_context_cov():
