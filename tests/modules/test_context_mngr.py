@@ -1,8 +1,7 @@
 import pytest
-# import rich
 import rich
 
-from bootstraparse.modules import context_mngr, export
+from bootstraparse.modules import context_mngr, export, error_mngr
 from bootstraparse.modules import syntax as sy #sy.SemanticType, sy.TextToken, sy.Linebreak, sy.StructuralElementStartToken, sy.StructuralElementEndToken, sy.EtUlistToken, sy.EtOlistToken # noqa
 from bootstraparse.modules.tools import __GLk
 __XF = pytest.mark.xfail
@@ -427,6 +426,36 @@ _token_list_with_expected_result = [
         ],
         __GLk(1),  # TODO : Add all optionals
     ],
+    [  # Testing error handling
+        [
+            sy.StructuralElementStartToken(["div"]),
+            sy.StructuralElementStartToken(["aside"]),
+            sy.TextToken(["a"]),
+            sy.StructuralElementEndToken(["div"]),
+            sy.StructuralElementEndToken(["aside"]),
+        ],
+        [
+            error_mngr.MismatchedContainerError,
+        ],
+        __GLk(1),
+    ],
+    [
+        [
+            sy.EtStrongToken(['**']),
+            sy.TextToken(["a"]),
+            sy.EtEmToken(['*']),
+            sy.EtStrongToken(['**']),
+        ],
+        [
+            context_mngr.EtStrongContainer([
+                sy.EtStrongToken(['**']),
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+                context_mngr.TextContainer([sy.TextToken(["*"])]),
+                sy.EtStrongToken(['**']),
+            ]),
+        ],
+        __GLk(1),
+    ],
 ]
 
 _zipped_token_list_with_expected_result = [
@@ -467,17 +496,17 @@ def test_encapsulate(base_cm):  # Robustness is tested in test_container_export_
 
 
 def test_encapsulate_bad_index(base_cm):
-    with pytest.raises(SystemExit):
+    with pytest.raises(IndexError):
         base_cm.encapsulate(1, 44)
 
-    with pytest.raises(SystemExit):
+    with pytest.raises(IndexError):
         base_cm.encapsulate(33, 1)
 
-    with pytest.raises(SystemExit):
+    with pytest.raises(IndexError):
         base_cm.encapsulate(2, 1)
 
     base_cm.encapsulate(1, 2)
-    with pytest.raises(SystemExit):
+    with pytest.raises(AttributeError):
         base_cm.encapsulate(2, 2)
 
     base_cm.pile[0] = {}
@@ -487,7 +516,7 @@ def test_encapsulate_bad_index(base_cm):
 
 def test_encapsulate_bad_cm(base_cm):
     base_cm.pile[1] = sy.SemanticType([1])
-    with pytest.raises(SystemExit):
+    with pytest.raises(KeyError):
         base_cm.encapsulate(1, 2)
 
 
@@ -601,13 +630,18 @@ def test_container():
 
 @pytest.mark.parametrize("init_list, expected, file_line", _zipped_token_list_with_expected_result)
 def test_context_call(init_list, expected, file_line):
+    print(f"Executing tests @{file_line}")
     ctx = context_mngr.ContextManager(init_list)  # noqa : F841
-    assert ctx() == expected
+    if isinstance(expected[0], context_mngr.BaseContainer) or isinstance(expected[0], sy.SemanticType):
+        assert ctx() == expected
+    else:
+        with pytest.raises(expected[0]):
+            ctx()
 
 
 def test_content_call_raises():
     ctx = context_mngr.ContextManager([sy.StructuralElementEndToken(["1"])])
-    with pytest.raises(SystemExit):
+    with pytest.raises(error_mngr.MismatchedContainerError):
         ctx()
 
 
@@ -621,7 +655,7 @@ def test_container_export(container, base_cm):
 
 def test_export_error():
     em = export.ExportManager(None, None)
-    with pytest.raises(SystemExit):
+    with pytest.raises(TypeError):
         context_mngr.TextContainer([sy.TextToken(['e']), None]).export(em)
 
 
@@ -645,10 +679,10 @@ def test_get_last_container_in_pile(base_cm):
     tk = sy.TextToken(['e'])
     tk.line_number = 1
     base_cm.pile[1] = tk
-    with pytest.raises(SystemExit):
+    with pytest.raises(error_mngr.LonelyOptionalError):
         base_cm.get_last_container_in_pile(3)
 
     base_cm.pile[1] = None
     base_cm.pile[0] = None
-    with pytest.raises(SystemExit):
+    with pytest.raises(error_mngr.LonelyOptionalError):
         base_cm.get_last_container_in_pile(3)

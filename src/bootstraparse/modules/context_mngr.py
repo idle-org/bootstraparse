@@ -11,6 +11,7 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
+import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message, LonelyOptionalError # noqa
@@ -149,7 +150,7 @@ class BaseContainer:
                 print(ident + "> " + str(e))
         print("")
 
-    def to_container(self):  # idea: additional parameters for encapsulation
+    def to_container(self, filter_func=None):  # idea: additional parameters for encapsulation
         return self
 
 
@@ -341,8 +342,15 @@ class ContextManager:
                 Index of the pile where the encapsulation must begin.
             end : int
                 Index of the pile where the encapsulation must end.
+        Returns
+        -------
+            list[(BaseContainer|None)]
         """
-        # print(start, end, self.pile[start:end+1])
+        # Enabling this will allow us to debug the pile
+        # print(f"Step : [{end}] - encapsulation:")
+        # print(" Base:", self.parsed_list)
+        # print(" >>> Pile:", self.pile)
+
         try:
             pile_start = self.pile[start]
             _ = self.pile[end]
@@ -350,17 +358,19 @@ class ContextManager:
                 raise IndexError("Start index must be lower than end index")
         except IndexError:
             log_exception(
-                KeyError(f"Indexes ({start}:{end}) must be in the pile range ({len(self.pile)})."),
+                IndexError(f"Indexes ({start}:{end}) must be in the pile range ({len(self.pile)})."),
                 level="CRITICAL"
             )
         try:
-            container = _to_container[pile_start.label]()  # noqa : F821 # TODO: fix bad error handling on missmatched SE
+            container = _to_container[pile_start.label]()  # noqa : F821
         except KeyError:
             log_exception(
-                KeyError(f"Element {self.pile[start].label} not in dictionary of tokens-containers correspondences."),
+                KeyError(f"Element {pile_start.label} not in dictionary of tokens-containers correspondences."),
                 level="CRITICAL"
             )
         except AttributeError as error:
+            rich.inspect(error)
+            rich.inspect(self.pile)
             if pile_start is None:
                 for e, r in zip(self.pile, self.parsed_list):
                     log_message(f'{e} - {r}')
@@ -372,12 +382,14 @@ class ContextManager:
                 raise error
         for i in range(start, end):
             if self.pile[i]:
-                # container.add(self.pile[i].to_container()) # This line transform the self modifiying containers # MONITOR # noqa
-                container.add(self.pile[i])  # TODO: ignore the first and last element, or ignore the self modifying tokens # noqa : F821
+                container.add(self.pile[i].to_container(lambda x: x.label==pile_start.label)) # This line transform the self modifiying containers # MONITOR # noqa
+                #container.add(self.pile[i])  # TODO: ignore the first and last element, or ignore the self modifying tokens # noqa : F821
                 self.pile[i] = None
         container.add(self.pile[end])
         self.pile[end] = None
         self.pile[start] = container
+
+        # print(" <<< Pile:", self.pile)
 
     def _add_matched(self, label, index):
         if label not in self.matched_elements:

@@ -1,6 +1,6 @@
 import pytest
 
-from bootstraparse.modules import syntax, error_mngr, tools
+from bootstraparse.modules import syntax, error_mngr, tools, context_mngr
 
 __XF = pytest.mark.xfail
 
@@ -19,7 +19,7 @@ _type_counterpart_container = [
     (syntax.EtStrongToken, 'text:strong', "token", tools.__GLk(1)),
     (syntax.EtUnderlineToken, 'text:underline', "token", tools.__GLk(1)),
     (syntax.EtStrikethroughToken, 'text:strikethrough', "token", tools.__GLk(1)),
-    (syntax.EtCustomSpanToken, None, "self", tools.__GLk(1), __XF),  # Not sure what to do with custom spans
+    (syntax.EtCustomSpanToken, None, "error", tools.__GLk(1)),
     (syntax.EtUlistToken, None, "self", tools.__GLk(1)),
     (syntax.EtOlistToken, None, "self", tools.__GLk(1)),
     (syntax.HeaderToken, None, "self", tools.__GLk(1)),
@@ -54,7 +54,7 @@ def test_counterpart_container(type_n, expected_counterpart, expected_container,
         elif expected_container == "self":
             assert token.to_container() == token
         elif expected_container == "token":
-            assert isinstance(token.to_container(), syntax.TextToken)
+            assert isinstance(token.to_container(), context_mngr.TextContainer)
         else:
             raise ValueError("Invalid expected_container value: {}".format(expected_container))
     except Exception as e:

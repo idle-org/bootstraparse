@@ -16,7 +16,7 @@ from collections import namedtuple
 import rich
 
 from bootstraparse.modules.error_mngr import MismatchedContainerError
-
+from bootstraparse.modules import context_mngr as cm
 import pyparsing as pp
 import regex  # future: remove regex
 
@@ -74,9 +74,15 @@ class SemanticType:
     def counterpart(self):  # noqa # FUTURE: Check for static counterpart implementation
         return None
 
-    def to_container(self):
+    def to_container(self, filter_func=None):
         """
         Function called by the context manager to know how to deal with the encapsulation of the token.
+
+        Parameters
+        ----------
+            filter_func: (function | None)
+                A function that takes a token and returns a boolean. If the token is not valid, it should return False.
+
         Returns
         -------
             SemanticType
@@ -106,8 +112,11 @@ class ExplicitSemanticType(SemanticType):
     def to_markup(self):
         return f'<{self.label} />'
 
-    def to_container(self):
-        return TextToken(self.content[0])
+    def to_container(self, filter_func=None):
+        """Check if we are trying to encapsulate this very token, don't do anything"""
+        if filter_func and filter_func(self):
+            return self
+        return cm.TextContainer([TextToken(self.content[0])])
 
 
 class FinalSemanticType(SemanticType):
@@ -118,7 +127,7 @@ class FinalSemanticType(SemanticType):
     def counterpart(self):  # noqa
         return None
 
-    def to_container(self):
+    def to_container(self, filter_func=None):
         return self
 
 
@@ -126,8 +135,12 @@ class OpenedSemanticType(SemanticType):
     """
     Semantic type used to signify it has a matching end component and needs to be matched.
     """
-    def to_container(self):
-        return self
+    def to_container(self, filter_func=None):
+        if filter_func is None:
+            raise MismatchedContainerError(self)
+        elif filter_func(self):
+            return self
+        raise MismatchedContainerError(self)
 
 
 class ClosedSemanticType(SemanticType):
@@ -164,7 +177,7 @@ class ImageToken(SemanticType):
 class TextToken(EmptySemanticType):
     label = "text"
 
-    def to_container(self):
+    def to_container(self, filter_func=None):
         return self
 
 
@@ -293,7 +306,7 @@ class BlockQuoteAuthorToken(SemanticType):
 class Linebreak(ExplicitSemanticType):
     label = "linebreak"
 
-    def to_container(self):
+    def to_container(self, filter_func=None):
         return self
 
 

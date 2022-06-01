@@ -10,7 +10,6 @@
 
 import logging
 import traceback
-import sys
 from bootstraparse.modules.tools import __GLk  # __GFi, __GFu, __GL
 
 
