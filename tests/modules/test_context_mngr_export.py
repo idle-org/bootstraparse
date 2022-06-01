@@ -112,6 +112,7 @@ _list_classes_expected_value = [
     [
         context_mngr.HeaderContainer([
             context_mngr.TextContainer([
+                sy.HeaderToken(["#", 'test11']),
                 sy.TextToken(['test11']),
             ]),
         ]),

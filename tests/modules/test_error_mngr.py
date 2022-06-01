@@ -33,7 +33,7 @@ class TestLogging(TestCase):
 
     def test_log_exception(self):
         with self.assertLogs() as captured:
-            with pytest.raises(SystemExit):
+            with pytest.raises(Exception):
                 error_mngr.log_exception(Exception(''), level="CRITICAL")
         self.assertGreaterEqual(len(captured.records), 3)
 

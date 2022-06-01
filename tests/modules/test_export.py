@@ -109,7 +109,7 @@ def test_transform(export_type, export_subtype):
 
 
 def test_get_template_error():
-    with pytest.raises(SystemExit):
+    with pytest.raises(KeyError):
         em = export.ExportManager("test", "test")
         em(export.ExportRequest("nope", "header", "", {}))
 

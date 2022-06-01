@@ -76,7 +76,7 @@ def log_exception(exception, level="ERROR"):
         logging.__getattribute__(level)(' ' + line)
     if level in ["critical", "error"]:
         print("An unrecoverable error occurred, please check the log file for more information.")
-        sys.exit()  # could also re-raise the exception
+        raise exception  # Could also re-raise the exception
 
     if exception.__class__.__name__ == "ParsingError":
         logging.error(exception.__str__())

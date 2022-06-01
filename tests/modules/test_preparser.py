@@ -322,13 +322,13 @@ def test_errors():
         pp = preparser.PreParser("not_existing_file.bprr", env)
         pp.readlines()
 
-    with pytest.raises(SystemExit):  # Not ImportError
+    with pytest.raises(ImportError):  # Not ImportError
         nofile = temp_name("real_file.bpr")
         make_new_file(nofile, "::< not_existing_file.bpr >")
         pp = preparser.PreParser(nofile, env)
         pp.make_import_list()
 
-    with pytest.raises(SystemExit):  # Not RecursionError
+    with pytest.raises(RecursionError):  # Not RecursionError
         path = temp_name("test_recursion_error.bpr")
         make_new_file(path, "::< test_recursion_error.bpr >")
         pp = preparser.PreParser(path, env)
@@ -386,9 +386,9 @@ def test_get_errors():
     pp = preparser.PreParser(from_config, env)
     assert pp.get_element_from_config("aliases", "shortcuts", "do_not_remove_s") == "This is a test"
     assert pp.get_element_from_config("aliases", "images", "do_not_remove_p") == 'This is a test'
-    with pytest.raises(SystemExit):
+    with pytest.raises(KeyError):
         pp.get_element_from_config("aliases", "not_existing", "do_not_remove_s")
-    with pytest.raises(SystemExit):
+    with pytest.raises(KeyError):
         pp.get_element_from_config("images", "not_existing", "do_not_remove_p")
 
 

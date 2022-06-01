@@ -9,7 +9,7 @@ _type_counterpart_container = [
     (syntax.SemanticType, None,  "error", tools.__GLk(1)),
     (syntax.ExplicitSemanticType, None,  "token", tools.__GLk(1)),
     (syntax.FinalSemanticType, None, "self", tools.__GLk(1)),
-    (syntax.OpenedSemanticType, None, "self", tools.__GLk(1)),
+    (syntax.OpenedSemanticType, None, "error", tools.__GLk(1)),
     (syntax.ClosedSemanticType, None, "error", tools.__GLk(1)),
     (syntax.EmptySemanticType, None, "self", tools.__GLk(1)),
     (syntax.UnimplementedToken, None, "error", tools.__GLk(1)),
@@ -24,8 +24,8 @@ _type_counterpart_container = [
     (syntax.EtOlistToken, None, "self", tools.__GLk(1)),
     (syntax.HeaderToken, None, "self", tools.__GLk(1)),
     (syntax.DisplayToken, None, "self", tools.__GLk(1)),
-    (syntax.StructuralElementStartToken, None, "self", tools.__GLk(1)),
-    (syntax.StructuralElementEndToken, 'se:start:test', "error", tools.__GLk(1)),
+    (syntax.StructuralElementStartToken, None, "error", tools.__GLk(1)),  # A start can't be in a container (MismatchedContainerError)
+    (syntax.StructuralElementEndToken, 'se:start:test', "error", tools.__GLk(1)),  # An end can't be in a container (MismatchedContainerError)
     (syntax.HyperlinkToken, None, "error", tools.__GLk(1)),  # Shouldn't be an error
     (syntax.TableToken, None, "error", tools.__GLk(1)),
     (syntax.TableRowToken, None, "error", tools.__GLk(1)),

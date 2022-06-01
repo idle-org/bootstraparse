@@ -59,7 +59,7 @@ def test_getter():
 
     try:
         test_check.purposefully_non_existing_parameter
-    except SystemExit:
+    except AttributeError:
         pass
     except Exception:
         assert False  # Not AttributeError when getting non-existing parameter
@@ -86,7 +86,7 @@ def test_setter():
 
     try:
         test_check.purposefully_non_existing_parameter = "test_value"
-    except SystemExit:
+    except AttributeError:
         pass
     except Exception:
         assert False  # Not AttributeError when getting non-existing parameter
