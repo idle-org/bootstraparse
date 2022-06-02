@@ -188,7 +188,10 @@ class EtStrikethroughContainer(BaseContainer):
 
 class EtCustomSpanContainer(BaseContainer):
     type = "inline_elements"
-    subtype = "custom_0"  # future: add logic
+
+    def export(self, exm):
+        self.subtype = "custom_" + self.content[0].content[0]
+        return super().export(exm)
 
 
 class EtUlistContainer(BaseContainer):
@@ -207,10 +210,9 @@ class HyperLinkContainer(BaseContainer):
     type = "inline_elements"
     subtype = "link"
 
-    def __init__(self, content=None, optionals=None, others=None):
-        super().__init__(content, optionals, others)
-        self.map['url'] = ""
-    pass
+    def export(self, exm):
+        self.others["url"] = self.content[0].content.url
+        return super().export(exm)
 
 
 # class IlImageContainer(BaseContainer):
@@ -229,20 +231,20 @@ class HeaderContainer(BaseContainer):
     type = "structural_elements"
     subtype = "header"
 
-    def __init__(self, content=None, optionals=None, others=None):
-        super().__init__(content, optionals, others)
-        self.map['header_level'] = ''
-    pass
+    def export(self, exm):
+        self.others = {}
+        self.others["header_level"] = len(self.content[0].content[0])
+        return super().export(exm)
 
 
 class DisplayContainer(BaseContainer):
     type = "structural_elements"
     subtype = "display"
 
-    def __init__(self, content=None, optionals=None, others=None):
-        super().__init__(content, optionals, others)
-        self.map['display_level'] = ""
-    pass
+    def export(self, exm):
+        self.others = {}
+        self.others["display_level"] = len(self.content[0].content[0])
+        return super().export(exm)
 
 
 class TableSeparatorContainer(BaseContainer):
@@ -298,10 +300,7 @@ _to_container = {
     "list:olist": EtOlistContainer,
     "header": HeaderContainer,
     "display": DisplayContainer,
-    "se:start:div": SeContainer,
-    "se:start:article": SeContainer,
-    "se:start:aside": SeContainer,
-    "se:start:section": SeContainer,
+    "se:start": SeContainer,
     "hyperlink": HyperLinkContainer,
     "linebreak": LinebreakContainer,
     "table:row": TableRowContainer,
@@ -362,7 +361,7 @@ class ContextManager:
                 level="CRITICAL"
             )
         try:
-            container = _to_container[pile_start.label]()  # noqa : F821
+            container = _to_container[pile_start.label_container]()  # noqa : F821
         except KeyError:
             log_exception(
                 KeyError(f"Element {pile_start.label} not in dictionary of tokens-containers correspondences."),
@@ -434,13 +433,13 @@ class ContextManager:
                 elif isinstance(token, syntax.FinalSemanticType):  # one-liners
                     self.encapsulate(index, index)
 
-                elif token.counterpart() in self.matched_elements:  # found a matching token in encountered tokens
+                elif token.counterpart() in self.matched_elements and len(self.matched_elements[token.counterpart()]) != 0:  # found a matching token in encountered tokens
                     self.encapsulate(self._get_matched(token.counterpart()), index)
 
                 elif isinstance(token, syntax.ClosedSemanticType):  # error if closing token does not have a start
                     raise MismatchedContainerError(token)
 
-                else:  # starting token by default (can cause unintended behaviours on bad implementations)
+                else:  # starting token by default (can cause unintended behaviours on bad implementations) # TODO: remove this default behaviour, error instead
                     self._add_matched(token.label, index)
             except MismatchedContainerError as e:
                 error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.
@@ -520,6 +519,7 @@ class ContextManager:
                 e.print_all()
             else:
                 print("> " + str(e))
+        print("Matched elements:" + self.matched_elements)
 
 
 # Defines all methods to manage the context of the parser as a file is being parsed
