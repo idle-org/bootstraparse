@@ -32,6 +32,7 @@ class SemanticType:
 
     def __init__(self, content):
         self.content = content
+        self.label_container = self.label
 
     def to_markup(self):
         """
@@ -207,7 +208,7 @@ class EtStrikethroughToken(ExplicitSemanticType):
     label = "text:strikethrough"
 
 
-class EtCustomSpanToken(SemanticType):
+class EtCustomSpanToken(AddFirstElementToLabel, ExplicitSemanticType):
     """(#int)"""
     label = "text:custom_span"
 
@@ -251,7 +252,7 @@ class StructuralElementEndToken(AddFirstElementToLabel, ClosedSemanticType):
         return f"se:start:{self._addendum}"
 
 
-class HyperlinkToken(SemanticType):
+class HyperlinkToken(FinalSemanticType):
     label = "hyperlink"
 
 

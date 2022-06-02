@@ -28,6 +28,13 @@ underline:
   type: enhanced text
   scope: first release
 
+small:
+  bpr: tbd
+  markdown compatible: tbd
+  accepts arguments: no
+  type: enhanced text
+  scope: post-release
+
 
 # In-line elements
 hyperlinks:
