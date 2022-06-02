@@ -245,18 +245,14 @@ if __name__ == '__main__':  # pragma: no cover
     from bootstraparse.modules import parser
 
     io_string = StringIO(
-        """<<section
-        <<div
-        <<article
-        <<aside
-        aside>>
-        div>>
-        article>>
-        section>>{{zpb}}"""
+        """- list
+        - list
+        - list"""
     )
     test = parser.parse_line(io_string)
     exm = ExportManager(None, None)
     cxm = context_mngr.ContextManager(test)
     cxc = ContextConverter(cxm(), exm)
+    rich.print(cxm.matched_elements)
     cxc.process_pile()
     cxc.print_all()
