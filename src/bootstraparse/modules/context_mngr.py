@@ -519,7 +519,7 @@ class ContextManager:
                 e.print_all()
             else:
                 print("> " + str(e))
-        print("Matched elements:" + self.matched_elements)
+        print("Matched elements:" + str(self.matched_elements))
 
 
 # Defines all methods to manage the context of the parser as a file is being parsed

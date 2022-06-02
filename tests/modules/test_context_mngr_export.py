@@ -58,9 +58,11 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.EtCustomSpanContainer([
+            sy.EtCustomSpanToken(["0"]),
             context_mngr.TextContainer([
                 sy.TextToken(['test6']),
             ]),
+            sy.EtCustomSpanToken(["0"]),
         ]),
         "<span>test6</span>",
         __GLk(1),

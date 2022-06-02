@@ -616,7 +616,7 @@ list_add_tag_input_and_expected_output = [
     (sy.StructuralElementEndToken(["div"]), "<se:end:div = 'div' />"),
     (sy.StructuralElementStartToken(["span"]), "<se:start:span = 'span' />"),
     (sy.StructuralElementEndToken(["span"]), "<se:end:span = 'span' />"),
-    (sy.EtCustomSpanToken(["(#12)"]), "<text:custom_span = '(#12)' />"),
+    (sy.EtCustomSpanToken(["(#12)"]), "<text:custom_span:(#12) />"),
     (sy.HeaderToken(["#", "Text"]), "<header = '#,Text' />"),
 ]
 
@@ -636,8 +636,8 @@ list_of_text_input_and_readable_output = [
      "Text <text:em /> bold <text:underline /> underline <text:underline /> still bold <text:em />"),
     # noqa E501 (line too long)
     ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />"),
-    ("Reverse order: (#123) Span, __underline__ ~~strikethrough~~ **emphasis * Strong**", "enhanced_text",
-     "Reverse order: <text:custom_span = '123' /> Span, <text:underline /> underline <text:underline /> <text:strikethrough /> strikethrough <text:strikethrough /> <text:strong /> emphasis <text:em /> Strong <text:strong />"), # noqa E501 (line too long)
+    ("Reverse order:(#123) Span, __underline__ ~~strikethrough~~ **emphasis * Strong**", "enhanced_text",
+     "Reverse order: <text:custom_span:123 /> Span, <text:underline /> underline <text:underline /> <text:strikethrough /> strikethrough <text:strikethrough /> <text:strong /> emphasis <text:em /> Strong <text:strong />"), # noqa E501 (line too long)
 
     # Structural elements
     ("<<div", "se", "<se:start:div = 'div' />"),

@@ -138,7 +138,6 @@ _token_list_with_expected_result = [
             ]),
         ],
         __GLk(1),
-        __XF,
     ],
     [
         [

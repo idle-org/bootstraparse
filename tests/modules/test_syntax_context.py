@@ -19,14 +19,14 @@ _type_counterpart_container = [
     (syntax.EtStrongToken, 'text:strong', "token", tools.__GLk(1)),
     (syntax.EtUnderlineToken, 'text:underline', "token", tools.__GLk(1)),
     (syntax.EtStrikethroughToken, 'text:strikethrough', "token", tools.__GLk(1)),
-    (syntax.EtCustomSpanToken, None, "error", tools.__GLk(1)),
+    (syntax.EtCustomSpanToken, "text:custom_span:test", "token", tools.__GLk(1)),
     (syntax.EtUlistToken, None, "self", tools.__GLk(1)),
     (syntax.EtOlistToken, None, "self", tools.__GLk(1)),
     (syntax.HeaderToken, None, "self", tools.__GLk(1)),
     (syntax.DisplayToken, None, "self", tools.__GLk(1)),
     (syntax.StructuralElementStartToken, None, "error", tools.__GLk(1)),  # A start can't be in a container (MismatchedContainerError)
     (syntax.StructuralElementEndToken, 'se:start:test', "error", tools.__GLk(1)),  # An end can't be in a container (MismatchedContainerError)
-    (syntax.HyperlinkToken, None, "error", tools.__GLk(1)),  # Shouldn't be an error
+    (syntax.HyperlinkToken, None, "self", tools.__GLk(1)),  # Shouldn't be an error
     (syntax.TableToken, None, "error", tools.__GLk(1)),
     (syntax.TableRowToken, None, "error", tools.__GLk(1)),
     (syntax.TableCellToken, None, "error", tools.__GLk(1)),
