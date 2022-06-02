@@ -12,6 +12,12 @@ _opts = sy.OptionalToken([
     sy.OptionalInsertToken(["var='test', number=11"]),
 ])
 
+
+class FalseHyperlink(list):
+    url = "http://test.com"
+    content = ["test"]
+
+
 _list_classes_expected_value = [
     [
         context_mngr.TextContainer([
@@ -93,6 +99,7 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.HyperLinkContainer([
+            sy.HyperlinkToken(FalseHyperlink(['test9'])),
             context_mngr.TextContainer([
                 sy.TextToken(['test9']),
             ]),
@@ -113,17 +120,17 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.HeaderContainer([
+            sy.HeaderToken(["#", 'test11']),
             context_mngr.TextContainer([
-                sy.HeaderToken(["#", 'test11']),
                 sy.TextToken(['test11']),
             ]),
         ]),
         "<h1>test11</h1>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.DisplayContainer([
+            sy.DisplayToken("!"),
             context_mngr.TextContainer([
                 sy.TextToken(['test12']),
             ]),

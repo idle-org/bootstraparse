@@ -244,7 +244,7 @@ class DisplayContainer(BaseContainer):
     def export(self, exm):
         self.others = {}
         self.others["display_level"] = len(self.content[0].content[0])
-        return super().export(exm)
+        super().export(exm)
 
 
 class TableSeparatorContainer(BaseContainer):
