@@ -15,6 +15,9 @@ inline_elements:
   image: ["<img src=\"", "\"{optionals}/>"]
   #  future: small
   custom_0: ["<span{optionals}>", "</span>"]
+  custom_1: ["<span{optionals} style='background-color:red;'>", "</span>"]
+  custom_2: ["<span{optionals} style='background-color:blue;'>", "</span>"]
+  custom_3: ["<span{optionals} style='background-color:white;'>", "</span>"]
 
 oneline_elements:
   ulist: ["<ul{optionals}>", "</ul>"]
