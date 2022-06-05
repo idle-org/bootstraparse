@@ -119,11 +119,18 @@ def test_with_optionnals():
     em(export.ExportRequest("structural_elements", "div", _opts)) # noqa E741
 
 
-@pytest.mark.xfail(reason="Not implemented")
 def test_format_optionnals():
     from bootstraparse.modules import syntax # noqa E402
-    export.format_optionals(_opts)
-    assert False
+    op = export.format_optionals(_opts)
+    expected = syntax.OptionalToken([
+        syntax.OptionalVarToken([
+            syntax.BeAssignToken([["class", "blue"]]),
+            syntax.BeValueToken([123]),
+        ]),
+        syntax.OptionalInsertToken(["var='test', number=11"]),
+    ])
+    assert expected == _opts
+    assert op == " var='test', number=11"
 
 
 def test_return_values():

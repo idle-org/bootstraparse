@@ -13,8 +13,6 @@ import os
 from itertools import zip_longest
 from collections import namedtuple
 
-import rich
-
 from bootstraparse.modules.error_mngr import MismatchedContainerError
 from bootstraparse.modules import context_mngr as cm
 import pyparsing as pp
@@ -365,7 +363,6 @@ def split_optionals(optionals):
         elif element.label == 'optional:insert':
             hi += " " + element.content[0]
         elif element.label == 'optional:var':
-            rich.inspect(optionals)
             for e in element.content:
                 if e.label == 'be:var':
                     var_list.append(e.content[0])

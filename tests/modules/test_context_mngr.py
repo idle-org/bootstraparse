@@ -26,7 +26,7 @@ _list_classes = [
     context_mngr.LinebreakContainer,
 ]
 
-_base_list = [sy.TextToken([1]), sy.TextToken([2]), sy.TextToken([3]), sy.TextToken([4])]
+_base_list = [sy.TextToken(["1"]), sy.TextToken(["2"]), sy.TextToken(["3"]), sy.TextToken(["4"])]
 _opts = sy.OptionalToken([
     sy.OptionalVarToken([
         sy.BeAssignToken([["class", "blue"]]),
@@ -45,20 +45,20 @@ _others = {
 
 _token_list_with_expected_result = [
     [
-        [sy.TextToken([1])],
-        [context_mngr.TextContainer([sy.TextToken([1])])],
+        [sy.TextToken(["1"])],
+        [context_mngr.TextContainer([sy.TextToken(["1"])])],
         __GLk(1),
     ],
     [
         [
             sy.StructuralElementStartToken(["div"]),
-            sy.TextToken([1]),
+            sy.TextToken(["1"]),
             sy.StructuralElementEndToken(["div"]),
         ],
         [
             context_mngr.SeContainer([
                 sy.StructuralElementStartToken(["div"]),
-                context_mngr.TextContainer([sy.TextToken([1])]),
+                context_mngr.TextContainer([sy.TextToken(["1"])]),
                 sy.StructuralElementEndToken(["div"])
             ]),
         ],
@@ -154,7 +154,7 @@ _token_list_with_expected_result = [
             sy.EtOlistToken([sy.TextToken(["dd"])]),
             sy.Linebreak([]),
             sy.Linebreak([]),
-            sy.TextToken([1]),
+            sy.TextToken(["1"]),
             sy.Linebreak([]),
             sy.TextToken([2]),
         ],
@@ -176,7 +176,7 @@ _token_list_with_expected_result = [
                 sy.Linebreak([]),
                 ]),
             context_mngr.LinebreakContainer([sy.Linebreak([])]),
-            context_mngr.TextContainer([sy.TextToken([1])]),
+            context_mngr.TextContainer([sy.TextToken(["1"])]),
             context_mngr.LinebreakContainer([sy.Linebreak([])]),
             context_mngr.TextContainer([sy.TextToken([2])]),
         ],
@@ -191,10 +191,9 @@ _token_list_with_expected_result = [
             context_mngr.HyperLinkContainer([
                 sy.HyperlinkToken(["a", "href", "http://test.com"]),
             ]),
-            sy.TextToken(["a"]),
+            context_mngr.TextContainer([sy.TextToken(["a"])]),
         ],
         __GLk(1),
-        __XF,
     ],
     [
         [
@@ -477,7 +476,7 @@ def test_container_init(cls):
 
 
 def test_context_manager(base_cm):
-    lst = [sy.SemanticType([1]), sy.SemanticType([2]), sy.SemanticType([3])]
+    lst = [sy.SemanticType(["1"]), sy.SemanticType([2]), sy.SemanticType([3])]
     base = context_mngr.ContextManager(lst)
     base.pile = lst
 
@@ -642,14 +641,6 @@ def test_content_call_raises():
     ctx = context_mngr.ContextManager([sy.StructuralElementEndToken(["1"])])
     with pytest.raises(error_mngr.MismatchedContainerError):
         ctx()
-
-
-@pytest.mark.xfail(reason="Not implemented")
-@pytest.mark.parametrize("container", _list_classes)
-def test_container_export(container, base_cm):
-    em = export.ExportManager(None, None)
-    assert type(container().export(em)) == str
-    assert container(_base_list).export(em) == str
 
 
 def test_export_error():

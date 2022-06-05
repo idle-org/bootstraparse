@@ -242,9 +242,9 @@ class DisplayContainer(BaseContainer):
     subtype = "display"
 
     def export(self, exm):
-        self.others = {}
+        # self.others = {}
         self.others["display_level"] = len(self.content[0].content[0])
-        super().export(exm)
+        return super().export(exm)
 
 
 class TableSeparatorContainer(BaseContainer):
@@ -415,31 +415,38 @@ class ContextManager:
             token.line_number = line_number
             self.pile.append(token)
             try:
-                if isinstance(token, syntax.Linebreak):  # linebreaks
+                # Linebreaks
+                if isinstance(token, syntax.Linebreak):
                     self.encapsulate(index, index)
                     line_number += 1
 
+                # Pack the optionnal with the previous container if it exists (else raise error)
                 elif isinstance(token, syntax.OptionalToken):
                     self.get_last_container_in_pile(index).optionals = token
                     self.pile[index] = None
 
-                elif token.label in self.dict_lookahead:  # group together multiple one-lines
+                # Group together multiple one-lines
+                elif token.label in self.dict_lookahead:
                     lookahead_return = self.lookahead(token, index)
                     index += lookahead_return[0]
                     line_number += lookahead_return[1]
 
-                # elif token.label in self.dict_advanced_lookahead:  # TODO: advanced lookahead for * logic
+                # TODO: advanced lookahead for * logic
+                # elif token.label in self.dict_advanced_lookahead:
 
                 elif isinstance(token, syntax.FinalSemanticType):  # one-liners
                     self.encapsulate(index, index)
 
-                elif token.counterpart() in self.matched_elements and len(self.matched_elements[token.counterpart()]) != 0:  # found a matching token in encountered tokens
+                # Found a matching token in encountered tokens
+                elif token.counterpart() in self.matched_elements and len(self.matched_elements[token.counterpart()]) != 0:
                     self.encapsulate(self._get_matched(token.counterpart()), index)
 
-                elif isinstance(token, syntax.ClosedSemanticType):  # error if closing token does not have a start
+                # Error if closing token does not have a start
+                elif isinstance(token, syntax.ClosedSemanticType):
                     raise MismatchedContainerError(token)
 
-                else:  # starting token by default (can cause unintended behaviours on bad implementations) # TODO: remove this default behaviour, error instead
+                # Starting token by default (can cause unintended behaviours on bad implementations)
+                else:  # TODO: remove this default behaviour, error instead
                     self._add_matched(token.label, index)
             except MismatchedContainerError as e:
                 error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.

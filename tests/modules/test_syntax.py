@@ -914,3 +914,27 @@ def test_empty_token():
     """Test that empty tokens are correctly dropped."""
 
     assert sy.of_type(sy.EmptySemanticType)("", [], []) is None
+
+
+def test_split_optionals():
+    """Test that optional tokens are correctly split."""
+    opts = sy.OptionalToken([
+        sy.OptionalVarToken([
+            sy.BeAssignToken([["class", "blue"]]),
+            sy.BeValueToken([123]),
+        ]),
+        sy.OptionalInsertToken(["var='test', number=11"]),
+        sy.OptionalClassToken(["cinsertBlue"]),
+    ])
+    spl = sy.split_optionals(opts)
+    print(spl)
+    assert type(spl) is sy.SplitOptionals
+    assert len(spl) == 4
+    assert spl[0] == "var='test', number=11"
+    assert spl[1] == "cinsertBlue"
+    assert spl[2] == [123]
+    assert spl[3] == {'class': 'blue'}
+    assert spl.html_insert == "var='test', number=11"
+    assert spl.class_insert == "cinsertBlue"
+    assert spl.var_list == [123]
+    assert spl.var_dict == {'class': 'blue'}

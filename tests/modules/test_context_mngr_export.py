@@ -104,19 +104,19 @@ _list_classes_expected_value = [
                 sy.TextToken(['test9']),
             ]),
         ]),
-        "<a href=\"test9\">test9</a>",
+        "<a href=\"http://test.com\">test9</a>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.SeContainer([
+            sy.StructuralElementStartToken(["div"]),
             context_mngr.TextContainer([
                 sy.TextToken(['test10']),
             ]),
+            sy.StructuralElementEndToken(["div"]),
         ]),
         "<div>test10</div>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.HeaderContainer([
@@ -130,26 +130,34 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.DisplayContainer([
-            sy.DisplayToken("!"),
+            sy.DisplayToken(["!"]),
             context_mngr.TextContainer([
                 sy.TextToken(['test12']),
             ]),
         ]),
-        "<display>test12</display>",
+        "<p class=\"display-1\">test12</p>",
         __GLk(1),
-        __XF,
     ],
     [
-        [
-            context_mngr.TableRowContainer([
-                context_mngr.TableCellContainer([
-                    context_mngr.TextContainer([sy.TextToken(["a"])]),
-                ]),
-                context_mngr.TableCellContainer([
-                    context_mngr.TextContainer([sy.TextToken(["b"])]),
-                ]),
+        context_mngr.DisplayContainer([
+            sy.DisplayToken(["!!"]),
+            context_mngr.TextContainer([
+                sy.TextToken(['test13']),
             ]),
-        ],
+        ]),
+        "<p class=\"display-2\">test13</p>",
+        __GLk(1),
+    ],
+    [
+
+        context_mngr.TableRowContainer([
+            context_mngr.TableCellContainer([
+                context_mngr.TextContainer([sy.TextToken(["a"])]),
+            ]),
+            context_mngr.TableCellContainer([
+                context_mngr.TextContainer([sy.TextToken(["b"])]),
+            ]),
+        ]),
         "<table><tr><td>a</td><td>b</td></tr></table>",
         __GLk(1),
         __XF,
@@ -181,19 +189,24 @@ _list_classes_expected_value = [
         __XF,
     ],
     [
-        [
-            context_mngr.EtOlistContainer([
-                sy.EtOlistToken([
-                    context_mngr.TextContainer([
-                        sy.TextToken(['test13']),
-                    ]),
-                    _opts,
+        context_mngr.EtOlistContainer([
+            sy.EtOlistToken([
+                context_mngr.TextContainer([
+                    sy.TextToken(['test13']),
                 ]),
+                _opts,
             ]),
-        ],
+        ]),
         "<ol><li>test13</li></ol>",
         __GLk(1),
         __XF,
+    ],
+    [
+        context_mngr.LinebreakContainer([
+            sy.Linebreak([""]),
+        ]),
+        "<br/>\n",
+        __GLk(1),
     ],
 
 ]
