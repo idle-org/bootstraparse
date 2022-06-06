@@ -1,95 +1,64 @@
 # Module sequencing the successive actions necessary for website building
+import os
+import rich
+from bootstraparse.modules import pathresolver, sitecrawler, environment, config, export, parser, context_mngr
 
-import bootstraparse.modules.config as config
-from bootstraparse.modules.pathresolver import b_path
 
-
-def create_website():
+def create_website(origin, destination):
     """
     First function called by bparse.py,
     calls all other modules in the right order.
     """
-    pass
+    env = create_environment(origin, destination)
+    crwlr = create_crawler(origin, destination, env)
+    crwlr.set_all_preparsers()
+    for element, destination in crwlr:
+        save(preparse_parse(element), destination, env)
 
 
-def create_environment():
+def create_environment(origin, destination):
     """
     Returns parserEnvironment as an object containing
     everything needed for app execution.
     """
-    pass
+    env = environment.Environment()
+    env.config = config.ConfigLoader(pathresolver.b_path("configs"))
+    if os.path.exists(os.path.join(origin, "configs")):
+        env.config.add_folder(os.path.join(origin, "configs"))
+
+    env.template = config.ConfigLoader(pathresolver.b_path("templates"))
+    if os.path.exists(os.path.join(origin, "templates")):
+        env.template.add_folder(os.path.join(origin, "templates"))
+
+    env.export_mngr = export.ExportManager(env.config, env.template)
+    env.origin = origin
+    env.destination = destination
+
+    return env
 
 
-def create_config():
-    """
-    Returns globalConfig as an object from parser_config.yml settings.
-    """
-    return config.ConfigLoader(b_path("configs/"))
-
-
-def create_crawler():
+def create_crawler(origin, destination, _env):
     """
     Returns crawler as an object for navigation in the user files.
     """
-    pass
+    return sitecrawler.SiteCrawler(origin, destination, _env)
 
 
-def create_user_config():
-    """
-    Returns userConfig as an object from aliases.yaml,
-    glossary.yaml and website.yaml.
-    """
-    pass
+def preparse_parse(preparser):
+    io = preparser.do_replacements()
+    parsed_list = parser.parse_line(io)
+    output = context_mngr.ContextManager(parsed_list)()
+    return output
 
 
-def create_template():
-    """
-    Returns a templateManager from templates for
-    generating the correct html files.
-    """
-    pass
+def save(list_of_containers, destination, env):
+    rich.print(list_of_containers[0])
+    with open(destination, "w") as output_file:
+        output_file.write(export.ContextConverter(list_of_containers, env.export_mngr).process_pile().read())
 
 
-def env_checker():
-    """
-    Verify all is in order for initialisation of
-    the parserEnvironment object and initialises.
-    """
-    pass
+if __name__ == "__main__":
+    xpath = pathresolver.b_path("../../example_userfiles")
+    dpath = pathresolver.b_path("../../example_output")
+    create_website(xpath, dpath)
 
-
-def begin_crawling(p_env):  # noqa : F811
-    """
-    Starts reading every file in the userfiles and
-    adds them to the crawler object progressively.
-    """
-    pass
-
-
-def begin_pre_parsing(p_env):  # noqa : F811
-    """
-    Create an importTree and checks for conflicts or loops;
-    then replaces imports with their contents,
-    then replaces all aliases with their values.
-    """
-    pass
-
-
-def begin_parsing(p_env):  # noqa : F811
-    """
-    For each of the generated files,
-    parses element after element and creates
-    the graph representation of the website,
-    interacts with context_mngr.py to ascertain integrity
-    and deal with errors.
-    """
-    pass
-
-
-def begin_export(p_env):  # noqa : F811
-    """
-    Replaces all parsed values with their attributed
-    correspondences as per the template_manager
-    and exports the result as a website.
-    """
-    pass
