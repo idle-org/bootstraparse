@@ -422,7 +422,7 @@ _token_list_with_expected_result = [
                 sy.EtUlistToken([sy.TextToken(["b"])]),
             ], _opts),
         ],
-        __GLk(1),  # TODO : Add all optionals
+        __GLk(1),
     ],
     [  # Testing error handling
         [

@@ -40,3 +40,12 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --cov-fail-under=100 -o xfail_strict=true --cov-report=term-missing .
+  deployment:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: deploy
+        run: |
+          pip install -r requirements.txt
+          pip install .
+          python -m bootstraparse "example_userfiles" "docs"

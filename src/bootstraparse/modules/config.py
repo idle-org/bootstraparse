@@ -7,6 +7,8 @@
 # The ConfigLoader class has load_from_file and load_from_folder methods and __getitem__ for accessing loaded elements
 
 import os
+
+import rich
 import yaml
 from bootstraparse.modules import error_mngr
 
@@ -130,5 +132,7 @@ class ConfigLoader:
 #     def __init__(self, config_folder):
 #         super().__init__(config_folder)
 
-
-# conf = ConfigLoader("./example_userfiles/config/aliases.yaml")
+if __name__ == '__main__':
+    conf = ConfigLoader("../configs/")
+    conf.add_folder("../../../example_userfiles/config/")
+    rich.inspect(conf)
