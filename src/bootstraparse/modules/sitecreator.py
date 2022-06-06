@@ -15,6 +15,8 @@ def create_website(origin, destination):
     for element, destination in crwlr:
         save(preparse_parse(element), destination, env)
 
+    return 0
+
 
 def create_environment(origin, destination):
     """
