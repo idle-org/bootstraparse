@@ -33,12 +33,14 @@ class BaseContainer:
         self.map = {}
         self.optionals = optionals
 
-    def get_content(self, exm):
+    def get_content(self, exm, arbitrary_list=None):
         output = ""
-        for element in self.content:
+        if not arbitrary_list:
+            arbitrary_list = self.content
+        for element in arbitrary_list:
             if isinstance(element, BaseContainer):
-                output += element.export(exm)
-        return output
+                output += element.export(exm) + " "
+        return output[:-1]
 
     def get_optionals(self):
         return self.optionals
@@ -194,13 +196,25 @@ class EtCustomSpanContainer(BaseContainer):
         return super().export(exm)
 
 
-class EtUlistContainer(BaseContainer):
+class ReContextContainer(BaseContainer):
+    def get_content(self, exm, arbitrary_list=None):
+        child_start, child_end = exm(export.ExportRequest(self.type, self.children))
+        output = "\n"
+        for element in self.content:
+            if isinstance(element, syntax.Linebreak):
+                output += "\n"
+            else:
+                output += child_start + super().get_content(exm, element.content) + child_end
+        return output
+
+
+class EtUlistContainer(ReContextContainer):
     type = "oneline_elements"
     subtype = "ulist"
     children = "list_line"
 
 
-class EtOlistContainer(BaseContainer):
+class EtOlistContainer(ReContextContainer):
     type = "oneline_elements"
     subtype = "olist"
     children = "list_line"
@@ -328,7 +342,8 @@ class ContextManager:
         self.dict_lookahead = {
             "list:ulist": ["list:ulist"],
             "list:olist": ["list:olist"],
-            "table:row": ["table:separator", "table:row"]  # TODO: Implement tables
+            "table:row": ["table:separator", "table:row"],  # TODO: Implement tables
+            "blockquotes": []  # TODO: Implement blockquotes
         }
 
     def encapsulate(self, start, end):
@@ -368,8 +383,6 @@ class ContextManager:
                 level="CRITICAL"
             )
         except AttributeError as error:
-            rich.inspect(error)
-            rich.inspect(self.pile)
             if pile_start is None:
                 for e, r in zip(self.pile, self.parsed_list):
                     log_message(f'{e} - {r}')
@@ -480,10 +493,12 @@ class ContextManager:
         """
         range_to_encapsulate = 0
         line_skipped = 0
+        self.recontext(self.parsed_list[index])
         i = index + 1
-        # print(self.parsed_list)
+
         while i < len(self.parsed_list):
             if self.parsed_list[i].label in self.dict_lookahead[token.label]:
+                self.recontext(self.parsed_list[i])
                 self.pile.append(self.parsed_list[i])
                 range_to_encapsulate += 1
             elif self.parsed_list[i].label == "linebreak":
@@ -498,6 +513,9 @@ class ContextManager:
             i += 1
         self.encapsulate(index, index + range_to_encapsulate)
         return range_to_encapsulate, line_skipped
+
+    def recontext(self, token):
+        token.content = ContextManager(token.content)()
 
     def get_last_container_in_pile(self, index):
         """
@@ -561,5 +579,4 @@ if __name__ == "__main__":  # pragma: no cover
     print('----------------------------------')
     # for e in ctx.pile:
     #     rich.inspect(e)
-    ctx.print_all()
     # rich.print(ctx.pile)
