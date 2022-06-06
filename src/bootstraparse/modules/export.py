@@ -12,7 +12,7 @@ from io import StringIO
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
 
-from bootstraparse.modules.syntax import split_optionals, OptionalToken  # noqa F401
+from bootstraparse.modules import syntax  # noqa F401
 
 """
 Named tuple containing all necessary information to select the appropriate
@@ -32,11 +32,11 @@ def format_optionals(optionals):
     Function handling parser output optional object, splitting it between html_insert and class_insert
     on one hand and var on the other hand.
     :param optionals: SplitToken namedtuple
-    :type optionals: OptionalToken
+    :type optionals: syntax.OptionalToken
     :return: The formatted optionals (With the pretty whitespace)
     :rtype: str
     """
-    split = split_optionals(optionals)
+    split = syntax.split_optionals(optionals)
     h = split.html_insert
     c = split.class_insert
     output = f'''{' ' if h or c else ''}{h}{' ' if h and c else ''}{f'class="{c}"' if c else ''}'''
@@ -209,7 +209,6 @@ class ContextConverter:
         """
         Main method processing the given pile.
         """
-        rich.print(self.pile)
         for container in self.pile:
             self.io_output.write(container.export(self.exporter))
         self.io_initialized = True
@@ -246,13 +245,12 @@ if __name__ == '__main__':  # pragma: no cover
 
     io_string = StringIO(
         """- list
-        - list
+        - this is a *list*
         - list"""
     )
     test = parser.parse_line(io_string)
     exm = ExportManager(None, None)
     cxm = context_mngr.ContextManager(test)
     cxc = ContextConverter(cxm(), exm)
-    rich.print(cxm.matched_elements)
     cxc.process_pile()
     cxc.print_all()
