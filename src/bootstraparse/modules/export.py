@@ -244,13 +244,13 @@ if __name__ == '__main__':  # pragma: no cover
     from bootstraparse.modules import parser
 
     io_string = StringIO(
-        """- list
-        - this is a *list*
-        - list"""
+        """[this is a link]('http://te.st')"""
     )
     test = parser.parse_line(io_string)
     exm = ExportManager(None, None)
     cxm = context_mngr.ContextManager(test)
     cxc = ContextConverter(cxm(), exm)
+    rich.inspect(cxc)
     cxc.process_pile()
+    rich.inspect(cxc.pile[0])
     cxc.print_all()

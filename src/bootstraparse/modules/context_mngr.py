@@ -38,9 +38,11 @@ class BaseContainer:
         output = ""
         if not arbitrary_list:
             arbitrary_list = self.content
+            # rich.inspect(arbitrary_list)
         for element in arbitrary_list:
             if isinstance(element, BaseContainer):
                 output += element.export(exm) + " "
+        # rich.inspect(output[:-1])
         return output[:-1]
 
     def get_optionals(self):
@@ -229,6 +231,9 @@ class HyperLinkContainer(BaseContainer):
         self.others["url"] = self.content[0].content.url
         return super().export(exm)
 
+    def get_content(self, exm, arbitrary_list=None):
+        return self.content[0].content.text
+
 
 # class IlImageContainer(BaseContainer):
 #     pass
@@ -250,6 +255,9 @@ class HeaderContainer(BaseContainer):
         self.others = {}
         self.others["header_level"] = len(self.content[0].content[0])
         return super().export(exm)
+
+    def get_content(self, exm, arbitrary_list=None):
+        return self.content[0].content[1]
 
 
 class DisplayContainer(BaseContainer):

@@ -2,7 +2,7 @@
 # Usage:
 #   from bootstraparse.modules.preparser import preparser
 #   pp = preparser(file, enviroment)
-#   pp.do_import() # imports all the modules and adds them to the file, do the same for all the files that are to be imported
+#   pp.do_import() # imports all the modules and adds them to the file, do the same for all the files that are to be imported  # noqa
 #   pp.do_replacements() # replaces all images and shortcuts in the file
 #   pp.readlines() # returns the lines of ORIGINAL file
 #   pp.get_all_lines() # returns the lines of the file after replacements and imports
@@ -29,12 +29,12 @@ class PreParser:
     """
     Takes a path and environment, executes all pre-parsing methods on the specified file.
     """
-    def __init__(self, file_path, __env, list_of_paths=None, dict_of_imports=None):
+    def __init__(self, file_path, _env, list_of_paths=None, dict_of_imports=None):
         """
         Initializes the PreParser object.
         Takes the following parameters:
         :param file_path: the path of the file to be parsed
-        :param __env: the environment object
+        :param _env: the environment object
         :param list_of_paths: the list of files that have been imported in this branch of the import tree
         :param dict_of_imports: Dictionary of all imports made to avoid duplicate file opening / pre-parsing
         """
@@ -44,7 +44,7 @@ class PreParser:
             dict_of_imports = {}
 
         # Set the environment & path
-        self.__env = __env
+        self._env = _env
         self.path = file_path
         self.name = os.path.basename(file_path)
         self.base_path = os.path.dirname(file_path)
@@ -148,7 +148,7 @@ class PreParser:
                 self.local_dict_of_imports[e] = pp
             else:
                 try:
-                    pp = PreParser(e, self.__env, self.list_of_paths.copy(), self.global_dict_of_imports)
+                    pp = PreParser(e, self._env, self.list_of_paths.copy(), self.global_dict_of_imports)
                     self.global_dict_of_imports[e] = pp
                     pp.make_import_list()
                     self.local_dict_of_imports[e] = pp
@@ -191,8 +191,8 @@ class PreParser:
         if self.imports_done:
             self.file_with_all_imports.seek(0)
             error_mngr.log_message(
-                level='WARNING',
-                message=f'Imports were already done on {self.path}, returning as is ;'
+                level='INFO',
+                message=f'Imports were already done on {self.path}, returning as is;'
                         f' rewound to the beginning of the file.'
             )
             return self.file_with_all_imports
@@ -240,7 +240,7 @@ class PreParser:
         """
         Fetches an element from the config
         """
-        sub_dict = self.__env.config.loaded_conf
+        sub_dict = self._env.config.loaded_conf
         validated_elements = []
         for key in list_keys:
             try:
@@ -248,7 +248,7 @@ class PreParser:
                 validated_elements.append(f'[{key}]')
             except KeyError:
                 error_mngr.log_exception(
-                    KeyError(f"Could not find key {key} in dict config{''.join(validated_elements)} in configs {'; '.join(self.__env.config.config_folders)}"),
+                    KeyError(f"Could not find key {key} in dict config{''.join(validated_elements)} in configs {'; '.join(self._env.config.config_folders)}"),
                     level='CRITICAL'
                 )
         return sub_dict
@@ -276,7 +276,7 @@ class PreParser:
         :param optionals: optional parameters along with alias
         """
         output = self.get_element_from_config('aliases', 'shortcuts', shortcut)
-        _, _, var_list, var_dict = export.split_optionals(optionals)
+        _, _, var_list, var_dict = syntax.split_optionals(optionals)
 
         return self.make_replacements(output, *var_list, **var_dict)
 
@@ -289,9 +289,9 @@ class PreParser:
         """
         shortcut_s = self.get_element_from_config('aliases', 'images', shortcut)
 
-        _, _, var_list, var_dict = export.split_optionals(optionals)
+        _, _, var_list, var_dict = syntax.split_optionals(optionals)
         request = export.ExportRequest('inline_elements', 'image', optionals)  # noqa : F841
-        output = self.__env.export_mngr(request)
+        output = self._env.export_mngr(request)
 
         return output.start + self.make_replacements(shortcut_s, *var_list, **var_dict) + output.end
 
@@ -300,11 +300,11 @@ class PreParser:
         Returns a string representation of the PreParser object.
         :return: a string representation of the PreParser object
         """
-        return "PreParser(path={}, name={}, base_path={}, " \
-               "relative_path_resolver={}, ist_of_paths={}, " \
+        return "PreParser[{}](path={}, name={}, base_path={}, " \
+               "relative_path_resolver={}, list_of_paths={}, " \
                "global_dict_of_imports={}, local_dict_of_imports={}" \
-               ")".format(self.path, self.name, self.base_path,
-                          self.relative_path_resolver, self.list_of_paths,
+               ")".format(id(self), self.path, self.name, self.base_path,
+                          id(self.relative_path_resolver), [os.path.basename(elt) for elt in self.list_of_paths],
                           self.global_dict_of_imports, self.local_dict_of_imports)
 
     def __str__(self):
@@ -368,9 +368,9 @@ if __name__ == "__main__":  # pragma: no cover
     from bootstraparse.modules import pathresolver
     site_path = pathresolver.b_path("../../example_userfiles/test.bpr")
     config_path = pathresolver.b_path("../../example_userfiles/config/")
-    __env = environment.Environment()
-    __env.config = config.ConfigLoader(config_path)
-    __env.export_mngr = export.ExportManager('', '')
-    t_pp = PreParser(site_path, __env)
+    _env = environment.Environment()
+    _env.config = config.ConfigLoader(config_path)
+    _env.export_mngr = export.ExportManager('', '')
+    t_pp = PreParser(site_path, _env)
     out = t_pp.do_replacements()
     rich.print(t_pp.get_all_lines())

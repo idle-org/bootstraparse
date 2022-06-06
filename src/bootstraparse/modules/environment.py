@@ -6,8 +6,8 @@
 #   from bootstraparse.modules.environment import Environment
 #   env = Environment()
 #   env.integrity_check() -> Checks if all mandatory parameters are set.
-#   env["Config"] -> returns config object
-#   env["context_mngr"] -> returns context manager object
+#   env["config"] -> returns config object
+#   env["template"] -> returns template object
 #   env["export_mngr"] -> returns export manager object
 #   env["global_path"] -> returns global path ???
 #   env["user_path"] -> returns user path ???
@@ -29,8 +29,10 @@ class Environment:
         # mandatoryParameters
         self._mParams = {
             'config': None,
-            'context_mngr': None,
+            'template': None,
             'export_mngr': None,
+            'origin': None,
+            'destination': None,
             'global_path': None,
             'user_path': None,
             'site_path': None,
