@@ -32,6 +32,7 @@ class BaseContainer:
         self.content = content
         self.map = {}
         self.optionals = optionals
+        self.indentation_level = 0  # future: add an indentation level to every token for human readability of the final output
 
     def get_content(self, exm, arbitrary_list=None):
         output = ""
