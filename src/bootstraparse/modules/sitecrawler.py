@@ -56,7 +56,7 @@ class SiteCrawler:
             preparser_path = os.path.join(self.initial_path, root, file)
             pp = preparser.PreParser(preparser_path, self._env, dict_of_imports=self.global_dict_of_imports)
             pp.do_imports()
-            p = self.create_file(os.path.join(self.destination_path, root, file))
+            p = self.create_file(os.path.join(self.destination_path, root, os.path.splitext(file)[0] + ".html"))
             self.preparsers.append((pp, p))
 
         return self.preparsers

@@ -52,7 +52,6 @@ def preparse_parse(preparser):
 
 
 def save(list_of_containers, destination, env):
-    rich.print(list_of_containers[0])
     with open(destination, "w") as output_file:
         output_file.write(export.ContextConverter(list_of_containers, env.export_mngr).process_pile().read())
 

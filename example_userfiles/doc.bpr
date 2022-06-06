@@ -1,0 +1,40 @@
+@[start]['doc']
+
+@{sch}[ht]
+@{vuln}[1]
+@{vuln}[1,2]
+
+@{custom_pict}{class="watabuya"}[number=2, _important=22]
+
+@[custom_permutation]
+
+@[custom_permutation]{class="bouyou"}[number=44]
+
+
+Oneline import @[tab_bnw]{class="sojek"} with three imports @[tab_color] @{image}{class="sojek dark" color="red"}[number=2]
+
+add {{class}} at the end of an element for instant bootstrapyfication (class="") (class_insert)
+add {html} at the end of an element to add something to your html markup element (style='border-top: 2px') (html_insert)
+add [statement/str/float] at the end of an element to add something that must be interpreted by the parser
+    add [int] to modify the path for aliases and images (vuln[1] looks for vuln1.png), you can add multiple with commas for multiple images variations
+
+
+filler
+::< whatever.bpr > < whatever2.bpr > (import file whatever.bpr)
+filler2
+
+.vky
+=> base.vky / .bky
+
+
+
+-------------------
+shortcuts.yaml
+    permutations
+    images/icons
+    glossaire
+
+navbar.yaml
+config.yaml
+
+@[end]

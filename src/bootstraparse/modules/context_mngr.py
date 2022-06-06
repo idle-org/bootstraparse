@@ -269,6 +269,9 @@ class DisplayContainer(BaseContainer):
         self.others["display_level"] = len(self.content[0].content[0])
         return super().export(exm)
 
+    def get_content(self, exm, arbitrary_list=None):
+        return self.content[0].content[1]
+
 
 class TableSeparatorContainer(BaseContainer):
     pass
@@ -305,8 +308,8 @@ class TableCellContainer(BaseContainer):
 
 
 class LinebreakContainer(BaseContainer):
-    def export(self, _):  # MONITOR: Observe behaviour when we'll be done, might cause unintended side effects
-        return "<br/>\n"
+    def export(self, _):  # TODO: add lookahead for double linebreak to force break
+        return "\n"
 
 
 """

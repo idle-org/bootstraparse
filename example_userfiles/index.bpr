@@ -1,63 +1,49 @@
-### header 3 ###
-[link]("http://test.icule"){style="underline: None;"}
+@[start]['bootstrap']
+
+Structural Elements:
+<<div
+This is a div
+div>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
 <<article
-
-*italic*
-**bold**
-#. Lists
-
-# Header # {style='height=44px'}
-## Header 2 ##
-
+This is an article
+article>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
 <<aside
-oneline
-aside>> {class="bubuyo"}
-~~ element
-multiple
-lines
-element~~ {class="bubuyo"}
-
-article>>
-
-~~header
-
-header~~
-
-
-@{custom_pict}
-@{sch}[ht]
-@{vuln}[1]
-@{vuln}[1,2]
-
-@{custom_pict}{class="watabuya"}[number=2, _important=22]
-
-@[custom_permutation]
-
-@[custom_permutation]{class="bouyou"}[number=44]
+This is an aside
+aside>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+<<section
+This is a section
+section>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+<<div
+<<article
+<<aside
+<<section
+Text
+section>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+aside>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+article>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+div>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+# Header 1 #[class='blue', 123]{var='test', number=11}{{cinsertion}}
+! Display 1 ![class='blue', 123]{var='test', number=11}{{cinsertion}}
 
 
-Oneline import @[tab_bnw]{class="sojek"} with three imports @[tab_color] @{image}{class="sojek dark" color="red"}[number=2]
-
-add {{class}} at the end of an element for instant bootstrapyfication (class="") (class_insert)
-add {html} at the end of an element to add something to your html markup element (style='border-top: 2px') (html_insert)
-add [statement/str/float] at the end of an element to add something that must be interpreted by the parser
-    add [int] to modify the path for aliases and images (vuln[1] looks for vuln1.png), you can add multiple with commas for multiple images variations
-
-
-filler
-::< whatever.bpr > < whatever2.bpr > (import file whatever.bpr)
-filler2
-
-.vky
-=> base.vky / .bky
+Inline Element:
+[Link text]('http://this.is.a.link')
+*This is in italic*
+**This is strong**
+~~This is stricken through~~
+__This is underlined__
+(#1)This is a custom span(#1)
 
 
+Oneline elements:
+- This is an unordered list item
+- This is an unordered list item
+- This is an unordered list item[class='blue', 123]{var='test', number=11}{{cinsertion}}
+#. This is an ordered list item
+#. This is an ordered list item
+#. This is an ordered list item[class='blue', 123]{var='test', number=11}{{cinsertion}}
 
--------------------
-shortcuts.yaml
-    permutations
-    images/icons
-    glossaire
+This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment.
+I wish there could be linebreaks.
 
-navbar.yaml
-config.yaml
+@[end]
