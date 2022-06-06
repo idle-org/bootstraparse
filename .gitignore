@@ -156,3 +156,10 @@ cython_debug/
 example_userfiles/output/
 example_userfiles/output/*
 dev_outputs/*
+/example_output/index.bpr
+/example_output/index2.bpr
+/example_output/pages/page1.bpr
+/example_output/pages/page2.bpr
+/example_output/test.bpr
+/example_output/whatever.bpr
+/example_output/whatever2.bpr
