@@ -1,0 +1,1 @@
+::< whatever.bpr > < whatever2.bpr > (import file whatever.bpr)

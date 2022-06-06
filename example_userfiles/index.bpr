@@ -1,29 +1,23 @@
-::< _imported.bpr > < whatever.bpr > < whatever2.bpr >
-
-~~article
+### header 3 ###
+[link]("http://test.icule"){style="underline: None;"}
+<<article
 
 *italic*
 **bold**
- 1. Lists
-
-[link]("http://test.icule") {style="underline: None;"}
+#. Lists
 
 # Header # {style='height=44px'}
 ## Header 2 ##
 
-~~ element oneline element~~ {class="bubuyo"}
+<<aside
+oneline
+aside>> {class="bubuyo"}
 ~~ element
 multiple
 lines
 element~~ {class="bubuyo"}
 
-| First header | Second Header | Third header |
-|--------------|-------:-------|-------------:|
-| First tab    | Second tab    | third tab    |
-|2 Big tab like very very big  | Third bab    |
-| Babada       |2   Very big babada           | {class= bigtable} #[skip,3,44,number=33]
-
-article~~
+article>>
 
 ~~header
 
@@ -36,7 +30,6 @@ header~~
 @{vuln}[1,2]
 
 @{custom_pict}{class="watabuya"}[number=2, _important=22]
-@{custom_pict/wat}
 
 @[custom_permutation]
 
