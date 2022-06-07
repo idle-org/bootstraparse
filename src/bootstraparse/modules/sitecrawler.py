@@ -33,6 +33,7 @@ class SiteCrawler:
 
     def get_all_paths(self):
         self.files, self.directories = self.list_recursively(self.initial_path, self.initial_path)
+        print (self.files, self.directories)
 
     def list_recursively(self, path, root):
         files = []
@@ -41,12 +42,14 @@ class SiteCrawler:
             element_fpath = os.path.join(path, element)
             element_rpath = os.path.relpath(path, root)
             if os.path.isdir(element_fpath):
-                directories.append((element, element_rpath))
-                f, d = self.list_recursively(element_fpath, root)
-                files += f
-                directories += d
+                if element not in self.forbidden_folders:
+                    directories.append((element_rpath, element))
+                    f, d = self.list_recursively(element_fpath, root)
+                    files += f
+                    directories += d
             else:
-                files.append((element, element_rpath))
+                if os.path.splitext(element)[1] in self.authorised_extensions and element[0] != "_":
+                    files.append((element_rpath, element))
         return files, directories
 
     def create_all_paths(self):
