@@ -22,6 +22,8 @@ inline_elements:
 oneline_elements:
   ulist: ["<ul{optionals}>", "</ul>"]
   olist: ["<ol{optionals}>", "</ol>"]
+  # future: blockquote
+  # future: code
   list_line: ["<li{optionals}>", "</li>"]
 
 table:

@@ -153,7 +153,7 @@ class MismatchedContainerError(BootstraparseError):
     """
     The token is not final and cannot be contained. Indicative of a mismatched token.
     """
-    def __init__(self, token):  # FUTURE : Add file name to error
+    def __init__(self, token):
         self.token = token
         if token:
             self.line = token.line_number

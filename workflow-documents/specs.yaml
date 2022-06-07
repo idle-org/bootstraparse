@@ -76,7 +76,7 @@ display:
   type: one-line
   scope: first release
 
-# Not sure about sublists for the moment, add that later
+# future: add sublists
 numbered lists:
   bpr: '#. nbd list item'
   markdown compatible: no

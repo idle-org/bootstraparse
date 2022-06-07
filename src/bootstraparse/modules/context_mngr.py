@@ -490,7 +490,7 @@ class ContextManager:
                     raise MismatchedContainerError(token)
 
             except MismatchedContainerError as e:
-                error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.
+                error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Try to guess some hints.
             index += 1
 
         self.contextualised = True

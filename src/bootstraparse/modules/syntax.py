@@ -6,7 +6,7 @@
 #   from bootstraparse.modules.syntax import line
 #   line.parse_line('string') # returns a List of tokens
 #   line_to_replace.parse_line('string') # returns a List of tokens parsed for replacements
-#   imports.parse_line('string', True) # returns a List of tokens parsed for imports # FUTURE: Not implemented yet
+#   imports.parse_line('string', True) # returns a List of tokens parsed for imports
 #   any_token.create_diagram("filename") # Debugging
 
 import os
@@ -347,7 +347,7 @@ def reparse(parse_element):
     :return: returns a function parsing given match with specified parsing element
     """
     def _reparse(__, _, tokens):
-        return parse_element.parseString(tokens[0])  # Future: fix this with a proper solution
+        return parse_element.parseString(tokens[0])  # Future: document this behaviour more in-depth
 
     return _reparse
 
