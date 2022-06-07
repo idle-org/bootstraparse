@@ -14,7 +14,6 @@ _type_counterpart_container = [
     (syntax.EmptySemanticType, None, "self", tools.__GLk(1)),
     (syntax.UnimplementedToken, None, "error", tools.__GLk(1)),
     (syntax.TextToken, None, "self", tools.__GLk(1)),
-    (syntax.EnhancedToken, 'text:enhanced', "token", tools.__GLk(1)),  # Not sure Enhanced text is used
     (syntax.EtEmToken, "text:em", "token", tools.__GLk(1)),
     (syntax.EtStrongToken, 'text:strong', "token", tools.__GLk(1)),
     (syntax.EtUnderlineToken, 'text:underline', "token", tools.__GLk(1)),
@@ -24,8 +23,8 @@ _type_counterpart_container = [
     (syntax.EtOlistToken, None, "self", tools.__GLk(1)),
     (syntax.HeaderToken, None, "self", tools.__GLk(1)),
     (syntax.DisplayToken, None, "self", tools.__GLk(1)),
-    (syntax.StructuralElementStartToken, None, "error", tools.__GLk(1)),  # A start can't be in a container (MismatchedContainerError)
-    (syntax.StructuralElementEndToken, 'se:start:test', "error", tools.__GLk(1)),  # An end can't be in a container (MismatchedContainerError)
+    (syntax.StructuralElementStartToken, None, "error", tools.__GLk(1)),  # A start can't be in a container (MismatchedContainerError) # noqa
+    (syntax.StructuralElementEndToken, 'se:start:test', "error", tools.__GLk(1)),  # An end can't be in a container (MismatchedContainerError) # noqa
     (syntax.HyperlinkToken, None, "self", tools.__GLk(1)),  # Shouldn't be an error
     (syntax.TableToken, None, "error", tools.__GLk(1)),
     (syntax.TableRowToken, None, "error", tools.__GLk(1)),
