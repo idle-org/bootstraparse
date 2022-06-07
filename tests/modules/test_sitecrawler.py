@@ -2,7 +2,6 @@ import os
 import tempfile
 
 import pytest
-import rich
 
 import bootstraparse.modules.sitecrawler as sitecrawler
 from bootstraparse.modules import environment, config, pathresolver, export, preparser

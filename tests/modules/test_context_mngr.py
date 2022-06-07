@@ -465,7 +465,7 @@ _zipped_token_list_with_expected_result = [
 @pytest.fixture
 def base_cm():
     lst = _base_list[:]
-    base = context_mngr.ContextManager(_base_list)
+    base = context_mngr.ContextManager(lst)
     base()
     return base
 
