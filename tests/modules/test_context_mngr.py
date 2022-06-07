@@ -454,6 +454,21 @@ _token_list_with_expected_result = [
         ],
         __GLk(1),
     ],
+    [
+        [
+            sy.Linebreak([]),
+            sy.Linebreak([]),
+            sy.Linebreak([]),
+        ],
+        [
+            context_mngr.LinebreakContainer([
+                sy.Linebreak([]),
+                sy.Linebreak([]),
+                sy.Linebreak([]),
+            ]),
+        ],
+        __GLk(1),
+    ],
 ]
 
 _zipped_token_list_with_expected_result = [

@@ -307,6 +307,10 @@ class BlockQuoteAuthorToken(SemanticType):
 class Linebreak(ExplicitSemanticType):
     label = "linebreak"
 
+    def __init__(self, content):
+        super().__init__(content)
+        self.content = []
+
     def to_container(self, filter_func=None):
         return self
 

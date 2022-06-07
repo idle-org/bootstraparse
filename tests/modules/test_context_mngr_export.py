@@ -200,11 +200,20 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.LinebreakContainer([
-            sy.Linebreak([""]),
+            sy.Linebreak([]),
         ]),
         "\n",
         __GLk(1),
     ],
+    [
+        context_mngr.LinebreakContainer([
+            sy.Linebreak([]),
+            sy.Linebreak([]),
+            sy.Linebreak([]),
+        ]),
+        "<br />\n<br />\n",
+        __GLk(1),
+    ]
 
 ]
 

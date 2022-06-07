@@ -11,6 +11,7 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
+import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message, LonelyOptionalError # noqa
@@ -309,8 +310,11 @@ class TableCellContainer(BaseContainer):
 
 
 class LinebreakContainer(BaseContainer):
-    def export(self, _):  # TODO: add lookahead for double linebreak to force break
-        return "\n"
+    def export(self, _):
+        if len(self.content) == 1:
+            return "\n"
+        return "<br />\n"*(len(self.content)-1)
+
 
 
 """
@@ -358,7 +362,8 @@ class ContextManager:
             "list:ulist": ["list:ulist"],
             "list:olist": ["list:olist"],
             "table:row": ["table:separator", "table:row"],  # TODO: Implement tables
-            "blockquotes": []  # TODO: Implement blockquotes
+            "blockquotes": [],  # TODO: Implement blockquotes
+            "linebreak": ["linebreak"],
         }
         self.contextualised = False
 
@@ -441,6 +446,7 @@ class ContextManager:
             return self.pile
         index = 0
         line_number = 1
+
         while index < len(self.parsed_list):
             token = self.parsed_list[index]
             token.line_number = line_number
@@ -450,11 +456,11 @@ class ContextManager:
             try:
                 # Linebreaks
                 if isinstance(token, syntax.Linebreak):
-                    self.encapsulate(index, index)
+                    # self.encapsulate(index, index)
                     line_number += 1
 
                 # Pack the optionnal with the previous container if it exists (else raise error)
-                elif isinstance(token, syntax.OptionalToken):
+                if isinstance(token, syntax.OptionalToken):
                     self.get_last_container_in_pile(index).optionals = token
                     self.pile[index] = None
 
