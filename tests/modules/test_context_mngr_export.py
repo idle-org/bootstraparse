@@ -83,8 +83,14 @@ _list_classes_expected_value = [
                     sy.TextToken(['test7']),
                 ]),
             ]),
+            sy.Linebreak(["\n"]),
+            sy.EtUlistToken([
+                context_mngr.TextContainer([
+                    sy.TextToken(['test8']),
+                ]),
+            ]),
         ]),
-        "<ul>\n<li>test7</li></ul>",
+        "<ul>\n<li>test7</li>\n<li>test8</li></ul>",
         __GLk(1),
     ],
     [

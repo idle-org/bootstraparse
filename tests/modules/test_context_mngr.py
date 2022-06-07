@@ -640,6 +640,12 @@ def test_context_call(init_list, expected, file_line):
             ctx()
 
 
+def test_double_call():
+    ctx = context_mngr.ContextManager([sy.TextToken('test')])
+    c = ctx()
+    assert c == ctx()
+
+
 def test_content_call_raises():
     ctx = context_mngr.ContextManager([sy.StructuralElementEndToken(["1"])])
     with pytest.raises(error_mngr.MismatchedContainerError):
