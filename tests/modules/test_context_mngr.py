@@ -678,3 +678,6 @@ def test_finalize_pile(base_cm):
     base_cm.pile[0] = {}
     with pytest.raises(TypeError):
         base_cm.finalize_pile()
+    base_cm.pile[0] = sy.TextToken(['e'])
+    with pytest.raises(TypeError):
+        base_cm.finalize_pile()

@@ -11,7 +11,6 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
-import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message, LonelyOptionalError # noqa
@@ -316,7 +315,6 @@ class LinebreakContainer(BaseContainer):
         return "<br />\n"*(len(self.content)-1)
 
 
-
 """
 Dictionary of all correspondences between tokens and containers.
 """
@@ -444,8 +442,8 @@ class ContextManager:
         # self.pile = self.parsed_list.copy()
         if self.contextualised:
             return self.pile
-        index = 0
-        line_number = 1
+
+        index, line_number = 0,  1
 
         while index < len(self.parsed_list):
             token = self.parsed_list[index]
@@ -521,7 +519,10 @@ class ContextManager:
                         line = "Undefined"
                         name = "Undefined"
                     log_exception(
-                        TypeError(f"Encountered a non-container element in the pile during the final pass: {p}, at line {line} in file {name}."),
+                        TypeError(
+                            f"Encountered a non-container element in the pile during "
+                            f"the final pass: {p}, at line {line} in file {name}."
+                        ),
                         level="CRITICAL"
                     )
         self.pile = final_pile

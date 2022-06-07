@@ -248,7 +248,8 @@ class PreParser:
                 validated_elements.append(f'[{key}]')
             except KeyError:
                 error_mngr.log_exception(
-                    KeyError(f"Could not find key {key} in dict config{''.join(validated_elements)} in configs {'; '.join(self._env.config.config_folders)}"),
+                    KeyError(f"Could not find key {key} in dict config{''.join(validated_elements)} "
+                             f"in configs {'; '.join(self._env.config.config_folders)}"),
                     level='CRITICAL'
                 )
         return sub_dict

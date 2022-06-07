@@ -1,8 +1,6 @@
 # Module sequencing the successive actions necessary for website building
 import os
 
-import rich
-
 from bootstraparse.modules import pathresolver, sitecrawler, environment, config, export, parser, context_mngr
 
 

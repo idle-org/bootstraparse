@@ -33,7 +33,6 @@ class SiteCrawler:
 
     def get_all_paths(self):
         self.files, self.directories = self.list_recursively(self.initial_path, self.initial_path)
-        print (self.files, self.directories)
 
     def list_recursively(self, path, root):
         files = []

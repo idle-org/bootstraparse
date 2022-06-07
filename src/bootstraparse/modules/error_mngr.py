@@ -182,7 +182,8 @@ class LonelyOptionalError(BootstraparseError):
             self.name = None
         if last_in_pile:
             super().__init__(f"Could not match token {token} at line {self.line} with "
-                             f"last element in pile {last_in_pile} at line {last_in_pile.line_number} in file {self.name}(not a container).")
+                             f"last element in pile {last_in_pile} at line {last_in_pile.line_number} "
+                             f"in file {self.name}(not a container).")
         else:
             super().__init__(f"Could not match token {token} at line {self.line} in file {self.name}"
                              f"as there was nothing in the pile.")

@@ -44,7 +44,7 @@ Test content line 7
 """
 content_page1 = """Test page1\nTest page1-2\nTest page1-3\n"""
 content_page2 = """Test page2\n::< page1.bpr >"""
-content_page3 = """Test page3\n::< subpages/page3.bpr > < subpages/spage4.bpr > <subpages/spage5.bpr > <subpages/spage6.bpr > < page4.bpr >"""
+content_page3 = """Test page3\n::< subpages/page3.bpr > < subpages/spage4.bpr > <subpages/spage5.bpr > <subpages/spage6.bpr > < page4.bpr >"""  # noqa: E501
 content_page4 = """Test page4\n::< page5.bpr > < page6.bpr > < ../index.bpr >"""
 content_page5 = """Test page5\n::"""
 content_page6 = """Test page6\n::"""
@@ -401,5 +401,5 @@ def test_make_replacement_errors():
     assert pp.make_replacements("This is a test", "not_existing") == "This is a test"
     assert pp.make_replacements("This is a test {}", "shortcuts") == "This is a test shortcuts"
     assert pp.make_replacements("This is a test {}", "images") == "This is a test images"
-    assert pp.make_replacements("This is a test {} {} {image} {b}", 1, 2, image="images", b="b") == "This is a test 1 2 images b"
+    assert pp.make_replacements("This is a test {} {} {image} {b}", 1, 2, image="images", b="b") == "This is a test 1 2 images b"  # noqa: E501
     assert pp.make_replacements("This is a test {} {} {image} {b}", karm=3) == "This is a test {} {} {image} {b}"

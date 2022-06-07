@@ -16,7 +16,7 @@ files = [
     ("base/_noimport.bpr", "", ""),
     ("base/subtests/test4.bpr", "", ""),
     ("base/subtests/test5.bpr", "", ""),
-    ("base/config/test6.yml", "", None),
+    ("base/config/test6.bpr", "", None),
     ("base/config/test7.yml", "", None),
     ("base/templates/test8.yml", "", None),
 ]
@@ -38,7 +38,8 @@ def list_files():
     """
     List all files in the test directory
     """
-    return [(os.path.join(_DEST, make_new_file(file, content).split("/", 1)[1].replace(".bpr", ".html")), exp) for file, content, exp in files]
+    return [(os.path.join(_DEST, make_new_file(file, content).split("/", 1)[1].replace(".bpr", ".html")), exp)
+            for file, content, exp in files]
 
 
 @pytest.fixture(scope="module")

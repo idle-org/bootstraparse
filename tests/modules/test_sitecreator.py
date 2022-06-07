@@ -37,7 +37,8 @@ def list_files():
     """
     List all files in the test directory
     """
-    return [(os.path.join(_DEST, make_new_file(file, content).split("/", 1)[1].replace(".bpr", ".html")), exp) for file, content, exp in files]
+    return [(os.path.join(_DEST, make_new_file(file, content).split("/", 1)[1].replace(".bpr", ".html")), exp)
+            for file, content, exp in files]
 
 
 @pytest.fixture(scope="module")

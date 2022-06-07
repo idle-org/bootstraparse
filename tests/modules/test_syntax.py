@@ -4,7 +4,7 @@ import pyparsing
 import pytest
 
 import bootstraparse.modules.syntax as sy
-from bootstraparse.modules.tools import __GL, __module_path, find_variables_in_file  # , find_functions_in_file, find_classes_in_file
+from bootstraparse.modules.tools import __GL, __module_path, find_variables_in_file
 
 ptp = pytest.param
 __XF = pytest.mark.xfail
