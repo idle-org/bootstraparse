@@ -202,7 +202,7 @@ class ReContextContainer(BaseContainer):
     children = ""
 
     def get_content(self, exm, arbitrary_list=None):
-        child_start, child_end = exm(export.ExportRequest(self.type, self.children))  # noqa: F841
+        child_start, child_end = exm(export.ExportRequest(self.type, self.children))  # noqa F821
         output = "\n"
         for element in self.content:
             if isinstance(element, syntax.Linebreak):
@@ -340,7 +340,7 @@ class ContextManager:
     """
     Class in charge of piling all the parsed elements and then encapsulating them inside one another.
     """
-    def __init__(self, parsed_list):
+    def __init__(self, parsed_list, name=None, ident=0):
         """
         Takes a list of parsed tokens.
         Parameters
@@ -351,6 +351,8 @@ class ContextManager:
         self.output = []
         self.parsed_list = parsed_list
         self.pile = []
+        self.name = name
+        self.ident = ident
         self.matched_elements = {}
         self.dict_lookahead = {
             "list:ulist": ["list:ulist"],
@@ -442,6 +444,8 @@ class ContextManager:
         while index < len(self.parsed_list):
             token = self.parsed_list[index]
             token.line_number = line_number
+            token.file_name = self.name
+            token.ident = self.ident
             self.pile.append(token)
             try:
                 # Linebreaks
@@ -500,8 +504,14 @@ class ContextManager:
                 if isinstance(p, BaseContainer):
                     final_pile.append(p)
                 else:  # Cleanup of non-matched elements
+                    if isinstance(p, syntax.SemanticType):
+                        line = p.line_number
+                        name = p.file_name
+                    else:
+                        line = "Undefined"
+                        name = "Undefined"
                     log_exception(
-                        TypeError(f"Expected BaseContainer, found {type(p)} instead."),
+                        TypeError(f"Encountered a non-container element in the pile during the final pass: {p}, at line {line} in file {name}."),
                         level="CRITICAL"
                     )
         self.pile = final_pile
@@ -536,7 +546,7 @@ class ContextManager:
         return range_to_encapsulate, line_skipped
 
     def recontext(self, token):
-        token.content = ContextManager(token.content)()
+        token.content = ContextManager(token.content, name=self.name)()
 
     def get_last_container_in_pile(self, index):
         """

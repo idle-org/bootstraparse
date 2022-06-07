@@ -247,7 +247,7 @@ if __name__ == '__main__':  # pragma: no cover
     test = parser.parse_line(io_string)
     __config = config.ConfigLoader(pathresolver.b_path("configs/"))
     __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
-    exm = ExportManager(None, None, __config, __templates)
+    exm = ExportManager(__config, __templates)
     cxm = context_mngr.ContextManager(test)
     cxc = ContextConverter(cxm(), exm)
     rich.inspect(cxc)

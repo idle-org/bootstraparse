@@ -1,5 +1,8 @@
 # Module sequencing the successive actions necessary for website building
 import os
+
+import rich
+
 from bootstraparse.modules import pathresolver, sitecrawler, environment, config, export, parser, context_mngr
 
 
@@ -48,7 +51,7 @@ def create_crawler(origin, destination, _env):
 def preparse_parse(preparser):
     io = preparser.do_replacements()
     parsed_list = parser.parse_line(io)
-    output = context_mngr.ContextManager(parsed_list)()
+    output = context_mngr.ContextManager(parsed_list, name=preparser.name)()
     return output
 
 

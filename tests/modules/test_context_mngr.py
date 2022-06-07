@@ -571,31 +571,6 @@ def test_context_mngr():
     assert base != base2
     base.debug_map()
 
-#
-# def test_base_container_with_optionals():
-#     base = context_mngr.BaseContainer()
-#     assert base is not None
-#
-#     assert base.class_name() == 'BaseContainerWithOptionals'
-#     assert base.debug_map() is None
-#
-#     base.add('test')
-#     assert base[0] == 'test'
-#     assert len(base) == 1
-#
-#     assert base.fetch_html_insert() == []
-#
-#     class OI:
-#         label = 'optional:insert'
-#
-#     class CI:
-#         label = 'optional:class'
-#
-#     i, c = OI(), CI()
-#     base.optionals = [i, c]
-#     assert base.fetch_html_insert() == [i]
-#     assert base.fetch_class_insert() == [c]
-
 
 def test_print():
     base = context_mngr.BaseContainer()
@@ -681,3 +656,10 @@ def test_get_last_container_in_pile(base_cm):
     base_cm.pile[0] = None
     with pytest.raises(error_mngr.LonelyOptionalError):
         base_cm.get_last_container_in_pile(3)
+
+
+def test_finalize_pile(base_cm):
+    base_cm()
+    base_cm.pile[0] = {}
+    with pytest.raises(TypeError):
+        base_cm.finalize_pile()

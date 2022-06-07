@@ -13,7 +13,7 @@ all_logging_tests = [(i, j, k) for i in [None, "test.log"]
 all_non_blocking_exception_tests = [
     (ParsingError("test error", 10, 10, "testfile.bpr")),
     (ParsingError()),
-    (MismatchedContainerError(namedtuple("Test", ["label", "line_number"])("test", 10),)),
+    (MismatchedContainerError(namedtuple("Test", ["label", "line_number", "file_name"])("test", 10, "test.bpr"),)),
 ]
 all_blocking_exception_tests = [
 
@@ -110,7 +110,7 @@ def test_weird_exception_cases():
         raise(error_mngr.LonelyOptionalError(None, None))
 
     from typing import NamedTuple
-    tk = NamedTuple("falsetoken", [("line_number", int), ("label", str)])(1, "test")
+    tk = NamedTuple("falsetoken", [("line_number", int), ("label", str), ("file_name", str)])(1, "test", "test.bpr")
     with pytest.raises(error_mngr.LonelyOptionalError):
         raise(error_mngr.LonelyOptionalError(tk, None))
 

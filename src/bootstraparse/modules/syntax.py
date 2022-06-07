@@ -30,6 +30,8 @@ class SemanticType:
 
     def __init__(self, content):
         self.content = content
+        self.line_number = "Undefined"
+        self.file_name = "Undefined"
         self.label_container = self.label
 
     def to_markup(self):
