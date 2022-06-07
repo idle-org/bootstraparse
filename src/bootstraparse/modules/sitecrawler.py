@@ -17,7 +17,7 @@ class SiteCrawler:
         self.destination_path = destination
 
         # initialize variables
-        self.force_rewrite = True  # TODO: read from config
+        self.force_rewrite = self._env.config["parser_config"]["export"]["force_rewrite"]
         self.directories = []
         self.files = []
         self.preparsers = []
