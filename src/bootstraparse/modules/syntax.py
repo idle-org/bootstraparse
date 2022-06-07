@@ -309,7 +309,7 @@ class Linebreak(ExplicitSemanticType):
 
     def __init__(self, content):
         super().__init__(content)
-        self.content = []
+        self.content = []  # force content empty to avoid any potential issue with lookahead
 
     def to_container(self, filter_func=None):
         return self
