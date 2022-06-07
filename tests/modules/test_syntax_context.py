@@ -32,6 +32,7 @@ _type_counterpart_container = [
     (syntax.TableSeparatorToken, None, "error", tools.__GLk(1)),
     (syntax.BlockQuoteToken, None, "error", tools.__GLk(1)),
     (syntax.BlockQuoteAuthorToken, None, "error", tools.__GLk(1)),
+    (syntax.CodeToken, "code", "token", tools.__GLk(1)),
     (syntax.Linebreak, "linebreak", "self", tools.__GLk(1)),
 ]
 

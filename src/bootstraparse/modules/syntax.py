@@ -48,6 +48,12 @@ class SemanticType:
             return f"<{self.label} = '{','.join(return_list)}' />"
         return f'<[NOC] {self.label} />'
 
+    def to_original(self):
+        """
+        Return the original string of the token.
+        """
+        return " ".join(self.content)
+
     def __str__(self):
         if type(self.content) == str:
             return f'{self.label}[{self.content}]'
@@ -305,6 +311,10 @@ class BlockQuoteAuthorToken(SemanticType):
     label = "bq:author"
 
 
+class CodeToken(ExplicitSemanticType, TokensToMatch):
+    label = "code"
+
+
 class Linebreak(ExplicitSemanticType):
     label = "linebreak"
 
@@ -455,8 +465,11 @@ et_custom_span = (
         pps('(#') + pp.Word(pp.nums)('span_id') + pps(')')
 ).set_name('custom_span').add_parse_action(of_type(EtCustomSpanToken))
 
+# Code Token
+code = pp.Literal('```')('code').add_parse_action(of_type(CodeToken))
+
 # markup sums up all in-line elements
-markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
+markup = il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span | code  # not quite correct but good enough for now # noqa : E501
 enhanced_text = pp.ZeroOrMore(
     markup | pp.SkipTo(markup)('text').add_parse_action(of_type(TextToken)) + markup
 ) + pp.Opt(pp.Regex(r'.+')("text").add_parse_action(of_type(TextToken)))

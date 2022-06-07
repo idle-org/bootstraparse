@@ -551,6 +551,7 @@ dict_advanced_syntax_input_and_expected_output = {
                     ]),
             ]),
         ), __GL(),),
+        ("```Code```", (sy.CodeToken(["```"]), sy.TextToken(["Code"]), sy.CodeToken(["```"])), __GL()),
     ],
     "blockquote": [
         ("> Text", (sy.BlockQuoteToken([sy.TextToken(["Text"])]),), __GL()),
@@ -589,6 +590,10 @@ dict_advanced_syntax_input_and_expected_output = {
         ("> -- Author Name", (
             sy.BlockQuoteAuthorToken(["Author Name"]),
         ), __GL()),
+    ],
+    "code": [
+        ("```\nText\n```", (sy.CodeToken(["```"]),), __GL()),
+        ("```\nText\nText\n```", (sy.CodeToken(["```"]),), __GL()),
     ],
 }
 
