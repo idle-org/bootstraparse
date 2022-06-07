@@ -466,7 +466,7 @@ _zipped_token_list_with_expected_result = [
 def base_cm():
     lst = _base_list[:]
     base = context_mngr.ContextManager(_base_list)
-    base.pile = lst
+    base()
     return base
 
 
@@ -475,16 +475,8 @@ def test_container_init(cls):
     cls()
 
 
-def test_context_manager(base_cm):
-    lst = [sy.SemanticType(["1"]), sy.SemanticType([2]), sy.SemanticType([3])]
-    base = context_mngr.ContextManager(lst)
-    base.pile = lst
-
-    for e, v in zip(_base_list, base_cm):
-        assert e == v
-
-
 def test_encapsulate(base_cm):  # Robustness is tested in test_container_export_value
+    base_cm.pile = _base_list[:]
     base_cm.encapsulate(1, 2)
     ctn = context_mngr.TextContainer()
     ctn.add(_base_list[1])
@@ -494,6 +486,7 @@ def test_encapsulate(base_cm):  # Robustness is tested in test_container_export_
 
 
 def test_encapsulate_bad_index(base_cm):
+    base_cm.pile = _base_list[:]
     with pytest.raises(IndexError):
         base_cm.encapsulate(1, 44)
 

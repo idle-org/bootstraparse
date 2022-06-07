@@ -84,7 +84,7 @@ if __name__ == "__main__":
     _env.config = config.ConfigLoader(config_path)
     __config = config.ConfigLoader(pathresolver.b_path("configs/"))
     __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
-    _env.export_mngr = export.ExportManager('', '', __config, __templates)
+    _env.export_mngr = export.ExportManager(__config, __templates)
     xpath = pathresolver.b_path("../../example_userfiles")
     dpath = pathresolver.b_path("../../example_output")
     sc = SiteCrawler(xpath, dpath, _env)

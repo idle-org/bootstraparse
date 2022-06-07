@@ -408,8 +408,8 @@ class ContextManager:
                 raise error
         for i in range(start, end):
             if self.pile[i]:
-                container.add(self.pile[i].to_container(lambda x: x.label==pile_start.label)) # This line transform the self modifiying containers # MONITOR # noqa
-                #container.add(self.pile[i])  # TODO: ignore the first and last element, or ignore the self modifying tokens # noqa : F821
+                # This line transform the self modifiying containers # MONITOR
+                container.add(self.pile[i].to_container(lambda x: x.label == pile_start.label)) # noqa : F821
                 self.pile[i] = None
         container.add(self.pile[end])
         self.pile[end] = None
@@ -497,11 +497,15 @@ class ContextManager:
         final_pile = []
         for p in self.pile:
             if p is not None:
-                final_pile.append(p)
-
+                if isinstance(p, BaseContainer):
+                    final_pile.append(p)
+                else:  # Cleanup of non-matched elements
+                    log_exception(
+                        TypeError(f"Expected BaseContainer, found {type(p)} instead."),
+                        level="CRITICAL"
+                    )
         self.pile = final_pile
 
-        # TODO: add cleanup of non-matched elements
         return self.pile
 
     def lookahead(self, token, index):
