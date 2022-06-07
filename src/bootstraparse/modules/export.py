@@ -111,7 +111,7 @@ class ExportManager:
                 level='CRITICAL'
             )
         # future: allow for template selection
-        optionals = format_optionals(export_request.optionals)  # TODO : Extensive testing
+        optionals = format_optionals(export_request.optionals)  # FUTURE : More Extensive testing
 
         return start, end, optionals
 
@@ -188,7 +188,7 @@ class ContextConverter:
     """
     Transforms output form context manager into final, printable versions of the containers.
     """
-    def __init__(self, pile, exporter):
+    def __init__(self, pile, exporter, destination):
         """
         Takes a pile and the exporter object
         Parameters
@@ -202,6 +202,7 @@ class ContextConverter:
         self.pile = pile
         self.exporter = exporter
         self.io_initialized = False
+        self.destination = destination
 
     def process_pile(self):
         """
@@ -227,9 +228,8 @@ class ContextConverter:
         return self.io_output.readlines()
 
     def __repr__(self):
-        return f"ContextConverter[FileName] <{len(self.pile)}> " \
+        return f"ContextConverter[{self.destination}] <{len(self.pile)}> " \
                f"Status: {'initialized' if self.io_initialized else 'uninitialized'}"
-        # TODO: deal with filename
 
     def print_all(self):
         print(self)
@@ -249,7 +249,7 @@ if __name__ == '__main__':  # pragma: no cover
     __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
     exm = ExportManager(__config, __templates)
     cxm = context_mngr.ContextManager(test)
-    cxc = ContextConverter(cxm(), exm)
+    cxc = ContextConverter(cxm(), exm, "Undefined")
     rich.inspect(cxc)
     cxc.process_pile()
     rich.inspect(cxc.pile[0])

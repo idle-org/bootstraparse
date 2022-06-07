@@ -57,7 +57,7 @@ def preparse_parse(preparser):
 
 def save(list_of_containers, destination, env):
     with open(destination, "w") as output_file:
-        output_file.write(export.ContextConverter(list_of_containers, env.export_mngr).process_pile().read())
+        output_file.write(export.ContextConverter(list_of_containers, env.export_mngr, destination).process_pile().read())
 
 
 if __name__ == "__main__":  # pragma: no cover

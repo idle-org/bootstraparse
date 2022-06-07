@@ -175,7 +175,7 @@ def test_context_cov():
     # base = context_mngr.ContextManager(lst)
     # base.pile = lst
     # return base
-    convr = export.ContextConverter(lst, em)
+    convr = export.ContextConverter(lst, em, "Undefined")
     convr.process_pile()
     convr.__repr__()
     convr.readlines()
