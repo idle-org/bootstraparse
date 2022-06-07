@@ -3,6 +3,8 @@ import pytest
 from bootstraparse.modules import context_mngr, export
 from bootstraparse.modules import syntax as sy #sy.SemanticType, sy.TextToken, sy.Linebreak, sy.StructuralElementStartToken, sy.StructuralElementEndToken, sy.EtUlistToken, sy.EtOlistToken # noqa
 from bootstraparse.modules.tools import __GLk
+from bootstraparse.modules import config, pathresolver
+
 __XF = pytest.mark.xfail
 _opts = sy.OptionalToken([
     sy.OptionalVarToken([
@@ -15,7 +17,8 @@ _opts = sy.OptionalToken([
 
 class FalseHyperlink(list):
     url = "http://test.com"
-    content = ["test"]
+    content = ["test9"]
+    text = "test9"
 
 
 _list_classes_expected_value = [
@@ -81,9 +84,8 @@ _list_classes_expected_value = [
                 ]),
             ]),
         ]),
-        "<ul><li>test7</li></ul>",
+        "<ul>\n<li>test7</li></ul>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.EtOlistContainer([
@@ -93,16 +95,12 @@ _list_classes_expected_value = [
                 ]),
             ]),
         ]),
-        "<ol><li>test8</li></ol>",
+        "<ol>\n<li>test8</li></ol>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.HyperLinkContainer([
             sy.HyperlinkToken(FalseHyperlink(['test9'])),
-            context_mngr.TextContainer([
-                sy.TextToken(['test9']),
-            ]),
         ]),
         "<a href=\"http://test.com\">test9</a>",
         __GLk(1),
@@ -130,20 +128,14 @@ _list_classes_expected_value = [
     ],
     [
         context_mngr.DisplayContainer([
-            sy.DisplayToken(["!"]),
-            context_mngr.TextContainer([
-                sy.TextToken(['test12']),
-            ]),
+            sy.DisplayToken(["!", "test12"]),
         ]),
         "<p class=\"display-1\">test12</p>",
         __GLk(1),
     ],
     [
         context_mngr.DisplayContainer([
-            sy.DisplayToken(["!!"]),
-            context_mngr.TextContainer([
-                sy.TextToken(['test13']),
-            ]),
+            sy.DisplayToken(["!!", "test13"]),
         ]),
         "<p class=\"display-2\">test13</p>",
         __GLk(1),
@@ -197,15 +189,14 @@ _list_classes_expected_value = [
                 _opts,
             ]),
         ]),
-        "<ol><li>test13</li></ol>",
+        "<ol>\n<li>test13</li></ol>",
         __GLk(1),
-        __XF,
     ],
     [
         context_mngr.LinebreakContainer([
             sy.Linebreak([""]),
         ]),
-        "<br/>\n",
+        "\n",
         __GLk(1),
     ],
 
@@ -219,6 +210,8 @@ _zipped_list_classes_expected_value = [
 @pytest.mark.parametrize("container, export_v, line", _zipped_list_classes_expected_value)
 def test_container_export_value(container, export_v, line):
     print(line)
-    em = export.ExportManager(None, None)
+    __config = config.ConfigLoader(pathresolver.b_path("configs/"))
+    __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
+    em = export.ExportManager(__config, __templates)
     assert isinstance(container, context_mngr.BaseContainer)
     assert container.export(em) == export_v

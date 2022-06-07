@@ -1,6 +1,5 @@
 # Module sequencing the successive actions necessary for website building
 import os
-import rich
 from bootstraparse.modules import pathresolver, sitecrawler, environment, config, export, parser, context_mngr
 
 
@@ -62,4 +61,3 @@ if __name__ == "__main__":
     xpath = pathresolver.b_path("../../example_userfiles")
     dpath = pathresolver.b_path("../../example_output")
     create_website(xpath, dpath)
-

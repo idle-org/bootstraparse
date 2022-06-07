@@ -132,7 +132,7 @@ class ConfigLoader:
 #     def __init__(self, config_folder):
 #         super().__init__(config_folder)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     conf = ConfigLoader("../configs/")
     conf.add_folder("../../../example_userfiles/config/")
     rich.inspect(conf)

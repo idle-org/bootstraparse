@@ -160,19 +160,19 @@ _token_list_with_expected_result = [
         ],
         [
             context_mngr.EtUlistContainer([
-                sy.EtUlistToken([sy.TextToken(["a"])]),
+                sy.EtUlistToken([context_mngr.TextContainer([sy.TextToken(["a"])])]),
                 sy.Linebreak([]),
-                sy.EtUlistToken([sy.TextToken(["b"])]),
+                sy.EtUlistToken([context_mngr.TextContainer([sy.TextToken(["b"])])]),
                 sy.Linebreak([]),
-                sy.EtUlistToken([sy.TextToken(["c"])]),
-                sy.EtUlistToken([sy.TextToken(["d"])]),
+                sy.EtUlistToken([context_mngr.TextContainer([sy.TextToken(["c"])])]),
+                sy.EtUlistToken([context_mngr.TextContainer([sy.TextToken(["d"])])]),
                 ]),
-            context_mngr.EtUlistContainer([
-                sy.EtOlistToken([sy.TextToken(["aa"])]),
-                sy.EtOlistToken([sy.TextToken(["bb"])]),
-                sy.EtOlistToken([sy.TextToken(["cc"])]),
+            context_mngr.EtOlistContainer([
+                sy.EtOlistToken([context_mngr.TextContainer([sy.TextToken(["aa"])])]),
+                sy.EtOlistToken([context_mngr.TextContainer([sy.TextToken(["bb"])])]),
+                sy.EtOlistToken([context_mngr.TextContainer([sy.TextToken(["cc"])])]),
                 sy.Linebreak([]),
-                sy.EtOlistToken([sy.TextToken(["dd"])]),
+                sy.EtOlistToken([context_mngr.TextContainer([sy.TextToken(["dd"])])]),
                 sy.Linebreak([]),
                 ]),
             context_mngr.LinebreakContainer([sy.Linebreak([])]),
@@ -416,10 +416,10 @@ _token_list_with_expected_result = [
         ],
         [
             context_mngr.EtOlistContainer([
-                sy.EtOlistToken([sy.TextToken(["a"])]),
+                sy.EtOlistToken([context_mngr.TextContainer([sy.TextToken(["a"])])]),
             ], _opts),
-            context_mngr.EtOlistContainer([
-                sy.EtUlistToken([sy.TextToken(["b"])]),
+            context_mngr.EtUlistContainer([
+                sy.EtUlistToken([context_mngr.TextContainer([sy.TextToken(["b"])])]),
             ], _opts),
         ],
         __GLk(1),
@@ -631,7 +631,10 @@ def test_context_call(init_list, expected, file_line):
     print(f"Executing tests @{file_line}")
     ctx = context_mngr.ContextManager(init_list)  # noqa : F841
     if isinstance(expected[0], context_mngr.BaseContainer) or isinstance(expected[0], sy.SemanticType):
-        assert ctx() == expected
+        for i, e in zip(ctx(), expected):
+            rich.inspect(i)
+            rich.inspect(e)
+            assert i == e
     else:
         with pytest.raises(expected[0]):
             ctx()
@@ -644,7 +647,10 @@ def test_content_call_raises():
 
 
 def test_export_error():
-    em = export.ExportManager(None, None)
+    from bootstraparse.modules import config, pathresolver
+    __config = config.ConfigLoader(pathresolver.b_path("configs/"))
+    __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
+    em = export.ExportManager(__config, __templates)
     with pytest.raises(TypeError):
         context_mngr.TextContainer([sy.TextToken(['e']), None]).export(em)
 

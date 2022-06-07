@@ -1,6 +1,5 @@
 # Module for file and directories repartition
 import os
-import rich
 from bootstraparse.modules import pathresolver, preparser, error_mngr, environment, export
 
 
@@ -79,12 +78,13 @@ class SiteCrawler:
 
 if __name__ == "__main__":
     from bootstraparse.modules import config
-    from bootstraparse.modules import pathresolver
     site_path = pathresolver.b_path("../../example_userfiles/test.bpr")
     config_path = pathresolver.b_path("../../example_userfiles/configs/")
     _env = environment.Environment()
     _env.config = config.ConfigLoader(config_path)
-    _env.export_mngr = export.ExportManager('', '')
+    __config = config.ConfigLoader(pathresolver.b_path("configs/"))
+    __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
+    _env.export_mngr = export.ExportManager('', '', __config, __templates)
     xpath = pathresolver.b_path("../../example_userfiles")
     dpath = pathresolver.b_path("../../example_output")
     sc = SiteCrawler(xpath, dpath, _env)

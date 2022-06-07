@@ -16,9 +16,11 @@ from bootstraparse.modules import export
 # Environment variables
 
 env = environment.Environment()
-env.export_mngr = export.ExportManager('', '')
+# env.export_mngr = export.ExportManager('', '')
 env.config = config.ConfigLoader(pathresolver.b_path("../../example_userfiles/configs/"))
-env.export_mngr = export.ExportManager('', '')
+__config = config.ConfigLoader(pathresolver.b_path("configs/"))
+__templates = config.ConfigLoader(pathresolver.b_path("templates/"))
+env.export_mngr = export.ExportManager(__config, __templates)
 _BASE_PATH_PREPARSER = "../../"
 _TEMP_DIRECTORY = tempfile.TemporaryDirectory()
 

@@ -11,7 +11,6 @@
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
-import rich
 
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message, LonelyOptionalError # noqa
@@ -200,8 +199,10 @@ class EtCustomSpanContainer(BaseContainer):
 
 
 class ReContextContainer(BaseContainer):
+    children = ""
+
     def get_content(self, exm, arbitrary_list=None):
-        child_start, child_end = exm(export.ExportRequest(self.type, self.children))
+        child_start, child_end = exm(export.ExportRequest(self.type, self.children))  # noqa: F841
         output = "\n"
         for element in self.content:
             if isinstance(element, syntax.Linebreak):
@@ -357,6 +358,7 @@ class ContextManager:
             "table:row": ["table:separator", "table:row"],  # TODO: Implement tables
             "blockquotes": []  # TODO: Implement blockquotes
         }
+        self.contextualised = False
 
     def encapsulate(self, start, end):
         """
@@ -433,6 +435,8 @@ class ContextManager:
                 Returns the pile entirely processed as a list of containers.
         """
         # self.pile = self.parsed_list.copy()
+        if self.contextualised:
+            return self.pile
         index = 0
         line_number = 1
         while index < len(self.parsed_list):
@@ -477,6 +481,7 @@ class ContextManager:
                 error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.
             index += 1
 
+        self.contextualised = True
         return self.finalize_pile()
 
     def __iter__(self):

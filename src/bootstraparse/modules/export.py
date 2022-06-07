@@ -48,10 +48,8 @@ class ExportManager:
     Transforms ExportRequest tuples to ExportResponse tuples with the config-provided appropriate markup.
     """
     def __init__(self, cnoifg, templates):  # noqa
-        #  self.config = cnoifg  TODO: actually import config
-        #  self.templates = templates # noqa TODO: actually import templates
-        self.config = config.ConfigLoader(pathresolver.b_path("configs/"))
-        self.templates = config.ConfigLoader(pathresolver.b_path("templates/"))
+        self.config = cnoifg
+        self.templates = templates
         self.advanced_export = {
             "header": self.header_transform,
             "display": self.display_transform,
@@ -247,7 +245,9 @@ if __name__ == '__main__':  # pragma: no cover
         """[this is a link]('http://te.st')"""
     )
     test = parser.parse_line(io_string)
-    exm = ExportManager(None, None)
+    __config = config.ConfigLoader(pathresolver.b_path("configs/"))
+    __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
+    exm = ExportManager(None, None, __config, __templates)
     cxm = context_mngr.ContextManager(test)
     cxc = ContextConverter(cxm(), exm)
     rich.inspect(cxc)

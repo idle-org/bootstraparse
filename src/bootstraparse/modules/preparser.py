@@ -366,11 +366,13 @@ class PreParser:
 if __name__ == "__main__":  # pragma: no cover
     from bootstraparse.modules import config
     from bootstraparse.modules import pathresolver
+    __config = config.ConfigLoader(pathresolver.b_path("configs/"))
+    __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
     site_path = pathresolver.b_path("../../example_userfiles/test.bpr")
     config_path = pathresolver.b_path("../../example_userfiles/config/")
     _env = environment.Environment()
     _env.config = config.ConfigLoader(config_path)
-    _env.export_mngr = export.ExportManager('', '')
+    _env.export_mngr = export.ExportManager(__config, __templates)
     t_pp = PreParser(site_path, _env)
     out = t_pp.do_replacements()
     rich.print(t_pp.get_all_lines())

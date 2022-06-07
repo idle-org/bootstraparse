@@ -3,9 +3,11 @@ from itertools import zip_longest
 import bootstraparse.modules.export as export
 import pytest
 
-from bootstraparse.modules import context_mngr, syntax
+from bootstraparse.modules import context_mngr, syntax, config, pathresolver
 from bootstraparse.modules.tools import __GLk
 
+__config = config.ConfigLoader(pathresolver.b_path("configs/"))
+__templates = config.ConfigLoader(pathresolver.b_path("templates/"))
 
 __XF = pytest.mark.xfail
 _all_templates = {
@@ -53,7 +55,7 @@ def test_export():
     """
     Test the export module
     """
-    em = export.ExportManager("test", "test")
+    em = export.ExportManager(__config, __templates)
     assert type(em) is export.ExportManager
 
 
@@ -90,7 +92,7 @@ def test_transform(export_type, export_subtype):
     """
     Test the transform method
     """
-    em = export.ExportManager("test", "test")
+    em = export.ExportManager(__config, __templates)
     re = em.transform(export.ExportRequest(export_type, export_subtype, "", { # noqa E741
         "header_level": "1",
         "display_level": "1",
@@ -110,12 +112,12 @@ def test_transform(export_type, export_subtype):
 
 def test_get_template_error():
     with pytest.raises(KeyError):
-        em = export.ExportManager("test", "test")
+        em = export.ExportManager(__config, __templates)
         em(export.ExportRequest("nope", "header", "", {}))
 
 
 def test_with_optionnals():
-    em = export.ExportManager("test", "test")
+    em = export.ExportManager(__config, __templates)
     em(export.ExportRequest("structural_elements", "div", _opts)) # noqa E741
 
 
@@ -138,14 +140,14 @@ def test_return_values():
 
 
 def test_bad_header():
-    em = export.ExportManager("test", "test")
+    em = export.ExportManager(__config, __templates)
     with pytest.raises(KeyError):
         em(export.ExportRequest("structural_elements", "header", "", {}))
 
 
 @pytest.mark.parametrize("export_type, export_subtype, line", zipped_templates)
 def test_get_templates(export_type, export_subtype, line):
-    em = export.ExportManager("test", "test")
+    em = export.ExportManager(__config, __templates)
     # assert type(em.get_templates()) is dict
     print(export_type, export_subtype)
     r = em(export.ExportRequest(export_type, export_subtype, "", {
@@ -167,7 +169,7 @@ def test_get_templates(export_type, export_subtype, line):
 
 
 def test_context_cov():
-    em = export.ExportManager("test", "test")
+    em = export.ExportManager(__config, __templates)
     lst = [context_mngr.TextContainer([syntax.TextToken("test")])]
 
     # base = context_mngr.ContextManager(lst)
