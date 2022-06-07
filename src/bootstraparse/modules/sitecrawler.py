@@ -68,7 +68,7 @@ class SiteCrawler:
                 )
             else:
                 os.remove(path)
-        open(path, "w+").close()
+        open(path, "a").close()
         return path
 
     def __iter__(self):
@@ -76,7 +76,7 @@ class SiteCrawler:
             yield pre
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     from bootstraparse.modules import config
     site_path = pathresolver.b_path("../../example_userfiles/test.bpr")
     config_path = pathresolver.b_path("../../example_userfiles/configs/")

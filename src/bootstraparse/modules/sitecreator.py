@@ -57,7 +57,7 @@ def save(list_of_containers, destination, env):
         output_file.write(export.ContextConverter(list_of_containers, env.export_mngr).process_pile().read())
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     xpath = pathresolver.b_path("../../example_userfiles")
     dpath = pathresolver.b_path("../../example_output")
     create_website(xpath, dpath)
