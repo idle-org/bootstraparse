@@ -42,6 +42,7 @@ def create_environment(origin, destination):
 def create_crawler(origin, destination, _env):
     """
     Returns crawler as an object for navigation in the user files.
+    rtype: sitecrawler.SiteCrawler
     """
     return sitecrawler.SiteCrawler(origin, destination, _env)
 
