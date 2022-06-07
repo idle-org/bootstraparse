@@ -96,6 +96,12 @@ class SemanticType:
         raise MismatchedContainerError(self)
 
 
+class TokensToMatch:
+    """Class used for verification in the context manager.
+    Classes inheriting this should be added to matched_elements."""
+    pass
+
+
 class AddFirstElementToLabel(SemanticType):
     def __init__(self, content):
         super().__init__(content)
@@ -183,32 +189,27 @@ class TextToken(EmptySemanticType):
 
 
 # FUTURE: all one-line elements should to inherit FinalSemanticType
-class EnhancedToken(ExplicitSemanticType):
-    """Mother of all EtTokens"""
-    label = "text:enhanced"
-
-
-class EtEmToken(ExplicitSemanticType):
+class EtEmToken(ExplicitSemanticType, TokensToMatch):
     """*"""
     label = "text:em"
 
 
-class EtStrongToken(ExplicitSemanticType):
+class EtStrongToken(ExplicitSemanticType, TokensToMatch):
     """**"""
     label = "text:strong"
 
 
-class EtUnderlineToken(ExplicitSemanticType):
+class EtUnderlineToken(ExplicitSemanticType, TokensToMatch):
     """__"""
     label = "text:underline"
 
 
-class EtStrikethroughToken(ExplicitSemanticType):
+class EtStrikethroughToken(ExplicitSemanticType, TokensToMatch):
     """~~"""
     label = "text:strikethrough"
 
 
-class EtCustomSpanToken(AddFirstElementToLabel, ExplicitSemanticType):
+class EtCustomSpanToken(AddFirstElementToLabel, ExplicitSemanticType, TokensToMatch):
     """(#int)"""
     label = "text:custom_span"
 
@@ -239,7 +240,7 @@ class DisplayToken(FinalSemanticType):
     label = "display"
 
 
-class StructuralElementStartToken(AddFirstElementToLabel, OpenedSemanticType):
+class StructuralElementStartToken(AddFirstElementToLabel, OpenedSemanticType, TokensToMatch):
     """<<div|article|section|aside"""
     label = 'se:start'
 

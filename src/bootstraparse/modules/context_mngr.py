@@ -361,8 +361,8 @@ class ContextManager:
         self.dict_lookahead = {
             "list:ulist": ["list:ulist"],
             "list:olist": ["list:olist"],
-            "table:row": ["table:separator", "table:row"],  # TODO: Implement tables
-            "blockquotes": [],  # TODO: Implement blockquotes
+            "table:row": ["table:separator", "table:row"],  # future: Implement tables
+            "blockquotes": [],  # future: Implement blockquotes
             "linebreak": ["linebreak"],
         }
         self.contextualised = False
@@ -470,7 +470,7 @@ class ContextManager:
                     index += lookahead_return[0]
                     line_number += lookahead_return[1]
 
-                # TODO: advanced lookahead for * logic
+                # future: advanced lookahead for * logic
                 # elif token.label in self.dict_advanced_lookahead:
 
                 elif isinstance(token, syntax.FinalSemanticType):  # one-liners
@@ -485,8 +485,12 @@ class ContextManager:
                     raise MismatchedContainerError(token)
 
                 # Starting token by default (can cause unintended behaviours on bad implementations)
-                else:  # TODO: remove this default behaviour, error instead
+                elif isinstance(token, syntax.TokensToMatch):
                     self._add_matched(token.label, index)
+
+                else:
+                    raise MismatchedContainerError(token)
+
             except MismatchedContainerError as e:
                 error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Be more specific.
             index += 1
