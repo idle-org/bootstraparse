@@ -75,7 +75,7 @@ class ConfigLoader:
                     self.loaded_conf[name] = yaml.safe_load(f)
                 else:
                     self.loaded_conf[name].update(yaml.safe_load(f))
-                    error_mngr.log_message(f"Warning: {name} is already in {self.loaded_conf}", level='WARNING')
+                    error_mngr.log_message(f"Warning: {name} is already in {self.loaded_conf}", level='INFO')
             except BaseException as e:
                 error_mngr.log_message(f'Error parsing in file {basename} at {filepath}.', level='CRITICAL')
                 error_mngr.log_exception(str(e), level='CRITICAL')
