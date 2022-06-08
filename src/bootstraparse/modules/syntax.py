@@ -102,7 +102,7 @@ class SemanticType:
         raise MismatchedContainerError(self)
 
 
-class TokensToMatch:
+class TokensToMatch(SemanticType):
     """Class used for verification in the context manager.
     Classes inheriting this should be added to matched_elements."""
     pass
