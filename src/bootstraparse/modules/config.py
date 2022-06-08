@@ -17,16 +17,16 @@ class ConfigLoader:
     """
     Reads all config files in a folder
     Behaves like a dictionary of all config files
-    return FileNotFound Error on Error
-    :param config_folder: The folder to read
     """
 
     def __init__(self, config_folder=None, extensions=("yaml", "yml")):
         """
         Defines the config folder and loads all configs
         :param config_folder: path to config file
+        :type config_folder: (str | list[str])
         :param extensions: file extensions to load
-        :return: None
+        :type extensions: list[str]
+        :raise TypeError: if config_folder is not a string or a list of strings
         """
         if config_folder is None:
             self.config_folders = []
@@ -54,6 +54,7 @@ class ConfigLoader:
         """
         Add a Folder to the list of configs
         :param folder: path to folder
+        :type folder: str
         :return: None
         """
         self.config_folders.append(folder)
@@ -63,6 +64,7 @@ class ConfigLoader:
         """
         Loads a config file
         :param filepath: path to config file
+        :type filepath: str
         :return: None
         """
         basename = os.path.basename(filepath)
@@ -81,6 +83,8 @@ class ConfigLoader:
     def load_from_folder(self, folder):
         """
         Loads all configs in the config folder
+        :param folder: path to folder
+        :type folder: str
         :return: None
         """
         for filename in os.listdir(folder):
@@ -92,6 +96,8 @@ class ConfigLoader:
         """
         Returns a yaml config object if in self.loaded_conf
         :param item: config key
+        :type item: str
+        :raise KeyError: if item is not in self.loaded_conf
         :return: config value
         """
         try:
@@ -102,35 +108,20 @@ class ConfigLoader:
     def __contains__(self, item):
         """
         Same as a dictionary.
+        :param item: config key
+        :type item: str
+        :return: True if item is in self.loaded_conf
         """
         return item in self.loaded_conf
 
     def __repr__(self):
         """
         Returns config as string
-        :return: config as string
+        :return: the dict of configs and their values
+        :rtype: str
         """
-        return self.loaded_conf.__repr__()
+        return str(self.loaded_conf.__repr__())
 
-
-# class UserConfig(ConfigLoader):
-#     """
-#     Reads user config file.
-#     :param config_folder: path to config file
-#     :return: None
-#     """
-#     def __init__(self, config_folder):
-#         super().__init__(config_folder)
-#
-#
-# class GlobalConfig(ConfigLoader):
-#     """
-#     Reads global config file.
-#     :param config_folder: path to config file
-#     :return: None
-#     """
-#     def __init__(self, config_folder):
-#         super().__init__(config_folder)
 
 if __name__ == '__main__':  # pragma: no cover
     conf = ConfigLoader("../configs/")
