@@ -26,6 +26,10 @@ class Environment:
     """
 
     def __init__(self):
+        """
+        Initialises the environment, all parameters are set to None.
+        Set _wasInitialised to False for all parameters.
+        """
         # mandatoryParameters
         self._mParams = {
             'config': None,
@@ -60,8 +64,10 @@ class Environment:
 
     def __getattr__(self, attribute):
         """
-        Getter for all parameters.
+        Getter for all parameters, looks for super if the parameter is prefaced with an underscore.
+        Looks for mandatory parameters first, then secondary parameters.
         :param attribute: The name of the parameter to get.
+        :type attribute: str
         :return: The value of the parameter.
         """
         if attribute[0] == "_":
@@ -80,8 +86,9 @@ class Environment:
 
     def __setattr__(self, attribute, value):
         """
-        Setter for all parameters.
+        Setter for all parameters, looks for super if the parameter is prefaced with an underscore.
         :param attribute: The name of the parameter to set.
+        :type attribute: str
         """
         if attribute[0] == "_":
             super().__setattr__(attribute, value)
