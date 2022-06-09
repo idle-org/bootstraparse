@@ -4,6 +4,7 @@ from collections import namedtuple
 from importlib import reload
 from unittest import TestCase
 import pytest
+import bootstraparse.modules.tools as tools
 import bootstraparse.modules.error_mngr as error_mngr
 from bootstraparse.modules.error_mngr import ParsingError, MismatchedContainerError
 
@@ -83,23 +84,23 @@ def test_dict_check():
     """
     Test the dict_check function
     """
-    assert(error_mngr.dict_check({"test": "test"}, "test") == [True])
-    assert(error_mngr.dict_check({"test": "test"}, "test2") == [False])
-    assert(error_mngr.dict_check({"test": {"test3": "test5"}}, "test", "test3") == [True, True])
-    assert(error_mngr.dict_check({"test": {"test3": "test5"}}, "test4", "test4") == [False, False])
-    assert(error_mngr.dict_check({"test": {"test3": "test5"}}, "test", "test34") == [True, False])
+    assert(tools.dict_check({"test": "test"}, "test") == [True])
+    assert(tools.dict_check({"test": "test"}, "test2") == [False])
+    assert(tools.dict_check({"test": {"test3": "test5"}}, "test", "test3") == [True, True])
+    assert(tools.dict_check({"test": {"test3": "test5"}}, "test4", "test4") == [False, False])
+    assert(tools.dict_check({"test": {"test3": "test5"}}, "test", "test34") == [True, False])
 
 
 # @pytest.mark.xfail(strict=True, reason="This test is not implemented yet")
 def test_dict_check_2():
-    assert(error_mngr.dict_check({"test": "test"}, "test", "test2") == [True, False])
-    assert(error_mngr.dict_check({"test": "test"}, "test", "test2", "test3") == [True, False, False])
+    assert(tools.dict_check({"test": "test"}, "test", "test2") == [True, False])
+    assert(tools.dict_check({"test": "test"}, "test", "test2", "test3") == [True, False, False])
 
 
 def test_dict_str():
-    assert error_mngr.str_dict_check({"test": "test"}, "test") == "test: True"
-    assert error_mngr.str_dict_check({"test": "test"}, "test2") == "test2: False"
-    assert error_mngr.str_dict_check({"test": {"test3": "test5"}}, "test", "test3") == "test: True\ntest3: True"
+    assert tools.str_dict_check({"test": "test"}, "test") == "test: True"
+    assert tools.str_dict_check({"test": "test"}, "test2") == "test2: False"
+    assert tools.str_dict_check({"test": {"test3": "test5"}}, "test", "test3") == "test: True\ntest3: True"
 
 
 def test_weird_exception_cases():

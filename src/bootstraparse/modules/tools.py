@@ -13,6 +13,35 @@ import re
 
 
 ###############################################################################
+# Dictionary checks
+########################################
+def dict_check(dic, *args):
+    """
+    Helper function to test existence within a dictionary.
+    :param dic: The dictionary of dictionaries to check
+    :param args: Any number of keys to check the dictionaries for
+    :return: A table of Booleans for every key checked.
+    """
+    output = [False for _ in args]
+    for i in range(len(args)):
+        if args[i] in dic:
+            output[i] = True
+            dic = dic[args[i]]
+        else:
+            break
+    return output
+
+
+def str_dict_check(dic, *args):
+    """
+    Helper function to test existence within a dictionary and return a string of the values.
+    'arg[0]' : True or False
+    """
+    out = dict_check(dic, *args)
+    return "\n".join([f"{args[i]}: {out[i]}" for i in range(len(out))])
+
+
+###############################################################################
 # Paths
 ########################################
 def __base():
