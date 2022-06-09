@@ -1,7 +1,7 @@
 import pytest
 
-from bootstraparse.modules import syntax, error_mngr, tools, context_mngr
-from bootstraparse.modules.tools import __GL, __module_path, find_variables_in_file
+from bootstraparse.modules import syntax  # , error_mngr, tools, context_mngr
+# from bootstraparse.modules.tools import __GL, __module_path, find_variables_in_file
 
 __XF = pytest.mark.xfail
 

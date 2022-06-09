@@ -246,7 +246,7 @@ def test_make_import_list(filename, content, capsys):
 ])
 def test_preparser_content(filename, content):
     """
-    Test the preparser content
+    Test the PreParser content
     """
     testfile = temp_name(os.path.join(_BASE_PATH_GIVEN, filename))
     assert os.path.exists(testfile)
@@ -258,7 +258,7 @@ def test_preparser_content(filename, content):
 
 def test_subfolder_parsing():
     """
-    Test the preparser content
+    Test the PreParser content
     """
     testfile = temp_name(os.path.join(_BASE_PATH_GIVEN, "superimports.bpr"))
     assert os.path.exists(testfile)
