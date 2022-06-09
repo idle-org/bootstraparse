@@ -5,7 +5,6 @@
 #  rsp = ExportResponse("start_string", "end_string")
 #  em = ExportManager(config_file, template_file)
 #  em(ExportRequest()) -> ExportResponse()
-# import rich
 import rich
 
 from io import StringIO
@@ -48,7 +47,14 @@ class ExportManager:
     """
     Transforms ExportRequest tuples to ExportResponse tuples with the config-provided appropriate markup.
     """
-    def __init__(self, cnoifg, templates):  # noqa
+    def __init__(self, cnoifg, templates):
+        """
+        Initialization function for the ExportManager.
+        :param cnoifg: Config file
+        :type cnoifg: config.ConfigLoader
+        :param templates: Templates file
+        :type templates: config.ConfigLoader
+        """
         self.config = cnoifg
         self.templates = templates
         self.advanced_export = {
@@ -62,6 +68,12 @@ class ExportManager:
         }
 
     def __call__(self, export_request):
+        """
+        Callable function for ExportManager, transforming ExportRequest tuples into ExportResponse tuples.
+        :param export_request: ExportRequest tuples
+        :type export_request: ExportRequest
+        :return: ExportResponse tuples
+        """
         return self.transform(export_request)
 
     def transform(self, export_request):
@@ -152,6 +164,7 @@ class ExportManager:
         """
         Specific template for display.
         :type export_request: ExportRequest
+        :rtype: ExportResponse
         """
         start, end, optionals = self._get_template(export_request)
         start = start.format(optionals=optionals, display_level=export_request.others["display_level"])
@@ -161,6 +174,7 @@ class ExportManager:
         """
         Specific template for link.
         :type export_request: ExportRequest
+        :rtype: ExportResponse
         """
         start, end, _ = self._get_template(export_request)
         start = start.format(url=export_request.others["url"])
@@ -170,6 +184,7 @@ class ExportManager:
         """
         Specific template for table content.
         :type export_request: ExportRequest
+        :rtype: ExportResponse
         """
         start, end, _ = self._get_template(export_request)
         start = start.format(col_span=export_request.others["col_span"])
@@ -179,6 +194,7 @@ class ExportManager:
         """
         Specific template for images.
         :type export_request: ExportRequest
+        :rtype: ExportResponse
         """
         start, end, optionals = self._get_template(export_request)
         end = end.format(optionals=optionals)
@@ -198,6 +214,8 @@ class ContextConverter:
                 pile output from the context manager.
             exporter : ExportManager
                 Our ExportManager
+            destination : str
+                Destination of the output file.
         """
         self.io_output = StringIO()
         self.pile = pile
@@ -207,7 +225,8 @@ class ContextConverter:
 
     def process_pile(self):
         """
-        Main method processing the given pile.
+        Processes the pile and writes the output to the io_output object.
+        :rtype: StringIO
         """
         for container in self.pile:
             self.io_output.write(container.export(self.exporter))
@@ -225,6 +244,7 @@ class ContextConverter:
     def readlines(self):
         """
         Yields the converted pile line after line
+        :rtype: list[str]
         """
         return self.io_output.readlines()
 
@@ -233,6 +253,9 @@ class ContextConverter:
                f"Status: {'initialized' if self.io_initialized else 'uninitialized'}"
 
     def print_all(self):
+        """
+        Prints the entirety of the converted pile
+        """
         print(self)
 
     def __eq__(self, other):
