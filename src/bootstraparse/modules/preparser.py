@@ -144,8 +144,7 @@ class PreParser:
                     RecursionError(f"Error: {e} was imported earlier in {self.list_of_paths}"), level='CRITICAL'
                 )
             if e in self.global_dict_of_imports:
-                pp = self.global_dict_of_imports[e]
-                self.local_dict_of_imports[e] = pp
+                self.local_dict_of_imports[e] = self.global_dict_of_imports[e]
             else:
                 try:
                     pp = PreParser(e, self._env, self.list_of_paths.copy(), self.global_dict_of_imports)
@@ -202,9 +201,9 @@ class PreParser:
         import_list = self.parse_import_list()
         source_lines = self.readlines()
         for import_path, import_line in import_list:
-            source_lines[import_line] = ""
-            temp_file.writelines(source_lines[source_line_count:import_line])
-            source_line_count = import_line
+            source_lines[import_line] = ""  # remove the line where the import was
+            temp_file.writelines(source_lines[source_line_count:import_line])  # copy origin to destination
+            source_line_count = import_line  # update origin for next import
             import_file = self.global_dict_of_imports[import_path].export_with_imports()
             temp_file.writelines(import_file.readlines())
         temp_file.writelines(source_lines[source_line_count:])
