@@ -24,7 +24,15 @@ files = [
 
 def make_new_file(path, content="", mode="w+"):
     """
-    Make a new file
+    Make a new file and all the directories in the path
+    :param path: the path to the file
+    :type path: str
+    :param content: the content of the file
+    :type content: str
+    :param mode: the mode of the file
+    :type mode: str
+    :return: the path to the file
+    :rtype: str
     """
     name = os.path.join(_TEMP_DIRECTORY.name, path)
     os.makedirs(os.path.dirname(name), exist_ok=True)
