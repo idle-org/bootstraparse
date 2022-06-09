@@ -10,6 +10,7 @@ import rich
 from io import StringIO
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
 from collections import namedtuple
+from bootstraparse.modules import tools
 
 from bootstraparse.modules import syntax  # noqa F401
 
@@ -113,7 +114,7 @@ class ExportManager:
             start, end = self.templates["bootstrap"][export_request.type][export_request.subtype]
         except KeyError:
             log_entries = ["bootstrap", export_request.type, export_request.subtype]
-            log_ = error_mngr.dict_check(self.templates, *log_entries)
+            log_ = tools.dict_check(self.templates, *log_entries)
             print()
             error_mngr.log_exception(
                 KeyError(

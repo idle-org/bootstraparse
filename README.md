@@ -15,6 +15,9 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Add documentation to remaining lone functions
 - Write a documentation for the application (use specs.yaml)
 
+### V1.0.2
+- Move the WARNING-level output to INFO for config overwrite
+
 ### V1.0.3
 - Copy un-parsable files to destination folder without modifications
 - Add copy behaviour to config file
