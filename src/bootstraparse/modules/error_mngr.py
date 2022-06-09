@@ -15,7 +15,6 @@ from bootstraparse.modules.tools import __GLk  # __GFi, __GFu, __GL
 
 # Define the error codes
 _ERRORS = ["ParsingError", "MismatchedContainerError"]
-__all__ = _ERRORS+[]
 
 
 def init_logging(filename=None, loglevel="ERROR", filemode='w', handler=None):

@@ -130,7 +130,7 @@ class BaseContainer:
 
     def __iter__(self):
         """
-        :rtype : iter[syntax.SemanticType]
+        :ytype : iter[syntax.SemanticType]
         """
         for content in self.content:
             yield content
@@ -617,7 +617,7 @@ class ContextManager:
     def __iter__(self):
         """
         Iterator over the pile.
-        :rtype: BaseContainer
+        :ytype: BaseContainer
         """
         for e in self.pile:
             if e:
