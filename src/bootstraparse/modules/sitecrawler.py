@@ -4,7 +4,22 @@ from bootstraparse.modules import pathresolver, preparser, error_mngr, environme
 
 
 class SiteCrawler:
+    """
+    A sitecrawler is a generator that yields a tuple of the form (PreParser, file)
+    Its goal is to create a list of preparsers and files to be parsed based on
+    the files and directories in the initial path.
+    This generator is to be used in a for loop to parse all the files and produce
+    the final website.
+    """
     def __init__(self, path, destination, _env):
+        """
+        :param path: The path to the directory to be crawled
+        :param destination: The path to the directory where the website will be created
+        :param _env: The environment object
+        :type path: str
+        :type destination: str
+        :type _env: environment.Environment
+        """
         if not os.path.exists(path):
             error_mngr.log_exception(
                 FileNotFoundError(f'The specified path "{path}" could not be found.'),
@@ -32,9 +47,23 @@ class SiteCrawler:
         self.create_all_paths()
 
     def get_all_paths(self):
+        """
+        This method is used to get all the paths to be crawled.
+        Its goal is to get all the paths to be crawled and to store them in
+        the self.directories and self.files variables.
+        """
         self.files, self.directories = self.list_recursively(self.initial_path, self.initial_path)
 
     def list_recursively(self, path, root):
+        """
+        Recursive method to get all the paths to be crawled.
+        :param path: The current path to be crawled
+        :param root: The root path (initial path)
+        :type path: str
+        :type root: str
+        :return: A tuple of the form (files, directories)
+        :rtype: (list[(str, str)], list[(str, str)])
+        """
         files = []
         directories = []
         for element in os.listdir(path):
@@ -52,6 +81,9 @@ class SiteCrawler:
         return files, directories
 
     def create_all_paths(self):
+        """
+        This method is used to create all the directories in the destination path.
+        """
         if not os.path.exists(self.destination_path):
             os.mkdir(self.destination_path)
         for root, di in self.directories:
@@ -60,6 +92,12 @@ class SiteCrawler:
                 os.mkdir(temp_path)
 
     def set_all_preparsers(self):
+        """
+        This method is used to set all the preparsers and initialize them.
+        The preparsers are stored in the self.preparsers variable.
+        :return: self.preparsers
+        :rtype: list[preparser.PreParser]
+        """
         for root, file in self.files:
             preparser_path = os.path.join(self.initial_path, root, file)
             pp = preparser.PreParser(preparser_path, self._env, dict_of_imports=self.global_dict_of_imports)
@@ -70,6 +108,12 @@ class SiteCrawler:
         return self.preparsers
 
     def create_file(self, path):
+        """
+        This method is used to create a file.
+        :raises FileExistsError: If the file already exists and the force_rewrite option is False
+        :param path: The path to the file to be created
+        :type path: str
+        """
         if os.path.exists(path):
             if not self.force_rewrite:
                 error_mngr.log_exception(
@@ -81,6 +125,11 @@ class SiteCrawler:
         return path
 
     def __iter__(self):
+        """
+        This method is used to iterate over the preparsers and files.
+        :yield: A tuple of the form (PreParser, file)
+        :ytype: (preparser.PreParser, str)
+        """
         for pre in self.preparsers:
             yield pre
 
