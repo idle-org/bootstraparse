@@ -44,3 +44,6 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 ### V2
 - Add a functioning post-context enhancer able to generate menus and elements from arbitrary logic.
 - Achieve perfect markdown compatibility with appropriate config parameters
+
+### V3
+- Add Template customisation.
