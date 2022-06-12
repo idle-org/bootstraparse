@@ -21,4 +21,4 @@ export:
   intermediate_files: true
   type: "html"
   force_rewrite: true
-  unparsable_files: "copy" # "copy" or "ignore"
+  copy_unparsable_files: "copy" # "copy" or "ignore"
