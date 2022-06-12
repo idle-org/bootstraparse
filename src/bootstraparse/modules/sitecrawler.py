@@ -118,8 +118,9 @@ class SiteCrawler:
         """
         This method is used to copy all the files that could not be parsed.
         """
-        for root, file in self.files_to_copy:
-            shutil.copy(os.path.join(self.initial_path, root, file), os.path.join(self.destination_path, root, file))
+        if self._env.config["parser_config"]["export"]["copy_unparsable_files"].lower() == "copy":
+            for root, file in self.files_to_copy:
+                shutil.copy(os.path.join(self.initial_path, root, file), os.path.join(self.destination_path, root, file))
 
     def create_file(self, path):
         """
