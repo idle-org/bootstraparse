@@ -424,8 +424,8 @@ _to_container = {
     "hyperlink": HyperLinkContainer,
     "linebreak": LinebreakContainer,
     "table:row": TableRowContainer,
-    "table:cell": TableCellContainer,
-    "table:separator": TableSeparatorContainer,
+    "table:cell": TableCellContainer,  # Should be an error I beleive ?
+    "table:separator": TableSeparatorContainer,  # Should be an error I beleive ?
 }
 
 
@@ -456,6 +456,10 @@ class ContextManager:
             "blockquotes": [],  # future: Implement blockquotes
             "linebreak": ["linebreak"],
         }
+        self.dict_lookahead_reparse = [
+            "list:ulist",
+            "list:olist",
+        ]
         self.contextualised = False
 
     def encapsulate(self, start, end):
@@ -649,12 +653,14 @@ class ContextManager:
         """
         range_to_encapsulate = 0
         line_skipped = 0
-        self.recontext(self.parsed_list[index])
+        if self.parsed_list[index].label in self.dict_lookahead_reparse:
+            self.recontext(self.parsed_list[index])
         i = index + 1
 
         while i < len(self.parsed_list):
             if self.parsed_list[i].label in self.dict_lookahead[token.label]:
-                self.recontext(self.parsed_list[i])
+                if self.parsed_list[i].label in self.dict_lookahead_reparse:
+                    self.recontext(self.parsed_list[i])
                 self.pile.append(self.parsed_list[i])
                 range_to_encapsulate += 1
             elif self.parsed_list[i].label == "linebreak":

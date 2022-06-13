@@ -279,7 +279,7 @@ class TableToken(SemanticType):
     label = "table"
 
 
-class TableRowToken(SemanticType):
+class TableRowToken(FinalSemanticType, TokensToMatch):
     label = "table:row"
 
 
@@ -289,6 +289,10 @@ class TableCellToken(SemanticType):
 
 class TableSeparatorToken(SemanticType):
     label = "table:separator"
+
+
+class TableCellSizeToken(SemanticType):
+    label = "table:cell_size"
 
 
 class OptionalToken(SemanticType):
@@ -499,7 +503,7 @@ se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralEl
 se = se_end | se_start  # Structural element
 table_row = pp.OneOrMore(
         # pp.Regex(r'\|(\d)?')('table_colspan') +
-        (pp.Combine(pps('|') + pp.Word(pp.nums)('table_colspan')) | pps('|')) +
+        (pp.Combine(pps('|') + pp.Word(pp.nums))('table_colspan').add_parse_action(of_type(TableCellSizeToken)) | pps('|')) +
         pp.SkipTo('|')('table_cell').add_parse_action(reparse(enhanced_text), of_type(TableCellToken))
 ).add_parse_action(of_type(TableRowToken)) + pps('|') + pp.Opt(optional)
 table_separator = pp.OneOrMore(
