@@ -1,5 +1,6 @@
 # Module for file and directories repartition
 import os
+import shutil
 from bootstraparse.modules import pathresolver, preparser, error_mngr, environment, export
 
 
@@ -35,6 +36,7 @@ class SiteCrawler:
         self.force_rewrite = self._env.config["parser_config"]["export"]["force_rewrite"]
         self.directories = []
         self.files = []
+        self.files_to_copy = []
         self.preparsers = []
         self.global_dict_of_imports = {}
 
@@ -50,9 +52,9 @@ class SiteCrawler:
         """
         This method is used to get all the paths to be crawled.
         Its goal is to get all the paths to be crawled and to store them in
-        the self.directories and self.files variables.
+        the self.directories and self.files, self.files_to_copy variables.
         """
-        self.files, self.directories = self.list_recursively(self.initial_path, self.initial_path)
+        self.files, self.files_to_copy, self.directories = self.list_recursively(self.initial_path, self.initial_path)
 
     def list_recursively(self, path, root):
         """
@@ -62,23 +64,28 @@ class SiteCrawler:
         :type path: str
         :type root: str
         :return: A tuple of the form (files, directories)
-        :rtype: (list[(str, str)], list[(str, str)])
+        :rtype: (list[(str, str)], list[(str, str)], list[(str, str)])
         """
         files = []
         directories = []
+        files_to_copy = []
         for element in os.listdir(path):
             element_fpath = os.path.join(path, element)
             element_rpath = os.path.relpath(path, root)
             if os.path.isdir(element_fpath):
                 if element not in self.forbidden_folders:
                     directories.append((element_rpath, element))
-                    f, d = self.list_recursively(element_fpath, root)
+                    f, fc, d = self.list_recursively(element_fpath, root)
                     files += f
                     directories += d
+                    files_to_copy += fc
             else:
-                if os.path.splitext(element)[1] in self.authorised_extensions and element[0] != "_":
-                    files.append((element_rpath, element))
-        return files, directories
+                if element[0] != "_":
+                    if os.path.splitext(element)[1] in self.authorised_extensions:
+                        files.append((element_rpath, element))
+                    else:
+                        files_to_copy.append((element_rpath, element))
+        return files, files_to_copy, directories
 
     def create_all_paths(self):
         """
@@ -106,6 +113,14 @@ class SiteCrawler:
             self.preparsers.append((pp, p))
 
         return self.preparsers
+
+    def copy_unparsable_files(self):
+        """
+        This method is used to copy all the files that could not be parsed.
+        """
+        if self._env.config["parser_config"]["export"]["copy_unparsable_files"].lower() == "copy":
+            for root, file in self.files_to_copy:
+                shutil.copy(os.path.join(self.initial_path, root, file), os.path.join(self.destination_path, root, file))
 
     def create_file(self, path):
         """

@@ -17,6 +17,7 @@ def create_website(origin, destination):
     env = create_environment(origin, destination)
     crwlr = create_crawler(origin, destination, env)
     crwlr.set_all_preparsers()
+    crwlr.copy_unparsable_files()
     for element, destination in crwlr:
         save(preparse_parse(element), destination, env)
 
