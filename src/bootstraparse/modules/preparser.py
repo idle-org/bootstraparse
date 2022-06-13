@@ -9,7 +9,6 @@
 
 
 import os
-#import regex  # future: remove regex
 from io import StringIO
 
 from bootstraparse.modules import pathresolver as pr

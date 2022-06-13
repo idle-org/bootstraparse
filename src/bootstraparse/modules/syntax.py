@@ -16,7 +16,6 @@ from collections import namedtuple
 from bootstraparse.modules.error_mngr import MismatchedContainerError
 from bootstraparse.modules import context_mngr as cm
 import pyparsing as pp
-import regex  # future: remove regex
 
 pps = pp.Suppress
 
