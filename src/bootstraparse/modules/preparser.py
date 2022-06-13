@@ -9,7 +9,6 @@
 
 
 import os
-import regex  # future: remove regex
 from io import StringIO
 
 from bootstraparse.modules import pathresolver as pr
@@ -179,10 +178,10 @@ class PreParser:
         line_count = 0
 
         for line in self.readlines():
-            results = regex.match(_rgx_import_file, line)
+            results = _rgx_import_file.searchString(line)
             if results:
-                for e in results.captures('file_name'):
-                    import_list += [(e, line_count)]
+                for e in results[0]:
+                    import_list += [(e.rstrip(), line_count)]
             line_count += 1
         # converts relative paths to absolute and returns a table
         self.saved_import_list = [(self.relative_path_resolver(p), l) for p, l in import_list]
