@@ -27,7 +27,7 @@ _type_counterpart_container = [
     (syntax.StructuralElementEndToken, 'se:start:test', "error", tools.__GLk(1)),  # An end can't be in a container (MismatchedContainerError) # noqa
     (syntax.HyperlinkToken, None, "self", tools.__GLk(1)),  # Shouldn't be an error
     (syntax.TableToken, None, "error", tools.__GLk(1)),
-    (syntax.TableRowToken, None, "error", tools.__GLk(1)),
+    (syntax.TableRowToken, None, "self", tools.__GLk(1)),
     (syntax.TableCellToken, None, "error", tools.__GLk(1)),
     (syntax.TableSeparatorToken, None, "error", tools.__GLk(1)),
     (syntax.BlockQuoteToken, None, "error", tools.__GLk(1)),
@@ -58,4 +58,5 @@ def test_counterpart_container(type_n, expected_counterpart, expected_container,
         else:
             raise ValueError("Invalid expected_container value: {}".format(expected_container))
     except Exception as e:
-        assert False, "Unexpected exception: {} in \n{}".format(e, file_n)
+        print("Unexpected exception: {} in \n{}".format(e, file_n))
+        raise e

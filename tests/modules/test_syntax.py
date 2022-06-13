@@ -458,32 +458,32 @@ dict_advanced_syntax_input_and_expected_output = {
         ), __GLk()),
         ("|2 Text1 | Text2 |", (
             sy.TableRowToken([
-                '2',
+                sy.TableCellSizeToken(['2']),
                 sy.TableCellToken([sy.TextToken(["Text1 "])]),
                 sy.TableCellToken([sy.TextToken(["Text2 "])]),
             ]),
         ), __GLk()),
         ("|2 Text1 |3 Text2 |", (
             sy.TableRowToken([
-                '2',
+                sy.TableCellSizeToken(['2']),
                 sy.TableCellToken([sy.TextToken(["Text1 "])]),
-                '3',
+                sy.TableCellSizeToken(['3']),
                 sy.TableCellToken([sy.TextToken(["Text2 "])]),
             ]),
         ), __GLk()),
         ("|2 Text1 |3 Text2 |4 Text3 |", (
             sy.TableRowToken([
-                '2',
+                sy.TableCellSizeToken(['2']),
                 sy.TableCellToken([sy.TextToken(["Text1 "])]),
-                '3',
+                sy.TableCellSizeToken(['3']),
                 sy.TableCellToken([sy.TextToken(["Text2 "])]),
-                '4',
+                sy.TableCellSizeToken(['4']),
                 sy.TableCellToken([sy.TextToken(["Text3 "])]),
             ]),
          ), __GLk()),
         ("|3 Text1 | Text2 | {var='test', number=11}", (
             sy.TableRowToken([
-                '3',
+                sy.TableCellSizeToken(['3']),
                 sy.TableCellToken([sy.TextToken(["Text1 "])]),
                 sy.TableCellToken([sy.TextToken(["Text2 "])]),
             ]),
@@ -517,7 +517,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ), __GLk(),),
         ("|2 Text1 | Text2 |", (
             sy.TableRowToken([
-                "2",
+                sy.TableCellSizeToken(['2']),
                 sy.TableCellToken([sy.TextToken(["Text1 "])]),
                 sy.TableCellToken([sy.TextToken(["Text2 "])]),
             ]),
@@ -662,7 +662,8 @@ list_of_text_input_and_readable_output = [
 
     # Tables
     ("| Text1 | Text2 |", "table", "<table:row = '<table:cell = 'Text1 ' />,<table:cell = 'Text2 ' />' />"),
-    ("| Text1 |3 Text2 |", "table", "<table:row = '<table:cell = 'Text1 ' />,3,<table:cell = 'Text2 ' />' />"),
+    ("| Text1 |3 Text2 |", "table", "<table:row = '<table:cell = 'Text1 ' />,<table:cell_size = '3' "
+ "/>,<table:cell = 'Text2 ' />' />"),
     ("|---|---|", "table_separator", "<table:separator = '---,---' />"),
     ("|:--|-:-|--:|--:|", "table_separator", "<table:separator = ':--,-:-,--:,--:' />"),
 

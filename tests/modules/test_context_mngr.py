@@ -315,6 +315,7 @@ _token_list_with_expected_result = [
     [
         [
             sy.TableRowToken([
+                sy.TableCellSizeToken(["2"]),
                 sy.TableCellToken([
                     sy.TextToken(["a"]),
                 ]),
@@ -327,7 +328,7 @@ _token_list_with_expected_result = [
             context_mngr.TableRowContainer([
                 context_mngr.TableCellContainer([
                     context_mngr.TextContainer([sy.TextToken(["a"])]),
-                ]),
+                ], others={"colspan": "2"}),
                 context_mngr.TableCellContainer([
                     context_mngr.TextContainer([sy.TextToken(["b"])]),
                 ]),
@@ -339,11 +340,11 @@ _token_list_with_expected_result = [
     [
         [
             sy.TableRowToken([
-                "2",
+                sy.TableCellSizeToken(["2"]),
                 sy.TableCellToken([
                     sy.TextToken(["a"]),
                 ]),
-                "3",
+                sy.TableCellSizeToken(["3"]),
                 sy.TableCellToken([
                     sy.TextToken(["b"]),
                 ]),
@@ -367,12 +368,9 @@ _token_list_with_expected_result = [
             sy.TableSeparatorToken(["---", "---"]),
         ],
         [
-            context_mngr.TableSeparatorContainer([
-                sy.TableSeparatorToken(["---", "---"]),
-            ]),
+            error_mngr.MismatchedContainerError,
         ],
         __GLk(1),
-        __XF,
     ],
     [
         [

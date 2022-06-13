@@ -78,7 +78,7 @@ def __module_path(module_name):
 # Frame inspection
 ########################################
 # Cursed frame inspection
-def __prev_stack(nb=0):  # pragma: no cover (Cursed frame inspection)
+def __prev_stack(nb=1):  # pragma: no cover (Cursed frame inspection)
     """
     Return the nth previous stack
     :return: Previous stack
