@@ -36,7 +36,7 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 ### V1.2
 - Check error messages and add a real debug level to parameters ☐
 - Functioning `blockquote` Token ☐
-- Remove old regex usage ☐
+- Remove old regex usage ☑
 
 ### V1.3
 - Add advanced lookahead logic for `*` ☐
