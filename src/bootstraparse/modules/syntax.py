@@ -434,8 +434,7 @@ def readable_markup(list_of_tokens):
 
 
 # Pre-parser expressions
-rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
-
+rgx_import_file = pps("::") + pp.OneOrMore(pps("<") + pp.SkipTo(">").set_name("file_name")("file_name") + pps(">"))
 
 # Base elements
 quotes = pp.Word(r""""'""")
