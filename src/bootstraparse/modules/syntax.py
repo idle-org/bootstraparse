@@ -1,3 +1,4 @@
+"""
 # Dedicated module for the syntax of all the parsing
 # All tokens inherit a SemanticType among SemanticType, ExplicitSemanticType and EmptySemanticType
 # All tokens have a label, and __eq__ and __ne__ methods.
@@ -8,7 +9,7 @@
 #   line_to_replace.parse_line('string') # returns a List of tokens parsed for replacements
 #   imports.parse_line('string', True) # returns a List of tokens parsed for imports
 #   any_token.create_diagram("filename") # Debugging
-
+"""
 import os
 from itertools import zip_longest
 from collections import namedtuple

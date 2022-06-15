@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Main program, use this to start parsing
+""" Main program, use this to start parsing"""
 
 from bootstraparse.modules import sitecreator, error_mngr
 import argparse
