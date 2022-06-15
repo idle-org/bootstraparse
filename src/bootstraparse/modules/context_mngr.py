@@ -436,14 +436,12 @@ class ContextManager:
     def __init__(self, parsed_list, name=None, ident=0):
         """
         Takes a list of parsed tokens.
-        Parameters
-        ----------
-            parsed_list : list[syntax.SemanticType]
-                List of parsed tokens output by our parser.
-            name : str
-                Name of the file being parsed.
-            ident : int
-                Number of spaces to indent the output.
+        :type parsed_list : list[syntax.SemanticType]
+        :param parsed_list: List of parsed tokens output by our parser.
+        :type name: str
+        :param name: Name of the file being parsed.
+        :type ident: int
+        :param ident: Number of spaces to indent the output.
         """
         self.output = []
         self.parsed_list = parsed_list
@@ -464,15 +462,12 @@ class ContextManager:
         """
         Method to encapsulate a number of tokens together as a final container object
         and replace all elements in the pile with None, except the first one which becomes the container.
-        Parameters
-        ----------
-            start : int
-                Index of the pile where the encapsulation must begin.
-            end : int
-                Index of the pile where the encapsulation must end.
-        Returns
-        -------
-            list[(BaseContainer|None)]
+        :type start : int
+        :param start: Index of the pile where the encapsulation must begin.
+        :type end: int
+        :param end: Index of the pile where the encapsulation must end.
+        :rtype: list[(BaseContainer|None)]
+        :return: List of containers and None objects.
         """
         # Enabling this will allow us to debug the pile
         # print(f"Step : [{end}] - encapsulation:")
@@ -514,18 +509,16 @@ class ContextManager:
         container.add(self.pile[end])
         self.pile[end] = None
         self.pile[start] = container
-
+        return self.pile  # ? I think this is the right way to return the pile
         # print(" <<< Pile:", self.pile)
 
     def _add_matched(self, label, index):
         """
         Method to add a matched element to the dictionary of matched elements.
-        Parameters
-        ----------
-            label : str
-                Label of the matched element.
-            index : int
-                Index of the matched element in the pile.
+        :type label : str
+        :param label: Label of the matched element.
+        :type index: int
+        :param index: Index of the matched element in the pile.
         """
         if label not in self.matched_elements:
             self.matched_elements[label] = []
@@ -534,13 +527,10 @@ class ContextManager:
     def _get_matched(self, label):
         """
         Method to get the index of the last matched element of a given label.
-        Parameters
-        ----------
-            label : str
-                Label of the matched element.
-        Returns
-        -------
-            int : Index of the last matched element of the given label.
+        :type label: str
+        :param label: Label of the matched element.
+        :rtype: int
+        :return: Index of the last matched element
         """
         return self.matched_elements[label].pop()
 
@@ -548,14 +538,9 @@ class ContextManager:
         """
         Interprets the list of tokens provided and deduces context, encapsulating them to their closest neighbour and
         containing all tokens inbetween.
-        Returns
-        -------
-            list[BaseContainer]
-                Returns the pile entirely processed as a list of containers.
-        Raise
-        -----
-            MismatchedContainerError
-                Raised when a container is not matched to its corresponding token.
+        :rtype: list[BaseContainer]
+        :return: Returns the pile entirely processed as a list of containers.
+        :raises: MismatchedContainerError if a container is not matched to its corresponding token.
         """
         # self.pile = self.parsed_list.copy()
         if self.contextualised:
@@ -655,15 +640,12 @@ class ContextManager:
     def lookahead(self, token, index):
         """
         Iterates the pile beginning from index and looks for all tokens matching labels with token.
-        Parameters
-        ----------
-            token : syntax.BaseContainer
-                Token to look for.
-            index : int
-                Index of the token in the pile.
-        Returns
-        -------
-            (int, int) : (number of tokens matched, number of linebreaks)
+        :type token : syntax.BaseContainer
+        :param token: Token to look for.
+        :type index : int
+        :param index: Index of the token in the pile.
+        :return: (number of tokens matched, number of linebreaks)
+        :rtype: (int, int)
         """
         range_to_encapsulate = 0
         line_skipped = 0
@@ -691,29 +673,21 @@ class ContextManager:
     def recontext(self, token):
         """
         Function to recontextualise the content of a token.
-        Parameters
-        ----------
-            token : syntax.SemanticType
-                Token to recontextualise.
+        :param token: Token to recontextualise.
+        :type token: syntax.SemanticType
+        :return: Token to recontextualise.
+        :rtype: syntax.SemanticType
         """
         token.content = ContextManager(token.content, name=self.name)()
 
     def get_last_container_in_pile(self, index):
         """
         Returns the last element in the pile if it is a Container, raises an error otherwise.
-        Parameters
-        ----------
-            index : int
-                Index of the element to check.
-
-        Returns
-        -------
-            BaseContainer
-
-        Raises
-        ------
-            error_mngr.LonelyOptionalError
-                Raised when an element is found in the pile that is not encapsulated in a container.
+        :type index : int
+        :param index: Index of the element to check.
+        :return: Last element in the pile if it is a Container, raises an error otherwise.
+        :rtype: BaseContainer
+        :raise: error_mngr.LonelyOptionalError when an element is found in the pile that is not encapsulated in a container.
         """
         i = index-1  # skip last token as it is self
         while i >= 0:

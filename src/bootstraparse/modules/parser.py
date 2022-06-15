@@ -12,10 +12,10 @@ import bootstraparse.modules.syntax as syntax
 def parse_line(io):
     """
     Takes an io string and returns the parsed output.
-    Parameters:
-        io (StringIO): The io string to parse.
-    Returns:
-        list[syntax.SemanticType]: The parsed output.
+    :param io: The io string to parse.
+    :type io: StringIO
+    :return: The parsed output.
+    :rtype: list[syntax.SemanticType]
     """
     output = []
     for line in io.readlines():
