@@ -63,8 +63,6 @@ class BaseContainer:
         :rtype : (syntax.SemanticType | BaseContainer)
         :return: The optionals of the container
         """
-        print(f"{self.content}")
-        print(f'Getting optionals for {self.class_name()} <{id(self)}>{self.optionals}')
         return self.optionals
 
     def get_others(self):
