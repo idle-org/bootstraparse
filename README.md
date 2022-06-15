@@ -5,22 +5,26 @@ bootstraparse aims to be customisable in that regard, but its first iteration an
 
 You can refer to the `example_userfiles` for an idea of what the parser expects you to feed it and find an example of our automated generation at https://idle-org.github.io/bootstraparse/ for this particular folder. Or you can run the program yourself for the same result!
 
-[![Python application](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml)
+- Main
+  - [![Python Main](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml) 
+- Releases
+  - [![Python Release](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml/badge.svg?branch=release)](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml)
 
 ---
-## Roadmap
+## Release Notes
 ### V1.0.1
-- Make the default example site way more useful ☐
-- Add the type and return types of all functions ☑
-- Add documentation to remaining lone functions ☑
-- Write a documentation for the application (use specs.yaml) ☐
+- Remove old regex usage
+- Add copy behaviour to config file
+- Add the type and return types of all functions
+- Add documentation to remaining lone functions
+- Copy un-parsable files to destination folder without modifications
+- Many bug fixes and improvements
 
+## Roadmap
 ### V1.0.2
+- Make the default example site way more useful ☐
+- Write a documentation for the application (use specs.yaml) ☐
 - Move the WARNING-level output to INFO for config overwrite ☐
-
-### V1.0.3
-- Copy un-parsable files to destination folder without modifications ☑
-- Add copy behaviour to config file ☑
 
 ### V1.1
 - Functioning `table` Token ☐
@@ -33,7 +37,6 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 ### V1.2
 - Check error messages and add a real debug level to parameters ☐
 - Functioning `blockquote` Token ☐
-- Remove old regex usage ☑
 
 ### V1.3
 - Add advanced lookahead logic for `*` ☐
