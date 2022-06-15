@@ -94,18 +94,10 @@ class ExportManager:
         """
         Function for initializing other transform functions.
 
-        Parameters:
-        ----------
-            export_request: ExportRequest tuples
-
-        Returns:
-        -------
-            start: str
-                Start string of the markup element
-            end: str
-                End string of the markup element
-            optionals: syntax.Optionals
-                Optionals object containing html_insert and class_insert
+        :param export_request: ExportRequest tuples
+        :type export_request: ExportRequest
+        :return: start, end, optionals
+        :rtype: str, str, str
         """
 
         start, end = None, None
@@ -206,14 +198,12 @@ class ContextConverter:
     def __init__(self, pile, exporter, destination):
         """
         Takes a pile and the exporter object
-        Parameters
-        ----------
-            pile : list[context_mngr.BaseContainer]
-                pile output from the context manager.
-            exporter : ExportManager
-                Our ExportManager
-            destination : str
-                Destination of the output file.
+        :type pile : list[context_mngr.BaseContainer]
+        :param pile: output from the context manager.
+        :type exporter : ExportManager
+        :param exporter: Our ExportManager
+        :type destination : str
+        :param destination: Destination of the output file.
         """
         self.io_output = StringIO()
         self.pile = pile
