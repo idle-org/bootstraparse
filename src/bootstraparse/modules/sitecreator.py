@@ -1,4 +1,9 @@
-# Module sequencing the successive actions necessary for website building
+"""
+Module sequencing the successive actions necessary for website building
+Usage:
+    create_website(origin, destination)
+"""
+
 import os
 
 from bootstraparse.modules import pathresolver, sitecrawler, environment, config, export, parser, context_mngr

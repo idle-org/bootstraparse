@@ -1,1 +1,3 @@
-# Module for interpreting default or custom templates.
+"""
+Module for interpreting default or custom templates.
+"""

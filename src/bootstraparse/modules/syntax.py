@@ -10,6 +10,7 @@
 #   imports.parse_line('string', True) # returns a List of tokens parsed for imports
 #   any_token.create_diagram("filename") # Debugging
 """
+
 import os
 from itertools import zip_longest
 from collections import namedtuple
