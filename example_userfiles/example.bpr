@@ -1,0 +1,48 @@
+
+Structural Elements:
+<<div
+This is a div
+div>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+<<article
+This is an article
+article>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+<<aside
+This is an aside
+aside>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+<<section
+This is a section
+section>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+<<div
+<<article
+<<aside
+<<section
+Text
+section>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+aside>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+article>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+div>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+# Header 1 #{class='blue', 123}{{cinsertion}}[var='test', number=11]
+! Display 1 !{class='blue', 123}{{cinsertion}}[var='test', number=11]
+
+
+Inline Element:
+[Link text]('http://this.is.a.link')
+*This is in italic*
+**This is strong**
+~~This is stricken through~~
+__This is underlined__
+(#1)This is a custom span(#1)
+
+
+Oneline elements:
+- This is an unordered list item
+- This is an unordered list item
+- This is an unordered list item{class='blue', 123}{{cinsertion}}[var='test', number=11]
+#. This is an ordered list item
+#. This is an ordered list item
+#. This is an ordered list item{class='blue', 123}{{cinsertion}}[var='test', number=11]
+
+This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment.
+This is still the same long text segment. This is still the same long text segment. This is still the same long text segment.
+
+Use a double linebreak to force linebreaks.
