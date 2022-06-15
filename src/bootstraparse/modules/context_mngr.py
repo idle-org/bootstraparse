@@ -401,6 +401,11 @@ class TableCellContainer(BaseContainer):
     pass
 
 
+class TableCellSizeContainer(BaseContainer):
+    type = "table"
+    subtype = "t_cell"
+
+
 class LinebreakContainer(BaseContainer):
     def export(self, _):
         if len(self.content) == 1:
@@ -428,7 +433,7 @@ _to_container = {
     "table:row": TableRowContainer,
     "table:cell": TableCellContainer,  # Should be an error I beleive ?
     "table:separator": TableSeparatorContainer,  # Should be an error I beleive ?
-    "table:cell_size": TableCellContainer,
+    "table:cell_size": TableCellSizeContainer,
 }
 
 
@@ -452,19 +457,24 @@ class ContextManager:
         self.name = name
         self.ident = ident
         self.matched_elements = {}
-        self.dict_lookahead = {
+        self._dict_lookahead = {
             "list:ulist": ["list:ulist"],
             "list:olist": ["list:olist"],
             "table:row": ["table:separator", "table:row"],  # future: Implement tables
+            "table:cell": ["table:separator", "table:cell"],
             "blockquotes": [],  # future: Implement blockquotes
             "linebreak": ["linebreak"],
         }
-        self.dict_lookahead_reparse = [
+        self._dict_custom_lookahead = {
+            "table:row": self.table_lookahead,  # future: Implement tables
+        }
+        self._dict_lookahead_reparse = [
             "list:ulist",
             "list:olist",
             "table:row",
             "table:cell",
         ]
+
         self.contextualised = False
 
     def encapsulate(self, start, end):
@@ -575,8 +585,13 @@ class ContextManager:
                     self.pile[index] = None
 
                 # Group together multiple one-lines
-                elif token.label in self.dict_lookahead:
+                elif token.label in self._dict_lookahead:
                     lookahead_return = self.lookahead(token, index)
+                    index += lookahead_return[0]
+                    line_number += lookahead_return[1]
+
+                elif token.label in self._dict_custom_lookahead:
+                    lookahead_return = self._dict_custom_lookahead[token.label](token, index)
                     index += lookahead_return[0]
                     line_number += lookahead_return[1]
 
@@ -658,13 +673,13 @@ class ContextManager:
         """
         range_to_encapsulate = 0
         line_skipped = 0
-        if self.parsed_list[index].label in self.dict_lookahead_reparse:
+        if self.parsed_list[index].label in self._dict_lookahead_reparse:
             self.recontext(self.parsed_list[index])
         i = index + 1
 
         while i < len(self.parsed_list):
-            if self.parsed_list[i].label in self.dict_lookahead[token.label]:
-                if self.parsed_list[i].label in self.dict_lookahead_reparse:
+            if self.parsed_list[i].label in self._dict_lookahead[token.label]:
+                if self.parsed_list[i].label in self._dict_lookahead_reparse:
                     self.recontext(self.parsed_list[i])
                 self.pile.append(self.parsed_list[i])
                 range_to_encapsulate += 1
@@ -681,6 +696,37 @@ class ContextManager:
         self.encapsulate(index, index + range_to_encapsulate)
         return range_to_encapsulate, line_skipped
 
+    def table_lookahead(self, token, index):
+        """
+        Method to lookahead for a table.
+        Parameters
+        ----------
+            token : syntax.Table
+                Token to lookahead for.
+            index : int
+                Index of the token in the pile.
+        Returns
+        -------
+            int : Index of the next token to lookahead for.
+        """
+        range_to_encapsulate = 0
+        i = index + 1
+        while i < len(self.parsed_list):
+            if self.parsed_list[i].label == "linebreak":
+                self.pile.append(self.parsed_list[i])
+                range_to_encapsulate += 1
+                if self.parsed_list[i-1].label == "linebreak":
+                    break
+            elif self.parsed_list[i].label in ["table:row", "table:separator"]:
+                self.pile.append(self.table_recontext(self.parsed_list[i]))
+                range_to_encapsulate += 1
+            elif self.parsed_list[i].label == "table:cell_size":
+                if not isinstance(self.pile[i-1], TableRowContainer):
+                    raise MismatchedContainerError(token, "A table cell size must be preceded by a table row.")
+                self.pile[i-1].cell_size = self.parsed_list[i]
+                self.pile.append(None)  # Unsure if this is the best way to do it.
+                range_to_encapsulate += 1
+
     def recontext(self, token):
         """
         Function to recontextualise the content of a token.
@@ -690,6 +736,17 @@ class ContextManager:
         :rtype: syntax.SemanticType
         """
         token.content = ContextManager(token.content, name=self.name)()
+
+    def table_recontext(self, token):
+        """
+        Function to recontextualise the content of a table.
+        """
+        for elt in token.content:
+            if isinstance(elt, syntax.TableCellToken):
+                elt.content = ContextManager(elt.content, name=self.name)()
+            elif isinstance(elt, syntax.TableCellSizeToken):
+                pass # Continue Here
+            elt.content = ContextManager(elt.content, name=self.name)()
 
     def get_last_container_in_pile(self, index):
         """

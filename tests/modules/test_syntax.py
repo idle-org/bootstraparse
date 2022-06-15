@@ -622,46 +622,46 @@ list_add_tag_input_and_expected_output = [
 # test_readable_markup
 list_of_text_input_and_readable_output = [
     # Header
-    ("# Text1 #", "one_header", "<header = '#,Text1 ' />"),
-    ("## Text2 ##", "one_header", "<header = '##,Text2 ' />"),
+    ("# Text1 #", "one_header", "<header = '#,Text1 ' />", __GL()),
+    ("## Text2 ##", "one_header", "<header = '##,Text2 ' />", __GL()),
 
     # Text
     # il_link | et_strong | et_em | et_strikethrough | et_underline | et_custom_span
-    ("*Italic*", "et_em", "<text:em />"),
-    ("__Underline__", "et_underline", "<text:underline />"),
-    ("**Bold**", "et_strong", "<text:strong />"),
-    ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough />"),
+    ("*Italic*", "et_em", "<text:em />", __GL()),
+    ("__Underline__", "et_underline", "<text:underline />", __GL()),
+    ("**Bold**", "et_strong", "<text:strong />", __GL()),
+    ("~~Strikethrough~~", "et_strikethrough", "<text:strikethrough />", __GL()),
     ("Text *bold __underline__ still bold*", "enhanced_text",
-     "Text <text:em /> bold <text:underline /> underline <text:underline /> still bold <text:em />"),
+     "Text <text:em /> bold <text:underline /> underline <text:underline /> still bold <text:em />", __GL()),
     # noqa E501 (line too long)
-    ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />"),
+    ("[link]('http://www.google.com')", "il_link", "<hyperlink = '[link]('http://www.google.com')' />", __GL()),
     ("Reverse order:(#123) Span, __underline__ ~~strikethrough~~ **emphasis * Strong**", "enhanced_text",
-     "Reverse order: <text:custom_span:123 /> Span, <text:underline /> underline <text:underline /> <text:strikethrough /> strikethrough <text:strikethrough /> <text:strong /> emphasis <text:em /> Strong <text:strong />"), # noqa E501 (line too long)
+     "Reverse order: <text:custom_span:123 /> Span, <text:underline /> underline <text:underline /> <text:strikethrough /> strikethrough <text:strikethrough /> <text:strong /> emphasis <text:em /> Strong <text:strong />", __GL()), # noqa E501 (line too long)
 
     # Structural elements
-    ("<<div", "se", "<se:start:div = 'div' />"),
-    ("div>>", "se", "<se:end:div = 'div' />"),
-    ("<<article", "se", "<se:start:article = 'article' />"),
-    ("article>>", "se", "<se:end:article = 'article' />"),
-    ("<<aside", "se", "<se:start:aside = 'aside' />"),
-    ("aside>>", "se", "<se:end:aside = 'aside' />"),
-    ("<<section", "se", "<se:start:section = 'section' />"),
-    ("section>>", "se", "<se:end:section = 'section' />"),
+    ("<<div", "se", "<se:start:div = 'div' />", __GL()),
+    ("div>>", "se", "<se:end:div = 'div' />", __GL()),
+    ("<<article", "se", "<se:start:article = 'article' />", __GL()),
+    ("article>>", "se", "<se:end:article = 'article' />", __GL()),
+    ("<<aside", "se", "<se:start:aside = 'aside' />", __GL()),
+    ("aside>>", "se", "<se:end:aside = 'aside' />", __GL()),
+    ("<<section", "se", "<se:start:section = 'section' />", __GL()),
+    ("section>>", "se", "<se:end:section = 'section' />", __GL()),
 
     # Lists
-    ("- Text", "one_ulist", "<list:ulist = 'Text' />"),
-    ("#. Text", "one_olist", "<list:olist = 'Text' />"),
+    ("- Text", "one_ulist", "<list:ulist = 'Text' />", __GL()),
+    ("#. Text", "one_olist", "<list:olist = 'Text' />", __GL()),
 
     # Tables
-    ("| Text1 | Text2 |", "table", "<table:row = '<table:cell = 'Text1 ' />,<table:cell = 'Text2 ' />' />"),
-    ("| Text1 |3 Text2 |", "table", "<table:row = '<table:cell = 'Text1 ' />,<table:cell = '<:cell_size = '3' "
- "/>,Text2 ' />' />"),
-    ("|---|---|", "table_separator", "<table:separator = '---,---' />"),
-    ("|:--|-:-|--:|--:|", "table_separator", "<table:separator = ':--,-:-,--:,--:' />"),
+    ("| Text1 | Text2 |", "table", "<table:row = '<table:cell = 'Text1 ' />,<table:cell = 'Text2 ' />' />", __GL()),
+    ("| Text1 |3 Text2 |", "table", "<table:row = '<table:cell = 'Text1 ' />,<table:cell = '<table:cell_size = '3' "
+ "/>,Text2 ' />' />", __GL()),
+    ("|---|---|", "table_separator", "<table:separator = '---,---' />", __GL()),
+    ("|:--|-:-|--:|--:|", "table_separator", "<table:separator = ':--,-:-,--:,--:' />", __GL()),
 
     # Other Mostly for testing and coverage
-    ("'", "quotes", "'"),
-    (" -", "line", "-"),
+    ("'", "quotes", "'", __GL()),
+    (" -", "line", "-", __GL()),
 ]
 
 
@@ -852,8 +852,8 @@ def test__add_tag(token, expected_output):
 
 
 # Test text functions
-@pytest.mark.parametrize("token_list, parsing_expression, expected", list_of_text_input_and_readable_output)
-def test_readable_markup(token_list, parsing_expression, expected):
+@pytest.mark.parametrize("token_list, parsing_expression, expected, line", list_of_text_input_and_readable_output)
+def test_readable_markup(token_list, parsing_expression, expected, line):
     """
     Test that the readable markup is correctly generated.
     :param token_list: The list of tokens.

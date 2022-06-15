@@ -329,7 +329,7 @@ _token_list_with_expected_result = [
                 sy.TableRowToken([
                     context_mngr.TableCellContainer([
                         sy.TableCellToken([
-                            "2",
+                            sy.TableCellSizeToken(["2"]),
                             context_mngr.TextContainer([sy.TextToken(["a"])]),
                         ]),
                     ]),

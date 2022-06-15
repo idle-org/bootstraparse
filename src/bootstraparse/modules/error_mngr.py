@@ -17,7 +17,7 @@ from bootstraparse.modules.tools import __GLk  # __GFi, __GFu, __GL
 _ERRORS = ["ParsingError", "MismatchedContainerError"]
 
 
-def init_logging(filename=None, loglevel="ERROR", filemode='w', handler=None):
+def init_logging(filename=None, loglevel="DEBUG", filemode='w', handler=None):
     """
     Initializes logging
     :param filename: The path for the log file
@@ -135,7 +135,7 @@ class MismatchedContainerError(BootstraparseError):
     """
     The token is not final and cannot be contained. Indicative of a mismatched token.
     """
-    def __init__(self, token):
+    def __init__(self, token, message=""):
         """
         Initializes the MismatchedContainerError class with the token that was not final
         :param token: The token that is not final
@@ -150,7 +150,7 @@ class MismatchedContainerError(BootstraparseError):
             self.line = None
             self.label = None
             self.name = None
-        super().__init__(f"Could not process {self.label} at line {self.line} in file {self.name}.")
+        super().__init__(f"Could not process {self.label} at line {self.line} in file {self.name}. {message}")
 
 
 class LonelyOptionalError(BootstraparseError):
