@@ -335,7 +335,7 @@ class SeContainer(BaseContainer):
     type = "structural_elements"
 
     def export(self, exm):
-        self.subtype = self[0].content[0]
+        self.subtype = "se_"+self[0].content[0]
         return super().export(exm)
 
 
