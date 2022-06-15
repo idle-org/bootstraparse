@@ -66,6 +66,21 @@ _token_list_with_expected_result = [
     ],
     [
         [
+            sy.StructuralElementStartToken(["header"]),
+            sy.TextToken(["1"]),
+            sy.StructuralElementEndToken(["header"]),
+        ],
+        [
+            context_mngr.SeContainer([
+                sy.StructuralElementStartToken(["header"]),
+                context_mngr.TextContainer([sy.TextToken(["1"])]),
+                sy.StructuralElementEndToken(["header"])
+            ]),
+        ],
+        __GLk(1),
+    ],
+    [
+        [
             sy.EtEmToken(["*"]),
             sy.TextToken(["a"]),
             sy.EtEmToken(["*"]),
