@@ -266,7 +266,7 @@ if __name__ == '__main__':  # pragma: no cover
     from bootstraparse.modules import parser
 
     io_string = StringIO(
-        """[this is a link]('http://te.st')"""
+        """! This is a test ! {{fgd}}"""
     )
     test = parser.parse_line(io_string)
     __config = config.ConfigLoader(pathresolver.b_path("configs/"))
