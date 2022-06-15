@@ -98,21 +98,13 @@ class SemanticType:
     def to_container(self, filter_func=None):
         """
         Function called by the context manager to know how to deal with the encapsulation of the token.
-
-        Parameters
-        ----------
-            filter_func: (function | None)
-                A function that takes a token and returns a boolean. If the token is not valid, it should return False.
-
-        Returns
-        -------
-            SemanticType | context_mngr.BaseContainer
-                Self if containable, the expected replacement token if it can, raises an error otherwise.
-        Raises
-        ------
-            CannotBeContainedError
-                Raises error if the token we were trying to encapsulate cannot be (probably mismatched).
+        :param filter_func: A function that will be used to filter the content of the token.
+        :type filter_func: (callable| None)
+        :return: Self if containable, the expected replacement token if it can, raises an error otherwise.
+        :rtype: SemanticType | context_mngr.BaseContainer
+        :raises CannotBeContainedError: Raises error if the token we were trying to encapsulate cannot be (probably mismatched).
         """
+
         raise MismatchedContainerError(self)
 
 
