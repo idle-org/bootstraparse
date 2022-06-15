@@ -538,12 +538,12 @@ one_display = (
         pp.Opt(optional)
 ).add_parse_action(of_type(DisplayToken))
 one_olist = pp.line_start + (
-        pps(pp.Literal('#.')) + (
+        pps(pp.Combine(pp.line_start + pp.Literal('#.'))) + (
          (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
-        pps(pp.Literal('-')) + (
+        pps(pp.Combine(pp.line_start + pp.Literal('-'))) + (
          (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtUlistToken))
