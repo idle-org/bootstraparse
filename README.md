@@ -10,7 +10,7 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Releases
   - [![Python Tests and Lint](https://github.com/idle-org/bootstraparse/actions/workflows/python-tests.yml/badge.svg?branch=develop)](https://github.com/idle-org/bootstraparse/actions/workflows/python-tests.yml)
 - Deploy
-  - [![Python Deployment](https://github.com/idle-org/bootstraparse/actions/workflows/python-deploy.yml/badge.svg)](https://github.com/idle-org/bootstraparse/actions/workflows/python-deploy.yml)
+  - [![Python Deployment](https://github.com/idle-org/bootstraparse/actions/workflows/python-deploy.yml/badge.svg?branch=main)](https://github.com/idle-org/bootstraparse/actions/workflows/python-deploy.yml)
 ---
 ## Release Notes
 ### V1.0.1
@@ -21,8 +21,16 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Copy un-parsable files to destination folder without modifications
 - Many bug fixes and improvements
 
-## Roadmap
 ### V1.0.2
+- Put out many fires
+
+### V1.0.3
+- Put out many more fires
+- Fixed continuous integration
+- Added doc generation
+
+## Roadmap
+### V1.0.4
 - Make the default example site way more useful ☐
 - Write a documentation for the application (use specs.yaml) ☐
 - Move the WARNING-level output to INFO for config overwrite ☐
