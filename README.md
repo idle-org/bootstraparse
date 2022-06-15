@@ -48,11 +48,15 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Functioning `blockquote` Token ☐
 
 ### V1.3
-- Add advanced lookahead logic for `*` ☐
+- Add advanced lookahead logic for `*`
+- Functioning `lead` Token
 
 ### V1.4
 - Add html indentation for human readability of the output. ☐
 
 ### V2
-- Add a functioning post-context enhancer able to generate menus and elements from arbitrary logic. ☐
-- Achieve perfect markdown compatibility with appropriate config parameters ☐
+- Add a functioning post-context enhancer able to generate menus and elements from arbitrary logic.
+- Achieve perfect markdown compatibility with appropriate config parameters
+
+### V3
+- Add Template customisation.
