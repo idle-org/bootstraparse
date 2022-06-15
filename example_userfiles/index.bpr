@@ -1,4 +1,13 @@
 @[start]['Bootstraparse']
+<<div
+<<header
+<<div
+<<div
+Bootstraparse
+div>>{{blog-header-logo text-dark text-center border-bottom}}
+div>>{{row flex-nowrap justify-content-between align-items-center}}
+header>>{{blog-header py-3}}
+<<div
 # What is bootstraparse ? #
 
 bootstraparse is a tool that allows you to bootstrap your own project.
@@ -14,4 +23,6 @@ And much much more !
 
 We encourage you to read the [documentation]("apidoc/index.html") to learn more about bootstraparse
 or explore the [source code]("https://github.com/idle-org/bootstraparse")
+div>>{{nav-scroller py-1 mb-2}}
+div>>{{container}}
 @[end]
