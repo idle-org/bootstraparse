@@ -1,12 +1,12 @@
 # This workflow will install Python dependencies, and deploy the application to GitHub Pages.
 
-name: Python application
+name: Deployment
 
 on:
   push:
-    branches: [ main, release ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, release ]
+    branches: [ main ]
 
 jobs:
   deployment:
