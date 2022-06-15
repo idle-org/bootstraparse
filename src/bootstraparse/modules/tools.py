@@ -174,6 +174,37 @@ def find_variables_in_file(file_path, list_variable_name):  # pragma: no cover (
     return find_string_in_file(file_path, [re.compile(f"^({variable_name}) ?=") for variable_name in list_variable_name])
 
 
+def compare(me, other):
+    """
+    Compares the container to another container.
+    :param me: The container to compare
+    :param other: The container to compare to
+    :type me: Container
+    :type other: Container
+    :return: True if the containers are equal, False otherwise
+    :rtype: bool
+    """
+    import rich
+    from bootstraparse.modules import syntax, context_mngr
+
+    for e, f in zip(me, other):
+        if isinstance(e, context_mngr.BaseContainer) or isinstance(e, syntax.SemanticType):
+            compare(e, f)
+        elif e != f:
+            rich.print(f'elt:{e} != {f}')
+            return False
+    if hasattr(me, "optionals"):
+        if me.optionals != other.optionals:
+            rich.print(f'opt:{me.optionals} != {other.optionals}')
+            return False
+    if hasattr(me, "others"):
+        if me.others != other.others:
+            rich.print(f'oth:{me.others} != {other.others}')
+            return False
+    rich.print("No differences found")
+    return True
+
+
 if __name__ == "__main__":  # pragma: no cover
     # print(find_string_in_file(__module_path("syntax.py"), [re.compile(r"^(html_insert) ?=")]))
     pass

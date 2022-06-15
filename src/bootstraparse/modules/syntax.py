@@ -86,6 +86,14 @@ class SemanticType:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __iter__(self):
+        """
+        Iterator over the content of the token.
+        :yield: The iterator over the content of the token.
+        :ytype: iterable
+        """
+        return iter(self.content)
+
     def print_all(self, ident=0):
         """
         Print all lines of the token.

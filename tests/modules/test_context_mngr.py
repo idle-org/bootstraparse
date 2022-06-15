@@ -1,7 +1,7 @@
 import pytest
 import rich
 
-from bootstraparse.modules import context_mngr, export, error_mngr
+from bootstraparse.modules import context_mngr, export, error_mngr, tools
 from bootstraparse.modules import syntax as sy #sy.SemanticType, sy.TextToken, sy.Linebreak, sy.StructuralElementStartToken, sy.StructuralElementEndToken, sy.EtUlistToken, sy.EtOlistToken # noqa
 from bootstraparse.modules.tools import __GLk
 __XF = pytest.mark.xfail
@@ -646,8 +646,7 @@ def test_context_call(init_list, expected, file_line):
         for i, e in zip(ctx(), expected):
             # rich.inspect(i)
             # rich.inspect(e)
-            i.print_all()
-            e.print_all()
+            tools.compare(i, e)
             assert i == e
     else:
         with pytest.raises(expected[0]):
