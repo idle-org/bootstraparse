@@ -5,7 +5,6 @@
 #  rsp = ExportResponse("start_string", "end_string")
 #  em = ExportManager(config_file, template_file)
 #  em(ExportRequest()) -> ExportResponse()
-import rich
 
 from io import StringIO
 from bootstraparse.modules import config, pathresolver, error_mngr, context_mngr
@@ -115,7 +114,6 @@ class ExportManager:
         except KeyError:
             log_entries = ["bootstrap", export_request.type, export_request.subtype]
             log_ = tools.dict_check(self.templates, *log_entries)
-            print()
             error_mngr.log_exception(
                 KeyError(
                     f'Template "bootstrap"/{export_request.type}/{export_request.subtype} could not be found.\n' +
@@ -263,6 +261,7 @@ class ContextConverter:
 
 
 if __name__ == '__main__':  # pragma: no cover
+    import rich
     from bootstraparse.modules import parser
 
     io_string = StringIO(
