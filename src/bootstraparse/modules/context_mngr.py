@@ -7,7 +7,6 @@
 # Usage:
 #   from bootstraparse.modules.context_mngr import ContextManager
 #   ctx = ContextManager()
-#   ctx.???
 #   container = BaseContainer()
 #   container[number] -> The number element in the content
 #   "class_insert" >> container[number] -> Get an element from one of the mapped methods
@@ -24,6 +23,14 @@ class BaseContainer:
     subtype = None
 
     def __init__(self, content=None, optionals=None, others=None):
+        """
+        :param content: List of tokens to be added to the container
+        :param optionals: List of optional tokens to be added to the container (from the parser)
+        :param others: List of values to add to the .format() method
+        :type content: (list[(syntax.SemanticType | BaseContainer)])
+        :type optionals: (syntax.SemanticType)
+        :type others: (dict[str, str])
+        """
         if content is None:
             content = []
         if others is None:
@@ -34,24 +41,41 @@ class BaseContainer:
         self.indentation_level = 0  # future: add an indentation level to every token for human readability of the final output
 
     def get_content(self, exm, arbitrary_list=None):
+        """
+        Get the content of any BaseContainer object (default self.content).
+        :param exm: ExportManager to use for exporting
+        :param arbitrary_list: List to get the content from
+        :type exm: export.ExportManager
+        :type arbitrary_list: list[BaseContainer]
+        :rtype : str
+        """
         output = ""
         if not arbitrary_list:
             arbitrary_list = self.content
-            # rich.inspect(arbitrary_list)
         for element in arbitrary_list:
             if isinstance(element, BaseContainer):
                 output += element.export(exm) + " "
-        # rich.inspect(output[:-1])
         return output[:-1]
 
     def get_optionals(self):
+        """
+        Get the optionals of the container.
+        :rtype : (syntax.SemanticType | BaseContainer)
+        :return: The optionals of the container
+        """
         return self.optionals
 
     def get_others(self):
+        """
+        Get the other values of the container.
+        :rtype : dict[str, str]
+        :return: The other values of the container
+        """
         return self.others
 
     def export(self, exm):
         """
+        Export the container to a string.
         :type exm: export.ExportManager
         :rtype : str
         """
@@ -62,15 +86,27 @@ class BaseContainer:
         return output
 
     def add(self, other):
+        """
+        Adds a list of elements to the container.
+        :param other: List of elements to add
+        :type other: syntax.SemanticType
+        :return: None
+        """
         self.content.append(other)
 
     def class_name(self):
+        """
+        A string representation of the class name.
+        :rtype : str
+        """
         return self.__class__.__name__
 
     def validate(self, other):
         """
         Takes a list as input and checks if every element is in map.
-        :return: Bool
+        :param other: List of elements to check
+        :type other: list[(syntax.SemanticType | BaseContainer)]
+        :return: True if every element is in map, False otherwise
         """
         for o in other:
             if o not in self.map:
@@ -78,30 +114,68 @@ class BaseContainer:
         return True
 
     def debug_map(self):
+        """
+        Prints the map of the container.
+        :return: None
+        """
         print(f'Debug for {self.class_name()} <{id(self)}>')
         for k, v in self.map.items():
             print(f'{k} = {v}')
 
     def __len__(self):
+        """
+        :rtype : int
+        """
         return len(self.content)
 
     def __iter__(self):
+        """
+        :ytype : iter[syntax.SemanticType]
+        """
         for content in self.content:
             yield content
 
     def __getitem__(self, item):
+        """
+        :param item: Index of the element to get
+        :type item: int
+        :rtype : (syntax.SemanticType | BaseContainer)
+        """
         return self.content[item]
 
     def __setitem__(self, key, value):
+        """
+        :param key: Index of the element to set
+        :param value: Value to set
+        :type key: int
+        :type value: (syntax.SemanticType | BaseContainer)
+        """
         self.content[key] = value
 
     def __getslice__(self, start, end):
+        """
+        :param start: Start index of the slice
+        :param end: End index of the slice
+        :type start: int
+        :type end: int
+        :rtype : list[(syntax.SemanticType | BaseContainer)]
+        """
         return self.content[start:end]
 
     def __rshift__(self, other):
+        """
+        :param other: The name of the map element to get
+        :type other: str
+        :rtype : (syntax.SemanticType | BaseContainer)
+        """
         return self.map[other]()
 
     def __eq__(self, other):
+        """
+        :param other: The other object to compare to
+        :type other: BaseContainer | list[(syntax.SemanticType | BaseContainer)] | syntax.SemanticType
+        :rtype : bool
+        """
         if not hasattr(other, "__len__"):
             return False
         if len(self) != len(other):
@@ -123,13 +197,23 @@ class BaseContainer:
         return True
 
     def __invert__(self):
+        """
+        Returns the inverted optionals of the container.
+        :rtype : BaseContainer
+        """
         return self.get_optionals()
 
     def __str__(self):
+        """
+        :rtype : str
+        """
         return '{} ({})'.format(", ".join(map(str, self.content)),
                                 ", ".join(map(str, self.get_optionals())) if self.get_optionals() else "")
 
     def __repr__(self):
+        """
+        :rtype : str
+        """
         representation = {}
         for content in self.content:
             if type(content) in representation:
@@ -146,6 +230,9 @@ class BaseContainer:
         )
 
     def print_all(self, ident=''):
+        """
+        Prints the container and all its content.
+        """
         print(ident + self.class_name())
         for e in self:
             if isinstance(e, BaseContainer):
@@ -154,8 +241,12 @@ class BaseContainer:
                 print(ident + "> " + str(e))
         print("")
 
-    def to_container(self, filter_func=None):  # idea: additional parameters for encapsulation
-        return self
+    def to_container(self, filter_func=None):  # noqa : C901
+        """
+        Returns a container with the same content as the current container.
+        Used for compatibility with the syntax for encapsulation.
+        """
+        return self  # idea: additional parameters for encapsulation
 
 
 # Define containers all the Enhanced text elements, divs, headers, list and any element that can be a container
@@ -194,7 +285,7 @@ class EtCustomSpanContainer(BaseContainer):
     type = "inline_elements"
 
     def export(self, exm):
-        self.subtype = "custom_" + self.content[0].content[0]
+        self.subtype = "custom_" + self.content[0].content[0] # noqa F821 (self.content[0] is a token, by definition
         return super().export(exm)
 
 
@@ -253,7 +344,7 @@ class HeaderContainer(BaseContainer):
     subtype = "header"
 
     def export(self, exm):
-        self.others = {}
+        self.others = {} # noqa F821
         self.others["header_level"] = len(self.content[0].content[0])
         return super().export(exm)
 
@@ -349,6 +440,10 @@ class ContextManager:
         ----------
             parsed_list : list[syntax.SemanticType]
                 List of parsed tokens output by our parser.
+            name : str
+                Name of the file being parsed.
+            ident : int
+                Number of spaces to indent the output.
         """
         self.output = []
         self.parsed_list = parsed_list
@@ -423,11 +518,30 @@ class ContextManager:
         # print(" <<< Pile:", self.pile)
 
     def _add_matched(self, label, index):
+        """
+        Method to add a matched element to the dictionary of matched elements.
+        Parameters
+        ----------
+            label : str
+                Label of the matched element.
+            index : int
+                Index of the matched element in the pile.
+        """
         if label not in self.matched_elements:
             self.matched_elements[label] = []
         self.matched_elements[label] += [index]
 
     def _get_matched(self, label):
+        """
+        Method to get the index of the last matched element of a given label.
+        Parameters
+        ----------
+            label : str
+                Label of the matched element.
+        Returns
+        -------
+            int : Index of the last matched element of the given label.
+        """
         return self.matched_elements[label].pop()
 
     def __call__(self):
@@ -438,6 +552,10 @@ class ContextManager:
         -------
             list[BaseContainer]
                 Returns the pile entirely processed as a list of containers.
+        Raise
+        -----
+            MismatchedContainerError
+                Raised when a container is not matched to its corresponding token.
         """
         # self.pile = self.parsed_list.copy()
         if self.contextualised:
@@ -497,6 +615,10 @@ class ContextManager:
         return self.finalize_pile()
 
     def __iter__(self):
+        """
+        Iterator over the pile.
+        :ytype: BaseContainer
+        """
         for e in self.pile:
             if e:
                 yield e
@@ -505,6 +627,7 @@ class ContextManager:
         """
         Function for cleaning up of the pile after full contextualisation.
         Removes Nones and checks for any errors or illogical containers.
+        :return: list[BaseContainer]
         """
         final_pile = []
         for p in self.pile:
@@ -532,6 +655,15 @@ class ContextManager:
     def lookahead(self, token, index):
         """
         Iterates the pile beginning from index and looks for all tokens matching labels with token.
+        Parameters
+        ----------
+            token : syntax.BaseContainer
+                Token to look for.
+            index : int
+                Index of the token in the pile.
+        Returns
+        -------
+            (int, int) : (number of tokens matched, number of linebreaks)
         """
         range_to_encapsulate = 0
         line_skipped = 0
@@ -557,18 +689,31 @@ class ContextManager:
         return range_to_encapsulate, line_skipped
 
     def recontext(self, token):
+        """
+        Function to recontextualise the content of a token.
+        Parameters
+        ----------
+            token : syntax.SemanticType
+                Token to recontextualise.
+        """
         token.content = ContextManager(token.content, name=self.name)()
 
     def get_last_container_in_pile(self, index):
         """
         Returns the last element in the pile if it is a Container, raises an error otherwise.
-        Return
-        ------
+        Parameters
+        ----------
+            index : int
+                Index of the element to check.
+
+        Returns
+        -------
             BaseContainer
 
         Raises
         ------
             error_mngr.LonelyOptionalError
+                Raised when an element is found in the pile that is not encapsulated in a container.
         """
         i = index-1  # skip last token as it is self
         while i >= 0:
@@ -581,6 +726,9 @@ class ContextManager:
         log_exception(LonelyOptionalError(self.pile[index], None), level="CRITICAL")
 
     def print_all(self):
+        """
+        Prints the pile.
+        """
         for e in self:
             if isinstance(e, BaseContainer):
                 e.print_all()

@@ -9,13 +9,12 @@
 
 
 import os
-import regex  # future: remove regex
 from io import StringIO
 
 from bootstraparse.modules import pathresolver as pr
 from bootstraparse.modules import environment
 from bootstraparse.modules import syntax
-from bootstraparse.modules import error_mngr # noqa # pylint: disable=unused-import
+from bootstraparse.modules import error_mngr
 from bootstraparse.modules import export
 
 import rich
@@ -37,6 +36,10 @@ class PreParser:
         :param _env: the environment object
         :param list_of_paths: the list of files that have been imported in this branch of the import tree
         :param dict_of_imports: Dictionary of all imports made to avoid duplicate file opening / pre-parsing
+        :type file_path: str
+        :type _env: environment.Environment
+        :type list_of_paths: list[str]
+        :type dict_of_imports: dict[str, PreParser]
         """
         if list_of_paths is None:
             list_of_paths = []
@@ -75,7 +78,6 @@ class PreParser:
     def make_temporary_files(self):
         """
         Creates temporary files for the import list and the replacement.
-        :return: None
         """
         self.file_with_all_imports = StringIO()
         self.file_with_all_replacements = StringIO()
@@ -86,13 +88,14 @@ class PreParser:
         """
         Make new temporary files, if the old one are not referenced,
         the garbage collector will delete them.
-        :return: None
         """
         self.make_temporary_files()
 
     def do_imports(self):
         """
         Execute all actions needed to do the imports and setup for the next step
+        :return: The file descriptor of the file with all imports
+        :rtype: StringIO
         """
         self.parse_import_list()
         self.make_import_list()
@@ -103,6 +106,8 @@ class PreParser:
     def do_replacements(self):
         """
         Execute all actions needed to do the replacements.
+        :return: The file descriptor of the file with all replacements
+        :rtype: StringIO
         """
         self.do_imports()
         self.parse_shortcuts_and_images()
@@ -112,7 +117,8 @@ class PreParser:
     def readlines(self):
         """
         Reads the original file and returns a list of lines.
-        :return: A list of lines
+        :return: a list of lines
+        :rtype: list[str]
         """
         with open(self.relative_path_resolver(self.name), 'r') as f:
             return f.readlines()
@@ -121,6 +127,7 @@ class PreParser:
         """
         Get the lines from the file on the step you are in
         :return: A list of lines
+        :rtype: list[str]
         """
         if self.current_origin_for_read is None:
             return self.readlines()
@@ -133,6 +140,7 @@ class PreParser:
         Makes sure that the files are not already imported through a previous import statement.
         Recursively build a list of PreParser object for each file to be imported.
         :return: the dictionary of all files to be imported (key: file name, value: PreParser object)
+        :rtype: dict[str, PreParser]
         """
         import_list = self.parse_import_list()
         if self.is_global_dict_of_imports_initialized:
@@ -144,8 +152,7 @@ class PreParser:
                     RecursionError(f"Error: {e} was imported earlier in {self.list_of_paths}"), level='CRITICAL'
                 )
             if e in self.global_dict_of_imports:
-                pp = self.global_dict_of_imports[e]
-                self.local_dict_of_imports[e] = pp
+                self.local_dict_of_imports[e] = self.global_dict_of_imports[e]
             else:
                 try:
                     pp = PreParser(e, self._env, self.list_of_paths.copy(), self.global_dict_of_imports)
@@ -162,7 +169,8 @@ class PreParser:
     def parse_import_list(self):
         """
         Parses the import list of the file.
-        :return: a list of files to be imported
+        :return: a list of files to be imported, and the line number of the import statement
+        :rtype: list[(str, int)]
         """
         if self.saved_import_list:
             return self.saved_import_list
@@ -170,10 +178,10 @@ class PreParser:
         line_count = 0
 
         for line in self.readlines():
-            results = regex.match(_rgx_import_file, line)
+            results = _rgx_import_file.searchString(line)
             if results:
-                for e in results.captures('file_name'):
-                    import_list += [(e, line_count)]
+                for e in results[0]:
+                    import_list += [(e.rstrip(), line_count)]
             line_count += 1
         # converts relative paths to absolute and returns a table
         self.saved_import_list = [(self.relative_path_resolver(p), l) for p, l in import_list]
@@ -183,6 +191,7 @@ class PreParser:
         """
         Return the file object with all file imports done
         :return: a filelike object with all file imports done
+        :rtype: StringIO
         """
         self.make_import_list()
 
@@ -202,9 +211,9 @@ class PreParser:
         import_list = self.parse_import_list()
         source_lines = self.readlines()
         for import_path, import_line in import_list:
-            source_lines[import_line] = ""
-            temp_file.writelines(source_lines[source_line_count:import_line])
-            source_line_count = import_line
+            source_lines[import_line] = ""  # remove the line where the import was
+            temp_file.writelines(source_lines[source_line_count:import_line])  # copy origin to destination
+            source_line_count = import_line  # update origin for next import
             import_file = self.global_dict_of_imports[import_path].export_with_imports()
             temp_file.writelines(import_file.readlines())
         temp_file.writelines(source_lines[source_line_count:])
@@ -217,7 +226,8 @@ class PreParser:
         """
         Parses through the output files from export_with_imports
         and replaces shortcuts and images calls with appropriate html
-        :return: a table of occurrences and their lines
+        :return: The file descriptor of the file with all replacements
+        :rtype: StringIO
         """
         temp_file = self.file_with_all_imports
         temp_text = ''
@@ -238,7 +248,10 @@ class PreParser:
 
     def get_element_from_config(self, *list_keys):
         """
-        Fetches an element from the config
+        Fetches an element from the config (a nested dictionary) going through the list of keys
+        Raises an error if the element is not found
+        :param list_keys: the list of keys to go through the config
+        :type list_keys: str
         """
         sub_dict = self._env.config.loaded_conf
         validated_elements = []
@@ -258,6 +271,12 @@ class PreParser:
     def make_replacements(message, *var_list, **var_dict):
         """
         Tries to format the message or give an error message and return the original message
+        :param message: the message to format
+        :type message: str
+        :param var_list: the list of variables to replace in the message
+        :type var_list: str
+        :keyword var_dict: the dictionary of variables to replace in the message
+        :type var_dict: dict[str, str]
         """
         try:
             return message.format(*var_list, **var_dict)
@@ -271,10 +290,13 @@ class PreParser:
 
     def get_alias_from_config(self, shortcut, optionals):
         """
-        Fetches shortcut paths from aliases.yaml
-        :return: the html to insert as a string
+        Returns the alias from the config and makes the replacements with the options provided
         :param shortcut: id of the shortcut to fetch
+        :type shortcut: str
         :param optionals: optional parameters along with alias
+        :type optionals: syntax.Optional
+        :return: the html to insert as a string
+        :rtype: str
         """
         output = self.get_element_from_config('aliases', 'shortcuts', shortcut)
         _, _, var_list, var_dict = syntax.split_optionals(optionals)
@@ -283,10 +305,12 @@ class PreParser:
 
     def get_image_from_config(self, shortcut, optionals):
         """
-        Fetches image paths from aliases.yaml
-        :return: html to insert as a string
-        :param shortcut: the id of the picture to fetch
+        Returns the image from the config and makes the replacements with the options provided
+        :param shortcut: id of the image to fetch
+        :type shortcut: str
         :param optionals: optional parameters along with image
+        :type optionals: syntax.Optional
+        :return: the html to insert as a string
         """
         shortcut_s = self.get_element_from_config('aliases', 'images', shortcut)
 
@@ -299,7 +323,6 @@ class PreParser:
     def __repr__(self):
         """
         Returns a string representation of the PreParser object.
-        :return: a string representation of the PreParser object
         """
         return "PreParser[{}](path={}, name={}, base_path={}, " \
                "relative_path_resolver={}, list_of_paths={}, " \
@@ -311,7 +334,6 @@ class PreParser:
     def __str__(self):
         """
         Returns a string representation of the PreParser object.
-        :return: a string representation of the PreParser object
         """
         return self.__repr__()
 
@@ -334,6 +356,7 @@ class PreParser:
         """
         Checks if the PreParser object is not equal to another PreParser object.
         :param other: the other PreParser object
+        :type other: PreParser
         :return: True if the PreParser objects are not equal, False otherwise
         """
         return not self.__eq__(other)
@@ -341,6 +364,14 @@ class PreParser:
     def rich_tree(self, prefix="", suffix="", force=True, strip_prefix=""):
         """
         Returns a rich representation of the PreParser object.
+        :param prefix: the prefix to add to the representation
+        :type prefix: str
+        :param suffix: the suffix to add to the representation
+        :type suffix: str
+        :param force: if True, the representation is always computed, even if it has already been done
+        :type force: bool
+        :param strip_prefix: the prefix to remove from the path
+        :type strip_prefix: str
         :return: a rich representation of the PreParser object
         """
         unparsed = False

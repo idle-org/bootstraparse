@@ -3,27 +3,27 @@
 Structural Elements:
 <<div
 This is a div
-div>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+div>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
 <<article
 This is an article
-article>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+article>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
 <<aside
 This is an aside
-aside>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+aside>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
 <<section
 This is a section
-section>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
+section>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
 <<div
 <<article
 <<aside
 <<section
 Text
-section>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
-aside>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
-article>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
-div>>[class='blue', 123]{var='test', number=11}{{cinsertion}}
-# Header 1 #[class='blue', 123]{var='test', number=11}{{cinsertion}}
-! Display 1 ![class='blue', 123]{var='test', number=11}{{cinsertion}}
+section>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+aside>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+article>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+div>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+# Header 1 #{class='blue', 123}{{cinsertion}}[var='test', number=11]
+! Display 1 !{class='blue', 123}{{cinsertion}}[var='test', number=11]
 
 
 Inline Element:
@@ -38,12 +38,14 @@ __This is underlined__
 Oneline elements:
 - This is an unordered list item
 - This is an unordered list item
-- This is an unordered list item[class='blue', 123]{var='test', number=11}{{cinsertion}}
+- This is an unordered list item{class='blue', 123}{{cinsertion}}[var='test', number=11]
 #. This is an ordered list item
 #. This is an ordered list item
-#. This is an ordered list item[class='blue', 123]{var='test', number=11}{{cinsertion}}
+#. This is an ordered list item{class='blue', 123}{{cinsertion}}[var='test', number=11]
 
-This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment.
-I wish there could be linebreaks.
+This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment.
+This is still the same long text segment. This is still the same long text segment. This is still the same long text segment.
+
+Use a double linebreak to force linebreaks.
 
 @[end]

@@ -15,17 +15,19 @@ from bootstraparse.modules.tools import __GLk  # __GFi, __GFu, __GL
 
 # Define the error codes
 _ERRORS = ["ParsingError", "MismatchedContainerError"]
-__all__ = _ERRORS+[]
 
 
 def init_logging(filename=None, loglevel="ERROR", filemode='w', handler=None):
     """
     Initializes logging
-    :param filename: The name of the log file
-    :param loglevel: The level of logging
-    :type loglevel: str
-    :param filemode: The mode of the log file
+    :param filename: The path for the log file
+    :param loglevel: The level of logging: "ERROR", "INFO", "WARNING", "DEBUG", "CRITICAL"
+    :param filemode: The mode of the log file: "w", "a"
     :param handler: The handler to use
+    :type filename: str
+    :type loglevel: str
+    :type filemode: str
+    :type handler: logging.Handler
     :return: None
     """
     loglevel = loglevel.upper()
@@ -50,6 +52,7 @@ def log_message(message, level="ERROR"):
     :param message: The message to log
     :param level: The level of the message
     :type level: str
+    :type message: str
     :return: None
     """
     level = level.lower()
@@ -84,24 +87,30 @@ def log_exception(exception, level="ERROR"):
 
 
 class BootstraparseError(Exception):
+    """
+    Base class for all Bootstraparse errors
+    """
     pass
 
 
 class ParsingError(Exception):
     """
     Exception class for parsing errors
-    :param message: The message to display
-    :type message: str
-    :param line: The line number of the error
-    :param column: The column number of the error
-    :param file: The name of the file
-    :return: None
     """
 
     def __init__(self, message=None, line=None, column=None, file=None):
         """
         Initializes the ParsingError class with the filename and a line and column number
         based on the current position in the file (if available)
+        :param message: The message to display
+        :type message: str
+        :param line: The line number of the error
+        :type line: int
+        :param column: The column number of the error
+        :type column: int
+        :param file: The name of the file
+        :type file: str
+        :return: None
         """
         super().__init__(message)
         self.line = line
@@ -127,6 +136,11 @@ class MismatchedContainerError(BootstraparseError):
     The token is not final and cannot be contained. Indicative of a mismatched token.
     """
     def __init__(self, token):
+        """
+        Initializes the MismatchedContainerError class with the token that was not final
+        :param token: The token that is not final
+        :type token: syntax.SemanticType
+        """
         self.token = token
         if token:
             self.line = token.line_number
@@ -144,6 +158,14 @@ class LonelyOptionalError(BootstraparseError):
     Optional token could not be matched with last element in pile (not a container).
     """
     def __init__(self, token, last_in_pile):
+        """
+        Initializes the LonelyOptionalError class with the token found and the last element in the pile
+        Used when a token is found that is optional and cannot be matched with the last element in the pile (not a container)
+        :param token: The token that is not final
+        :type token: syntax.SemanticType
+        :param last_in_pile: The last element in the pile
+        :type last_in_pile: syntax.SemanticType
+        """
         self.token = token
         if token:
             self.line = token.line_number

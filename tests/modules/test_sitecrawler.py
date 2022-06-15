@@ -19,12 +19,21 @@ files = [
     ("base/config/test6.bpr", "", None),
     ("base/config/test7.yml", "", None),
     ("base/templates/test8.yml", "", None),
+    ("base/unparsable.php", "", ""),
 ]
 
 
 def make_new_file(path, content="", mode="w+"):
     """
-    Make a new file
+    Make a new file and all the directories in the path
+    :param path: the path to the file
+    :type path: str
+    :param content: the content of the file
+    :type content: str
+    :param mode: the mode of the file
+    :type mode: str
+    :return: the path to the file
+    :rtype: str
     """
     name = os.path.join(_TEMP_DIRECTORY.name, path)
     os.makedirs(os.path.dirname(name), exist_ok=True)
@@ -88,6 +97,7 @@ def test_result_crawler(list_files, env):
     """
     crw = sitecrawler.SiteCrawler(_BASE, _DEST, env)
     crw.set_all_preparsers()
+    crw.copy_unparsable_files()
     for pp, dest in crw:
         assert os.path.exists(dest)
         assert os.path.isfile(dest)

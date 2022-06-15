@@ -16,7 +16,6 @@ from collections import namedtuple
 from bootstraparse.modules.error_mngr import MismatchedContainerError
 from bootstraparse.modules import context_mngr as cm
 import pyparsing as pp
-import regex  # future: remove regex
 
 pps = pp.Suppress
 
@@ -29,6 +28,11 @@ class SemanticType:
     label = None
 
     def __init__(self, content):
+        """
+        Initialises the token.
+        :param content: The content of the token.
+        :type content: list[pp.ParseResults]
+        """
         self.content = content
         self.line_number = "Undefined"
         self.file_name = "Undefined"
@@ -37,6 +41,8 @@ class SemanticType:
     def to_markup(self):
         """
         Function used for testing and readability purposes. Replaces matched markup with html-like tags.
+        :return: The markup of the token.
+        :rtype: str
         """
         if self.content:
             return_list = []
@@ -51,6 +57,8 @@ class SemanticType:
     def to_original(self):
         """
         Return the original string of the token.
+        :return: The original string of the token.
+        :rtype: str
         """
         return " ".join(self.content)
 
@@ -79,6 +87,12 @@ class SemanticType:
         return not self.__eq__(other)
 
     def counterpart(self):  # noqa # FUTURE: Check for static counterpart implementation
+        """
+        Function called by the context manager to know how to deal with the encapsulation of the token.
+        Will return the counterpart of the token (the previous token to look for).
+        :return: The counterpart of the token.
+        :rtype: str | None
+        """
         return None
 
     def to_container(self, filter_func=None):
@@ -92,7 +106,7 @@ class SemanticType:
 
         Returns
         -------
-            SemanticType
+            SemanticType | context_mngr.BaseContainer
                 Self if containable, the expected replacement token if it can, raises an error otherwise.
         Raises
         ------
@@ -102,13 +116,19 @@ class SemanticType:
         raise MismatchedContainerError(self)
 
 
-class TokensToMatch:
-    """Class used for verification in the context manager.
-    Classes inheriting this should be added to matched_elements."""
+class TokensToMatch(SemanticType):
+    """
+    Class used for verification in the context manager.
+    Classes inheriting this should be added to matched_elements.
+    """
     pass
 
 
 class AddFirstElementToLabel(SemanticType):
+    """
+    Class used for verification in the context manager.
+    Adds the first element of the content to the label (for matching purposes).
+    """
     def __init__(self, content):
         super().__init__(content)
         self.label += ":" + content[0]
@@ -247,12 +267,12 @@ class DisplayToken(FinalSemanticType):
 
 
 class StructuralElementStartToken(AddFirstElementToLabel, OpenedSemanticType, TokensToMatch):
-    """<<div|article|section|aside"""
+    """<<div|article|section|aside|header|body|nav"""
     label = 'se:start'
 
 
 class StructuralElementEndToken(AddFirstElementToLabel, ClosedSemanticType):
-    """div|article|section|aside>>"""
+    """div|article|section|aside|header|body|nav>>"""
     label = "se:end"
 
     def counterpart(self):
@@ -330,7 +350,9 @@ def of_type(token_class):
     """
     Function creating a custom function for generating the given Token type.
     :param token_class: SemanticType class
+    :type token_class: type
     :return: returns a function creating an instance of the given class
+    :rtype: function
     """
     def _of_type(_, __, content):
         if len(content) == 0:  # Drop Empty token
@@ -344,7 +366,9 @@ def reparse(parse_element):
     """
     Creates a function which reparses given match with specified parsing element.
     :param parse_element: pp object defining desired match
+    :type parse_element: pp.ParserElement
     :return: returns a function parsing given match with specified parsing element
+    :rtype: function
     """
     def _reparse(__, _, tokens):
         return parse_element.parseString(tokens[0])  # Future: document this behaviour more in-depth
@@ -392,6 +416,7 @@ def readable_markup(list_of_tokens):
     """
     Function used for testing and readability purposes. Replaces matched markup with html-like tags.
     :param list_of_tokens: list of matched markup tokens in analysed text.
+    :type list_of_tokens: list
     :return: returns readable string.
     :rtype: string
     """
@@ -408,8 +433,7 @@ def readable_markup(list_of_tokens):
 
 
 # Pre-parser expressions
-rgx_import_file = regex.compile(r'::( ?\< ?(?P<file_name>[\w\-._/]+) ?\>[ \s]*)+')
-
+rgx_import_file = pps("::") + pp.OneOrMore(pps("<") + pp.SkipTo(">").set_name("file_name")("file_name") + pps(">"))
 
 # Base elements
 quotes = pp.Word(r""""'""")
@@ -446,7 +470,10 @@ structural_elements = (
         pp.CaselessLiteral('div') |
         pp.CaselessLiteral('article') |
         pp.CaselessLiteral('aside') |
-        pp.CaselessLiteral('section')
+        pp.CaselessLiteral('section') |
+        pp.CaselessLiteral('header') |
+        pp.CaselessLiteral('body') |
+        pp.CaselessLiteral('nav')
 )('structural_element')
 header_element = pp.Word('#')
 display_element = pp.Word('!')
@@ -501,22 +528,20 @@ multi_line = se | table | quotation
 one_header = (
         header_element +
         pp.SkipTo(pp.match_previous_literal(header_element)) +
-        pps(pp.match_previous_literal(header_element)) +
-        pp.Opt(optional)
-).add_parse_action(of_type(HeaderToken))
+        pps(pp.match_previous_literal(header_element))
+).add_parse_action(of_type(HeaderToken)) + pp.Opt(optional)
 one_display = (
         display_element +
         pp.SkipTo(pp.match_previous_literal(display_element)) +
-        pps(pp.match_previous_literal(display_element)) +
-        pp.Opt(optional)
-).add_parse_action(of_type(DisplayToken))
+        pps(pp.match_previous_literal(display_element))
+).add_parse_action(of_type(DisplayToken)) + pp.Opt(optional)
 one_olist = pp.line_start + (
-        pps(pp.Literal('#.')) + (
+        pps(pp.Combine(pp.line_start + pp.Literal('#.'))) + (
          (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtOlistToken))
 one_ulist = pp.line_start + (
-        pps(pp.Literal('-')) + (
+        pps(pp.Combine(pp.line_start + pp.Literal('-'))) + (
          (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
          enhanced_text)
 ).add_parse_action(of_type(EtUlistToken))
