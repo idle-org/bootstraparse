@@ -12,12 +12,14 @@ __templates = config.ConfigLoader(pathresolver.b_path("templates/"))
 __XF = pytest.mark.xfail
 _all_templates = {
     "structural_elements": [
-        ["div", __GLk(1)],
-        ["article", __GLk(1)],
-        ["aside", __GLk(1)],
-        ["section", __GLk(1)],
+        ["se_div", __GLk(1)],
+        ["se_article", __GLk(1)],
+        ["se_aside", __GLk(1)],
+        ["se_section", __GLk(1)],
         ["header", __GLk(1)],
         ["display", __GLk(1)],
+        ["se_body", __GLk(1)],
+        ["se_nav", __GLk(1)],
     ],
     "inline_elements": [
         ["link", __GLk(1)],
@@ -86,7 +88,7 @@ def test_export_response():
     ("table", "t_head"),
     ("table", "t_row"),
     ("table", "t_cell"),
-    ("structural_elements", "div"),
+    ("structural_elements", "se_div"),
 ])
 def test_transform(export_type, export_subtype):
     """
@@ -118,7 +120,7 @@ def test_get_template_error():
 
 def test_with_optionnals():
     em = export.ExportManager(__config, __templates)
-    em(export.ExportRequest("structural_elements", "div", _opts)) # noqa E741
+    em(export.ExportRequest("structural_elements", "se_div", _opts)) # noqa E741
 
 
 def test_format_optionnals():
@@ -147,6 +149,7 @@ def test_bad_header():
 
 @pytest.mark.parametrize("export_type, export_subtype, line", zipped_templates)
 def test_get_templates(export_type, export_subtype, line):
+    print(line)
     em = export.ExportManager(__config, __templates)
     # assert type(em.get_templates()) is dict
     print(export_type, export_subtype)
