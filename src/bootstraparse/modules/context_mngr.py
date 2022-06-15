@@ -229,17 +229,19 @@ class BaseContainer:
             f" Otrs[{len(self.get_others())}]" if self.get_others() else ""
         )
 
-    def print_all(self, ident=''):
+    def print_all(self, ident=0):
         """
         Prints the container and all its content.
         """
-        print(ident + self.class_name())
+        import rich
+        rich.print("  " * ident + self.class_name() + ':')
         for e in self:
             if isinstance(e, BaseContainer):
-                e.print_all(ident + '  ')
+                e.print_all(ident + 1)
+            if isinstance(e, syntax.SemanticType):
+                e.print_all(ident + 1)
             else:
-                print(ident + "> " + str(e))
-        print("")
+                rich.print("  "*ident + "> " + str(e))
 
     def to_container(self, filter_func=None):  # noqa : C901
         """
@@ -426,6 +428,7 @@ _to_container = {
     "table:row": TableRowContainer,
     "table:cell": TableCellContainer,  # Should be an error I beleive ?
     "table:separator": TableSeparatorContainer,  # Should be an error I beleive ?
+    "table:cell_size": TableCellContainer,
 }
 
 
@@ -459,6 +462,8 @@ class ContextManager:
         self.dict_lookahead_reparse = [
             "list:ulist",
             "list:olist",
+            "table:row",
+            "table:cell",
         ]
         self.contextualised = False
 
@@ -705,16 +710,19 @@ class ContextManager:
             i -= 1
         log_exception(LonelyOptionalError(self.pile[index], None), level="CRITICAL")
 
-    def print_all(self):
+    def print_all(self, ident=0):
         """
         Prints the pile.
         """
+        import rich
         for e in self:
             if isinstance(e, BaseContainer):
-                e.print_all()
+                e.print_all(ident + 1)
+            elif isinstance(e, syntax.SemanticType):
+                e.print_all(ident + 1)
             else:
-                print("> " + str(e))
-        print("Matched elements:" + str(self.matched_elements))
+                rich.print("  " * ident + str(e))
+        rich.print("Matched elements:" + str(self.matched_elements))
 
 
 # Defines all methods to manage the context of the parser as a file is being parsed

@@ -240,11 +240,11 @@ class ContextConverter:
         return f"ContextConverter[{self.destination}] <{len(self.pile)}> " \
                f"Status: {'initialized' if self.io_initialized else 'uninitialized'}"
 
-    def print_all(self):
+    def print_all(self, ident=0):
         """
         Prints the entirety of the converted pile
         """
-        print(self)
+        rich.print(self)
 
     def __eq__(self, other):
         return str(self) == str(other)

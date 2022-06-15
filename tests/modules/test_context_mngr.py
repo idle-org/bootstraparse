@@ -315,8 +315,8 @@ _token_list_with_expected_result = [
     [
         [
             sy.TableRowToken([
-                sy.TableCellSizeToken(["2"]),
                 sy.TableCellToken([
+                    "2",
                     sy.TextToken(["a"]),
                 ]),
                 sy.TableCellToken([
@@ -326,11 +326,18 @@ _token_list_with_expected_result = [
         ],
         [
             context_mngr.TableRowContainer([
-                context_mngr.TableCellContainer([
-                    context_mngr.TextContainer([sy.TextToken(["a"])]),
-                ], others={"colspan": "2"}),
-                context_mngr.TableCellContainer([
-                    context_mngr.TextContainer([sy.TextToken(["b"])]),
+                sy.TableRowToken([
+                    context_mngr.TableCellContainer([
+                        sy.TableCellToken([
+                            "2",
+                            context_mngr.TextContainer([sy.TextToken(["a"])]),
+                        ]),
+                    ]),
+                    context_mngr.TableCellContainer([
+                        sy.TableCellToken([
+                            context_mngr.TextContainer([sy.TextToken(["b"])]),
+                        ]),
+                    ]),
                 ]),
             ]),
         ],
@@ -340,38 +347,46 @@ _token_list_with_expected_result = [
     [
         [
             sy.TableRowToken([
-                sy.TableCellSizeToken(["2"]),
                 sy.TableCellToken([
+                    sy.TableCellSizeToken(["2"]),
                     sy.TextToken(["a"]),
                 ]),
-                sy.TableCellSizeToken(["3"]),
                 sy.TableCellToken([
+                    sy.TableCellSizeToken(["3"]),
                     sy.TextToken(["b"]),
                 ]),
             ]),
         ],
         [
             context_mngr.TableRowContainer([
-                context_mngr.TableCellContainer([  # MONITOR # The colspan must be taken into account
-                    context_mngr.TextContainer([sy.TextToken(["a"])]),
-                ]),
-                context_mngr.TableCellContainer([
-                    context_mngr.TextContainer([sy.TextToken(["b"])]),
+                sy.TableRowToken([
+                    context_mngr.TableCellContainer([  # MONITOR # The colspan must be taken into account
+                        sy.TableCellToken([
+                            sy.TableCellSizeToken(["2"]),
+                            context_mngr.TextContainer([sy.TextToken(["a"])]),
+                        ]),
+                    ]),
+                    context_mngr.TableCellContainer([
+                        sy.TableCellToken([
+                            sy.TableCellSizeToken(["3"]),
+                            context_mngr.TextContainer([sy.TextToken(["b"])]),
+                        ]),
+                    ]),
                 ]),
             ]),
         ],
         __GLk(1),
         __XF,
     ],
-    [
-        [
-            sy.TableSeparatorToken(["---", "---"]),
-        ],
-        [
-            error_mngr.MismatchedContainerError,
-        ],
-        __GLk(1),
-    ],
+    # [
+    #     [
+    #         sy.TableSeparatorToken(["---", "---"]),
+    #     ],
+    #     [
+    #         error_mngr.MismatchedContainerError,
+    #     ],
+    #     __GLk(1),
+    # ],
     [
         [
             sy.TableRowToken([
@@ -626,10 +641,13 @@ def test_container():
 def test_context_call(init_list, expected, file_line):
     print(f"Executing tests @{file_line}")
     ctx = context_mngr.ContextManager(init_list)  # noqa : F841
+    # ctx.print_all()
     if isinstance(expected[0], context_mngr.BaseContainer) or isinstance(expected[0], sy.SemanticType):
         for i, e in zip(ctx(), expected):
-            rich.inspect(i)
-            rich.inspect(e)
+            # rich.inspect(i)
+            # rich.inspect(e)
+            i.print_all()
+            e.print_all()
             assert i == e
     else:
         with pytest.raises(expected[0]):

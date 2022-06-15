@@ -86,6 +86,21 @@ class SemanticType:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def print_all(self, ident=0):
+        """
+        Print all lines of the token.
+        """
+        import rich
+        rich.print("  "*ident + self.__class__.__name__ + ":")
+        if self.content:
+            for elt in self.content:
+                if isinstance(elt, cm.BaseContainer):
+                    elt.print_all(ident+1)
+                elif isinstance(elt, SemanticType):
+                    elt.print_all(ident+1)
+                else:
+                    rich.print("  "*(ident+1) + str(elt))
+
     def counterpart(self):  # noqa # FUTURE: Check for static counterpart implementation
         """
         Function called by the context manager to know how to deal with the encapsulation of the token.
@@ -283,16 +298,16 @@ class TableRowToken(FinalSemanticType, TokensToMatch):
     label = "table:row"
 
 
-class TableCellToken(SemanticType):
+class TableCellToken(FinalSemanticType):
     label = "table:cell"
 
 
-class TableSeparatorToken(SemanticType):
+class TableSeparatorToken(FinalSemanticType):
     label = "table:separator"
 
 
-class TableCellSizeToken(SemanticType):
-    label = "table:cell_size"
+class TableCellSizeToken(FinalSemanticType):
+    label = ":cell_size"
 
 
 class OptionalToken(SemanticType):
@@ -502,9 +517,8 @@ se_start = (pps('<<') + structural_elements).add_parse_action(of_type(Structural
 se_end = (structural_elements + pps('>>')).add_parse_action(of_type(StructuralElementEndToken)) + pp.Opt(optional)
 se = se_end | se_start  # Structural element
 table_row = pp.OneOrMore(
-        # pp.Regex(r'\|(\d)?')('table_colspan') +
-        (pp.Combine(pps('|') + pp.Word(pp.nums))('table_colspan').add_parse_action(of_type(TableCellSizeToken)) | pps('|')) +
-        pp.SkipTo('|')('table_cell').add_parse_action(reparse(enhanced_text), of_type(TableCellToken))
+    ((pp.Combine(pps('|') + pp.Word(pp.nums))('table_colspan').add_parse_action(of_type(TableCellSizeToken)) | pps('|')) +
+     pp.SkipTo('|').add_parse_action(reparse(enhanced_text))('table_cell')).add_parse_action(of_type(TableCellToken))
 ).add_parse_action(of_type(TableRowToken)) + pps('|') + pp.Opt(optional)
 table_separator = pp.OneOrMore(
     pps('|') + pp.Word(':-')

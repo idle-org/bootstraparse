@@ -28,8 +28,8 @@ _type_counterpart_container = [
     (syntax.HyperlinkToken, None, "self", tools.__GLk(1)),  # Shouldn't be an error
     (syntax.TableToken, None, "error", tools.__GLk(1)),
     (syntax.TableRowToken, None, "self", tools.__GLk(1)),
-    (syntax.TableCellToken, None, "error", tools.__GLk(1)),
-    (syntax.TableSeparatorToken, None, "error", tools.__GLk(1)),
+    (syntax.TableCellToken, None, "self", tools.__GLk(1)),
+    (syntax.TableSeparatorToken, None, "self", tools.__GLk(1)),
     (syntax.BlockQuoteToken, None, "error", tools.__GLk(1)),
     (syntax.BlockQuoteAuthorToken, None, "error", tools.__GLk(1)),
     (syntax.CodeToken, "code", "token", tools.__GLk(1)),
