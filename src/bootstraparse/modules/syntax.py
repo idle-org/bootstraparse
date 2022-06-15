@@ -267,12 +267,12 @@ class DisplayToken(FinalSemanticType):
 
 
 class StructuralElementStartToken(AddFirstElementToLabel, OpenedSemanticType, TokensToMatch):
-    """<<div|article|section|aside"""
+    """<<div|article|section|aside|header|body|nav"""
     label = 'se:start'
 
 
 class StructuralElementEndToken(AddFirstElementToLabel, ClosedSemanticType):
-    """div|article|section|aside>>"""
+    """div|article|section|aside|header|body|nav>>"""
     label = "se:end"
 
     def counterpart(self):
@@ -470,7 +470,10 @@ structural_elements = (
         pp.CaselessLiteral('div') |
         pp.CaselessLiteral('article') |
         pp.CaselessLiteral('aside') |
-        pp.CaselessLiteral('section')
+        pp.CaselessLiteral('section') |
+        pp.CaselessLiteral('header') |
+        pp.CaselessLiteral('body') |
+        pp.CaselessLiteral('nav')
 )('structural_element')
 header_element = pp.Word('#')
 display_element = pp.Word('!')
