@@ -4,12 +4,13 @@
 bootstraparse is a tool that allows you to bootstrap your own project.
 In a very small number of steps, you can create a new project with the
 following features:
-#. Imports, with the <code>::< filename > </code>syntax you can import another file and have it's contents dumped into your file.
-#. Markup, a subset of markdown is already supported and the rest is incomming !
-#. Aliases : With the <code> @ [alias_name] </code> syntax you can create an alias for a string of text, with replacement capabilities.
-#. Images: With the <code> @ {image_name} </code> syntax you can specify an image template to import, with replacement capabilities.
+- Imports, with the <code>: :< filename > </code>syntax you can import another file and have it's contents dumped into your file.
+- Markup, a subset of markdown is already supported and the rest is incomming !
+- Aliases : With the <code> @[alias_name] </code> syntax you can create an alias for a string of text, with replacement capabilities.
+- Images: With the <code> @&#123;imagename&#125; </code> syntax you can specify an image template to import, with replacement capabilities.
 
 And much much more !
+
 
 We encourage you to read the [documentation]("apidoc/index.html") to learn more about bootstraparse
 or explore the [source code]("https://github.com/idle-org/bootstraparse")
