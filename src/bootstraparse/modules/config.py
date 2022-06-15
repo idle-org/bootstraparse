@@ -74,11 +74,16 @@ class ConfigLoader:
                 if name not in self.loaded_conf:
                     self.loaded_conf[name] = yaml.safe_load(f)
                 else:
-                    self.loaded_conf[name].update(yaml.safe_load(f))
-                    error_mngr.log_message(f"Warning: {name} is already in {self.loaded_conf}", level='INFO')
+                    new_config = yaml.safe_load(f)
+                    for key in new_config:
+                        if key in self.loaded_conf[name]:
+                            self.loaded_conf[name][key].update(new_config[key])
+                        else:
+                            self.loaded_conf[name][key] = new_config[key]
+                            error_mngr.log_message(f"Warning: {name} is already in {self.loaded_conf}", level='CRITICAL')
             except BaseException as e:
                 error_mngr.log_message(f'Error parsing in file {basename} at {filepath}.', level='CRITICAL')
-                error_mngr.log_exception(str(e), level='CRITICAL')
+                error_mngr.log_exception(e, level='CRITICAL')
 
     def load_from_folder(self, folder):
         """

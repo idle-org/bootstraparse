@@ -6,10 +6,11 @@ bootstraparse aims to be customisable in that regard, but its first iteration an
 You can refer to the `example_userfiles` for an idea of what the parser expects you to feed it and find an example of our automated generation at https://idle-org.github.io/bootstraparse/ for this particular folder. Or you can run the program yourself for the same result!
 
 - Main
-  - [![Python Main](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml) 
+  - [![Python Tests and Lint](https://github.com/idle-org/bootstraparse/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/idle-org/bootstraparse/actions/workflows/python-tests.yml)
 - Releases
-  - [![Python Release](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml/badge.svg?branch=release)](https://github.com/idle-org/bootstraparse/actions/workflows/python-app.yml)
-
+  - [![Python Tests and Lint](https://github.com/idle-org/bootstraparse/actions/workflows/python-tests.yml/badge.svg?branch=develop)](https://github.com/idle-org/bootstraparse/actions/workflows/python-tests.yml)
+- Deploy
+  - [![Python Deployment](https://github.com/idle-org/bootstraparse/actions/workflows/python-deploy.yml/badge.svg)](https://github.com/idle-org/bootstraparse/actions/workflows/python-deploy.yml)
 ---
 ## Release Notes
 ### V1.0.1
