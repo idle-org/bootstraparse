@@ -1,5 +1,7 @@
 import os
 
+from yaml.scanner import ScannerError
+
 import bootstraparse.modules.config as config
 import pytest
 import tempfile
@@ -10,7 +12,8 @@ configs = {
     "app/configs/parser_config.yaml": '{"parser": {"name": "test_parser", "type": "test_parser"}}',
     "app/configs/aliases.yaml": '{"parser": {"name": "test_parser", "type": "test_parser"}}',
     "user/config/aliases.yaml": '{"aliases": {"test_alias": "test_parser"}}',
-    "user/config/glossary.yaml": '{"glossary": {"test_glossary": "test_parser"}}',
+    "app/configs/glossary.yaml": '{"glossary": {"test_glossary": "test_parser"}}',
+    "user/config/glossary.yaml": '{"glossary": {"test_glossary": "second_parser"}}',
     "user/config/custom_template.yaml": '{"custom_template": {"test_template": "test_parser"}}',
 }
 bad_configs = {
@@ -36,7 +39,9 @@ def make_false_configs():
 def test_config_load():
     usr_c = config.ConfigLoader(user_conf)
     assert usr_c["aliases"] == {"aliases": {"test_alias": "test_parser"}}
-    assert usr_c["glossary"] == {"glossary": {"test_glossary": "test_parser"}}
+    assert usr_c["glossary"] == {"glossary": {"test_glossary": "second_parser"}}
+    assert usr_c["glossary"]["glossary"] == {"test_glossary": "second_parser"}
+    assert usr_c["glossary"]["glossary"]["test_glossary"] == "second_parser"
     assert usr_c["aliases"]["aliases"] == {"test_alias": "test_parser"}
     assert usr_c["aliases"]["aliases"]["test_alias"] == "test_parser"
     with pytest.raises(KeyError):
@@ -54,7 +59,6 @@ def test_add_to_config():
     assert from_list["aliases"] == {"aliases": {"test_alias": "test_parser"},
                                     "parser": {"name": "test_parser", "type": "test_parser"}}
     assert from_list["parser_config"] == {"parser": {"name": "test_parser", "type": "test_parser"}}
-
     with pytest.raises(KeyError):  # Not FileNotFoundError
         assert from_empty["aliases"]
     from_empty.add_folder(user_conf)
@@ -64,7 +68,7 @@ def test_add_to_config():
     assert from_empty["aliases"] == {"aliases": {"test_alias": "test_parser"},
                                      "parser": {"name": "test_parser", "type": "test_parser"}}
 
-    with pytest.raises(TypeError):
+    with pytest.raises(ScannerError):
         from_empty.load_from_file(os.path.join(bad_conf, "bad_config.yaml"))
 
 

@@ -2,7 +2,7 @@
 
 # Main program, use this to start parsing
 
-from bootstraparse.modules import sitecreator
+from bootstraparse.modules import sitecreator, error_mngr
 import argparse
 import sys
 
@@ -21,5 +21,6 @@ def parse(_args):
 
 if __name__ == "__main__":  # pragma: no cover
     args = parse(sys.argv[1:])
+    error_mngr.init_logging(filename=None, loglevel="DEBUG", filemode='w', handler=None)
     if sitecreator.create_website(args.origin, args.destination) == 0:
         print("Bootstraparse run successful!")
