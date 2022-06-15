@@ -1,0 +1,45 @@
+<<aside
+  ## Jump right in ##{{h6 pt-4 pb-3 mb-4 border-bottom}}
+  <nav class="small" id="toc">
+    <ul class="list-unstyled">
+      <li class="my-2">
+        <button class="btn d-inline-flex align-items-center collapsed" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#contents-collapse" aria-controls="contents-collapse">Understanding my co-healer</button>
+        <ul class="list-unstyled ps-3 collapse" id="contents-collapse">
+          <li><a class="d-inline-flex align-items-center rounded" href="#sge">Sage</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#sch">Scholar</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#ast">Astrologian</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#whm">White Mage</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#group">Honorable mentions</a></li>
+
+            <li><a class="d-inline-flex align-items-center rounded" href="#roleac">  Role actions</a></li>
+            <li><a class="d-inline-flex align-items-center rounded" href="#jobac">  Job specific actions</a></li>
+            <li><a class="d-inline-flex align-items-center rounded" href="#tinvuln">  Tank invulnerabilities</a></li>
+
+        </ul>
+      </li>
+      <li class="my-2">
+        <button class="btn d-inline-flex align-items-center collapsed" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#forms-collapse" aria-controls="forms-collapse">How to play as a team</button>
+        <ul class="list-unstyled ps-3 collapse" id="forms-collapse">
+          <li><a class="d-inline-flex align-items-center rounded" href="#healing">Healing</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#raiseandlb">Raise and Limit Break</a></li>
+        </ul>
+      </li>
+      <li class="my-2">
+        <button class="btn d-inline-flex align-items-center collapsed" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#lexicon-collapse" aria-controls="lexicon-collapse">Lexicon</button>
+        <ul class="list-unstyled ps-3 collapse" id="lexicon-collapse">
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_mitig">Mitigation</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_regen">Regen</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_raiddmg">Raid damage</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_tick">Tick</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_top">To top</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_rptdmg">Repeat damage</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_haction">Healing action</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_hability">Healing ability</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_gtaoe">Ground-targeted AoE</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_prog">Progress</a></li>
+          <li><a class="d-inline-flex align-items-center rounded" href="#lx_enrage">Enrage</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+aside>>{{bd-aside sticky-xl-top text-muted align-self-start mb-3 mb-xl-5 px-2}}
