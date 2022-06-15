@@ -37,6 +37,7 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 
 ### V1.3
 - Add advanced lookahead logic for `*`
+- Functioning `lead` Token
 
 ### V1.4
 - Add html indentation for human readability of the output.
