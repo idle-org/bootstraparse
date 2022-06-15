@@ -1,9 +1,9 @@
 """Interprets config files
 The Config will be loaded by the environment at runtime and should be accessed that way
 Usage:
-    from bootstraparse.modules.config import ConfigLoader
-    config = ConfigLoader([list of config files], extensions=[list of extensions])
-    config['file']['key']
+ - from bootstraparse.modules.config import ConfigLoader
+ - config = ConfigLoader([list of config files], extensions=[list of extensions])
+ - config['file']['key']
 The ConfigLoader class has load_from_file and load_from_folder methods and __getitem__ for accessing loaded elements
 """
 import os

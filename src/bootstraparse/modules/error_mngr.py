@@ -1,13 +1,13 @@
 """
 Dedicated module for defining and interpreting errors as well as generating error messages
 You're probably here for log_message or log_exception.
-    They take: message, level=("ERROR, "INFO", "WARNING", "DEBUG", "CRITICAL")
+ - They take: message, level=("ERROR, "INFO", "WARNING", "DEBUG", "CRITICAL")
 There's also a dict_check(dic, *args) that returns true if all args are keys in the dict.
 Usage:
-    from bootstraparse.modules.error_mngr import log_message, log_exception
-    log_message("This is a message", level="INFO") level=("ERROR, "INFO", "WARNING", "DEBUG", "CRITICAL")
-    log_exception(Exception("This is an exception"), level="ERROR")
-    dict_check({"a": 1, "b": 2}, "a", "b") # returns [True, True]
+ - from bootstraparse.modules.error_mngr import log_message, log_exception
+ - log_message("This is a message", level="INFO") level=("ERROR, "INFO", "WARNING", "DEBUG", "CRITICAL")
+ - log_exception(Exception("This is an exception"), level="ERROR")
+ - dict_check({"a": 1, "b": 2}, "a", "b") # returns [True, True]
 """
 
 import logging

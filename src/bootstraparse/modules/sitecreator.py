@@ -1,7 +1,7 @@
 """
 Module sequencing the successive actions necessary for website building
 Usage:
-    create_website(origin, destination)
+ - create_website(origin, destination)
 """
 
 import os
