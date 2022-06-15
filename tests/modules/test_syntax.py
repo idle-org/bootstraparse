@@ -524,6 +524,7 @@ dict_advanced_syntax_input_and_expected_output = {
         ), __GL()),
         ("|---|---|", (sy.TableSeparatorToken(["---", "---"]),), __GL()),
         ("- Text", (sy.EtUlistToken([sy.TextToken(["Text"])]),), __GL()),
+        (" - Non ulist", (sy.TextToken(["- Non ulist"]),), __GL()),
         ("div>>", (sy.StructuralElementEndToken(["div"]),), __GL()),
         ("body>>", (sy.StructuralElementEndToken(["body"]),), __GL()),
         ("#. Text with *em* and __underline__ and {arguments}{{super-arguments}}[a=1, c=2,'ui']", (
@@ -667,6 +668,7 @@ list_of_text_input_and_readable_output = [
 
     # Other Mostly for testing and coverage
     ("'", "quotes", "'"),
+    (" -", "line", "-"),
 ]
 
 
