@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  
+
+  <head>
+    
+    <title>bootstraparse.modules.export.ContextConverter</title>
+    <meta name="generator" content="pydoctor 22.5.1"> 
+        
+    </meta>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="apidocs.css" />
+    <link rel="stylesheet" type="text/css" href="extra.css" />
+</head>
+
+  <body>
+
+    
+
+    <nav class="navbar navbar-default mainnavbar">
+      
+  
+  <div class="container-fluid">
+
+
+    <div class="navbar-header">
+      
+      <div class="navlinks">
+        <span class="navbar-brand">
+          bootstraparse <a href="index.html">API Documentation</a>
+        </span>
+
+        <a href="moduleIndex.html">
+          Modules
+        </a>
+
+        <a href="classIndex.html">
+          Classes
+        </a>
+
+        <a href="nameIndex.html">
+          Names
+        </a>
+
+        <div id="search-box-container">
+          <div class="input-group">
+            <input id="search-box" type="search" name="search-query" placeholder="Search..." aria-label="Search" minlength="2" class="form-control" autocomplete="off" />
+            
+            <span class="input-group-btn">
+              <a style="display: none;" class="btn btn-default" id="search-clear-button" title="Clear" onclick="clearSearch()"><img src="fonts/x-circle.svg" alt="Clear" /></a>
+              <a class="btn btn-default" id="search-help-button" title="Help" onclick="toggleSearchHelpText()"><img src="fonts/info.svg" alt="Help" /></a>
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="search-results-container" style="display: none;">
+        
+        <div id="search-buttons">
+          <span class="label label-default" id="search-docstrings-button">
+          <label class="checkbox-inline">
+            <input type="checkbox" id="toggle-search-in-docstrings-checkbox" value="false" onclick="toggleSearchInDocstrings()">
+              search in docstrings
+            </input>
+          </label>
+          </span>
+          
+        </div>
+        
+        <noscript>
+            <h1>Cannot search: JavaScript is not supported/enabled in your browser.</h1>
+        </noscript>
+
+        <div class="hint" id="search-help-box">
+          <p class="rst-last">
+      
+            Search bar offers the following options:
+            <ul>   
+                <li>
+                  <strong>Term presence.</strong> The below example searches for documents that 
+                    must contain “foo”, might contain “bar” and must not contain “baz”: <code>+foo bar -baz</code>
+                </li> 
+
+                <li>
+                  <strong>Wildcards.</strong> The below example searches for documents with words beginning with “foo”: <code>foo*</code>
+                </li> 
+
+                <li>
+                  <strong>Search in specific fields.</strong> The following search matches all objects 
+                  in "twisted.mail" that matches “search”: <code>+qname:twisted.mail.* +search</code>
+
+                  <p>
+                    Possible fields: 'name', 'qname' (fully qualified name), 'docstring', and 'kind'.
+                    Last two fields are only applicable if "search in docstrings" is enabled.
+                  </p>
+                </li>
+
+                <li>
+                  <strong>Fuzzy matches.</strong> The following search matches all documents 
+                  that have a word within 1 edit distance of “foo”: <code>foo~1</code>
+                </li>
+            </ul>
+
+          </p>
+        </div>
+
+        <div id="search-status"> </div>
+
+        <div class="warning" id="search-warn-box" style="display: none;">
+          <p class="rst-last"><span id="search-warn"></span></p>
+        </div>
+
+        <table id="search-results">
+          <!-- Filled dynamically by JS -->
+        </table>
+        
+        <div style="margin-top: 8px;">
+          <p>Results provided by <a href="https://lunrjs.com">Lunr.js</a></p>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</nav>
+    
+    <div class="container-fluid">
+
+      <!-- Side navigation -->
+      <div class="sidebarcontainer" style="display: none;">
+        
+        <div class="sidebar"><nav class="sidebar">
+  
+
+  <div>
+
+      <div class="thingTitle">
+        <span>Class</span>
+        <code class="thisobject"><a href="bootstraparse.modules.export.ContextConverter.html" class="internal-link" title="This class"><wbr></wbr>Context<wbr></wbr>Converter</a></code> 
+      </div>
+      
+      <div>
+        
+
+        
+         
+
+        
+        
+
+        <div class="childrenKindTitle">Methods</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#__eq__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__eq__">__eq__</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#__init__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__init__">__init__</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#__repr__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__repr__">__repr__</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#__str__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__str__">__str__</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#print_all" class="internal-link" title="bootstraparse.modules.export.ContextConverter.print_all">print<wbr></wbr>_all</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#process_pile" class="internal-link" title="bootstraparse.modules.export.ContextConverter.process_pile">process<wbr></wbr>_pile</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#readlines" class="internal-link" title="bootstraparse.modules.export.ContextConverter.readlines">readlines</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+
+        <div class="childrenKindTitle">Attributes</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#destination" class="internal-link" title="bootstraparse.modules.export.ContextConverter.destination">destination</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#exporter" class="internal-link" title="bootstraparse.modules.export.ContextConverter.exporter">exporter</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#io_initialized" class="internal-link" title="bootstraparse.modules.export.ContextConverter.io_initialized">io<wbr></wbr>_initialized</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#io_output" class="internal-link" title="bootstraparse.modules.export.ContextConverter.io_output">io<wbr></wbr>_output</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#pile" class="internal-link" title="bootstraparse.modules.export.ContextConverter.pile">pile</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+        
+      </div>
+  </div><div>
+
+      <div class="thingTitle">
+        <span>Module</span>
+        <code><a href="bootstraparse.modules.export.html" class="internal-link" title="The parent of this class">export</a></code> 
+      </div>
+      
+      <div>
+        
+
+        
+         
+
+        <div class="childrenKindTitle">Classes</div>
+        <ul>
+    
+    <li class=" thisobject">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.export.ContextConverter.html" class="internal-link" title="bootstraparse.modules.export.ContextConverter"><wbr></wbr>Context<wbr></wbr>Converter</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.export.ExportManager.html" class="internal-link" title="bootstraparse.modules.export.ExportManager"><wbr></wbr>Export<wbr></wbr>Manager</a></code>
+            </div>
+        
+
+    </li>
+</ul>
+
+        <div class="childrenKindTitle">Functions</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.export.html#format_optionals" class="internal-link" title="bootstraparse.modules.export.format_optionals">format<wbr></wbr>_optionals</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+
+        <div class="childrenKindTitle">Variables</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.export.html#ExportRequest" class="internal-link" title="bootstraparse.modules.export.ExportRequest"><wbr></wbr>Export<wbr></wbr>Request</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.export.html#ExportResponse" class="internal-link" title="bootstraparse.modules.export.ExportResponse"><wbr></wbr>Export<wbr></wbr>Response</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+        
+      </div>
+  </div>
+
+</nav>
+        </div>
+        <div id="collapseSideBar">
+          <a class="btn btn-link" onclick="toggleSideBarCollapse()" title="Toggle Sidebar Collapse">
+          </a>
+        </div> 
+        <script src="sidebartoggle.js" type="text/javascript"></script>
+       
+      </div>
+
+      <div id="main" class="">
+        
+
+        
+
+        <div class="page-header">
+          <h1 class="class"><code><code><a href="index.html" class="internal-link">bootstraparse</a></code><wbr></wbr>.<code><a href="bootstraparse.modules.html" class="internal-link" title="bootstraparse.modules">modules</a></code><wbr></wbr>.<code><a href="bootstraparse.modules.export.html" class="internal-link" title="bootstraparse.modules.export">export</a></code><wbr></wbr>.<code><a href="bootstraparse.modules.export.ContextConverter.html" class="internal-link" title="bootstraparse.modules.export.ContextConverter">ContextConverter</a></code></code></h1>
+          <div id="showPrivate">
+            <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+          </div>
+        </div>
+
+        <div class="categoryHeader">
+          class documentation
+        </div>
+
+        <div class="extrasDocstring">
+          <p><code><span class="py-keyword">class</span> <span class="py-defname">ContextConverter</span>:</code></p>
+          <p><a href="classIndex.html#bootstraparse.modules.export.ContextConverter">View In Hierarchy</a></p>
+        </div>
+
+        <div class="moduleDocstring">
+          <div><p>Transforms output form context manager into final, printable versions of the containers.</p>
+</div>
+        </div>
+
+        <div id="splitTables">
+          <table class="children sortable" id="id52">
+  
+  
+  <tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__eq__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__eq__">__eq__</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__init__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__init__">__init__</a></code></td>
+    <td>Takes a pile and the exporter object :type pile : list[context_mngr.BaseContainer] :param pile: output from the context manager. :type exporter : ExportManager :param exporter: Our ExportManager :type destination : str :param destination: Destination of the output file.</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__repr__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__repr__">__repr__</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__str__" class="internal-link" title="bootstraparse.modules.export.ContextConverter.__str__">__str__</a></code></td>
+    <td>Stringifies the entirety of the converted pile</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#print_all" class="internal-link" title="bootstraparse.modules.export.ContextConverter.print_all">print<wbr></wbr>_all</a></code></td>
+    <td>Prints the entirety of the converted pile</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#process_pile" class="internal-link" title="bootstraparse.modules.export.ContextConverter.process_pile">process<wbr></wbr>_pile</a></code></td>
+    <td>Processes the pile and writes the output to the io_output object. :rtype: StringIO</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#readlines" class="internal-link" title="bootstraparse.modules.export.ContextConverter.readlines">readlines</a></code></td>
+    <td>Yields the converted pile line after line :rtype: list[str]</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#destination" class="internal-link" title="bootstraparse.modules.export.ContextConverter.destination">destination</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#exporter" class="internal-link" title="bootstraparse.modules.export.ContextConverter.exporter">exporter</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#io_initialized" class="internal-link" title="bootstraparse.modules.export.ContextConverter.io_initialized">io<wbr></wbr>_initialized</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#io_output" class="internal-link" title="bootstraparse.modules.export.ContextConverter.io_output">io<wbr></wbr>_output</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#pile" class="internal-link" title="bootstraparse.modules.export.ContextConverter.pile">pile</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+</table>
+          
+
+            
+        </div>
+
+        <div id="childList">
+          <div class="basemethod">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.__eq__">
+    
+  </a>
+  <a name="__eq__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__eq__</span>(self, other):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.__init__">
+    
+  </a>
+  <a name="__init__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__init__</span>(self, pile, exporter, destination):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Takes a pile and the exporter object :type pile : list[context_mngr.BaseContainer] :param pile: output from the context manager. :type exporter : ExportManager :param exporter: Our ExportManager :type destination : str :param destination: Destination of the output file.</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.__repr__">
+    
+  </a>
+  <a name="__repr__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__repr__</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.__str__">
+    
+  </a>
+  <a name="__str__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__str__</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Stringifies the entirety of the converted pile</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.print_all">
+    
+  </a>
+  <a name="print_all">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">print_all</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Prints the entirety of the converted pile</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.process_pile">
+    
+  </a>
+  <a name="process_pile">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">process_pile</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Processes the pile and writes the output to the io_output object. :rtype: StringIO</p>
+</div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.readlines">
+    
+  </a>
+  <a name="readlines">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">readlines</span>(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Yields the converted pile line after line :rtype: list[str]</p>
+</div>
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.destination">
+    
+  </a>
+  <a name="destination">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">destination</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.exporter">
+    
+  </a>
+  <a name="exporter">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">exporter</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.io_initialized">
+    
+  </a>
+  <a name="io_initialized">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">io_initialized</span>: <code>bool</code> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.io_output">
+    
+  </a>
+  <a name="io_output">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">io_output</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="bootstraparse.modules.export.ContextConverter.pile">
+    
+  </a>
+  <a name="pile">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">pile</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div>
+        </div>
+      
+      </div>
+    </div>
+
+    <footer class="navbar navbar-default">
+
+  
+  <div class="container">
+    <a href="index.html">API Documentation</a> for bootstraparse,
+  generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a>
+    22.5.1 at 2022-06-15 19:33:33.
+  </div>
+
+  <!-- Search related scripts needs to be loaded at the end of HTML 
+    parsing not to introduce overhead and display HTML data asap -->
+  <script src="ajax.js" type="text/javascript"></script>
+  <script src="searchlib.js" type="text/javascript"></script>
+  <script src="search.js" type="text/javascript"></script>
+
+</footer>
+  
+    <script src="pydoctor.js" type="text/javascript"></script>
+
+  </body>
+</html>

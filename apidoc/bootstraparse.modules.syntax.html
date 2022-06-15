@@ -1,0 +1,2666 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  
+
+  <head>
+    
+    <title>bootstraparse.modules.syntax</title>
+    <meta name="generator" content="pydoctor 22.5.1"> 
+        
+    </meta>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="apidocs.css" />
+    <link rel="stylesheet" type="text/css" href="extra.css" />
+</head>
+
+  <body>
+
+    
+
+    <nav class="navbar navbar-default mainnavbar">
+      
+  
+  <div class="container-fluid">
+
+
+    <div class="navbar-header">
+      
+      <div class="navlinks">
+        <span class="navbar-brand">
+          bootstraparse <a href="index.html">API Documentation</a>
+        </span>
+
+        <a href="moduleIndex.html">
+          Modules
+        </a>
+
+        <a href="classIndex.html">
+          Classes
+        </a>
+
+        <a href="nameIndex.html">
+          Names
+        </a>
+
+        <div id="search-box-container">
+          <div class="input-group">
+            <input id="search-box" type="search" name="search-query" placeholder="Search..." aria-label="Search" minlength="2" class="form-control" autocomplete="off" />
+            
+            <span class="input-group-btn">
+              <a style="display: none;" class="btn btn-default" id="search-clear-button" title="Clear" onclick="clearSearch()"><img src="fonts/x-circle.svg" alt="Clear" /></a>
+              <a class="btn btn-default" id="search-help-button" title="Help" onclick="toggleSearchHelpText()"><img src="fonts/info.svg" alt="Help" /></a>
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="search-results-container" style="display: none;">
+        
+        <div id="search-buttons">
+          <span class="label label-default" id="search-docstrings-button">
+          <label class="checkbox-inline">
+            <input type="checkbox" id="toggle-search-in-docstrings-checkbox" value="false" onclick="toggleSearchInDocstrings()">
+              search in docstrings
+            </input>
+          </label>
+          </span>
+          
+        </div>
+        
+        <noscript>
+            <h1>Cannot search: JavaScript is not supported/enabled in your browser.</h1>
+        </noscript>
+
+        <div class="hint" id="search-help-box">
+          <p class="rst-last">
+      
+            Search bar offers the following options:
+            <ul>   
+                <li>
+                  <strong>Term presence.</strong> The below example searches for documents that 
+                    must contain “foo”, might contain “bar” and must not contain “baz”: <code>+foo bar -baz</code>
+                </li> 
+
+                <li>
+                  <strong>Wildcards.</strong> The below example searches for documents with words beginning with “foo”: <code>foo*</code>
+                </li> 
+
+                <li>
+                  <strong>Search in specific fields.</strong> The following search matches all objects 
+                  in "twisted.mail" that matches “search”: <code>+qname:twisted.mail.* +search</code>
+
+                  <p>
+                    Possible fields: 'name', 'qname' (fully qualified name), 'docstring', and 'kind'.
+                    Last two fields are only applicable if "search in docstrings" is enabled.
+                  </p>
+                </li>
+
+                <li>
+                  <strong>Fuzzy matches.</strong> The following search matches all documents 
+                  that have a word within 1 edit distance of “foo”: <code>foo~1</code>
+                </li>
+            </ul>
+
+          </p>
+        </div>
+
+        <div id="search-status"> </div>
+
+        <div class="warning" id="search-warn-box" style="display: none;">
+          <p class="rst-last"><span id="search-warn"></span></p>
+        </div>
+
+        <table id="search-results">
+          <!-- Filled dynamically by JS -->
+        </table>
+        
+        <div style="margin-top: 8px;">
+          <p>Results provided by <a href="https://lunrjs.com">Lunr.js</a></p>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</nav>
+    
+    <div class="container-fluid">
+
+      <!-- Side navigation -->
+      <div class="sidebarcontainer" style="display: none;">
+        
+        <div class="sidebar"><nav class="sidebar">
+  
+
+  <div>
+
+      <div class="thingTitle">
+        <span>Module</span>
+        <code class="thisobject"><a href="bootstraparse.modules.syntax.html" class="internal-link" title="This module">syntax</a></code> 
+      </div>
+      
+      <div>
+        
+
+        
+         
+
+        <div class="childrenKindTitle">Classes</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.AddFirstElementToLabel.html" class="internal-link" title="bootstraparse.modules.syntax.AddFirstElementToLabel"><wbr></wbr>Add<wbr></wbr>First<wbr></wbr>Element<wbr></wbr>To<wbr></wbr>Label</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.AliasToken.html" class="internal-link" title="bootstraparse.modules.syntax.AliasToken"><wbr></wbr>Alias<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.BeAssignToken.html" class="internal-link" title="bootstraparse.modules.syntax.BeAssignToken"><wbr></wbr>Be<wbr></wbr>Assign<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.BeValueToken.html" class="internal-link" title="bootstraparse.modules.syntax.BeValueToken"><wbr></wbr>Be<wbr></wbr>Value<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.BlockQuoteAuthorToken.html" class="internal-link" title="bootstraparse.modules.syntax.BlockQuoteAuthorToken"><wbr></wbr>Block<wbr></wbr>Quote<wbr></wbr>Author<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.BlockQuoteToken.html" class="internal-link" title="bootstraparse.modules.syntax.BlockQuoteToken"><wbr></wbr>Block<wbr></wbr>Quote<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.ClosedSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.ClosedSemanticType"><wbr></wbr>Closed<wbr></wbr>Semantic<wbr></wbr>Type</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.CodeToken.html" class="internal-link" title="bootstraparse.modules.syntax.CodeToken"><wbr></wbr>Code<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.DisplayToken.html" class="internal-link" title="bootstraparse.modules.syntax.DisplayToken"><wbr></wbr>Display<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EmptySemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.EmptySemanticType"><wbr></wbr>Empty<wbr></wbr>Semantic<wbr></wbr>Type</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EtCustomSpanToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtCustomSpanToken"><wbr></wbr>Et<wbr></wbr>Custom<wbr></wbr>Span<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EtEmToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtEmToken"><wbr></wbr>Et<wbr></wbr>Em<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EtOlistToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtOlistToken"><wbr></wbr>Et<wbr></wbr>Olist<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EtStrikethroughToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtStrikethroughToken"><wbr></wbr>Et<wbr></wbr>Strikethrough<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EtStrongToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtStrongToken"><wbr></wbr>Et<wbr></wbr>Strong<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EtUlistToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtUlistToken"><wbr></wbr>Et<wbr></wbr>Ulist<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.EtUnderlineToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtUnderlineToken"><wbr></wbr>Et<wbr></wbr>Underline<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.ExplicitSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.ExplicitSemanticType"><wbr></wbr>Explicit<wbr></wbr>Semantic<wbr></wbr>Type</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.FinalSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.FinalSemanticType"><wbr></wbr>Final<wbr></wbr>Semantic<wbr></wbr>Type</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.HeaderToken.html" class="internal-link" title="bootstraparse.modules.syntax.HeaderToken"><wbr></wbr>Header<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.HyperlinkToken.html" class="internal-link" title="bootstraparse.modules.syntax.HyperlinkToken"><wbr></wbr>Hyperlink<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.ImageToken.html" class="internal-link" title="bootstraparse.modules.syntax.ImageToken"><wbr></wbr>Image<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.Linebreak.html" class="internal-link" title="bootstraparse.modules.syntax.Linebreak"><wbr></wbr>Linebreak</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.OpenedSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.OpenedSemanticType"><wbr></wbr>Opened<wbr></wbr>Semantic<wbr></wbr>Type</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.OptionalClassToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalClassToken"><wbr></wbr>Optional<wbr></wbr>Class<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.OptionalInsertToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalInsertToken"><wbr></wbr>Optional<wbr></wbr>Insert<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.OptionalToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalToken"><wbr></wbr>Optional<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.OptionalVarToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalVarToken"><wbr></wbr>Optional<wbr></wbr>Var<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.SemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.SemanticType"><wbr></wbr>Semantic<wbr></wbr>Type</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.StructuralElementEndToken.html" class="internal-link" title="bootstraparse.modules.syntax.StructuralElementEndToken"><wbr></wbr>Structural<wbr></wbr>Element<wbr></wbr>End<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.StructuralElementStartToken.html" class="internal-link" title="bootstraparse.modules.syntax.StructuralElementStartToken"><wbr></wbr>Structural<wbr></wbr>Element<wbr></wbr>Start<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.TableCellToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableCellToken"><wbr></wbr>Table<wbr></wbr>Cell<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.TableRowToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableRowToken"><wbr></wbr>Table<wbr></wbr>Row<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.TableSeparatorToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableSeparatorToken"><wbr></wbr>Table<wbr></wbr>Separator<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.TableToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableToken"><wbr></wbr>Table<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.TextToken.html" class="internal-link" title="bootstraparse.modules.syntax.TextToken"><wbr></wbr>Text<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.TokensToMatch.html" class="internal-link" title="bootstraparse.modules.syntax.TokensToMatch"><wbr></wbr>Tokens<wbr></wbr>To<wbr></wbr>Match</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.UnimplementedToken.html" class="internal-link" title="bootstraparse.modules.syntax.UnimplementedToken"><wbr></wbr>Unimplemented<wbr></wbr>Token</a></code>
+            </div>
+        
+
+    </li>
+</ul>
+
+        <div class="childrenKindTitle">Functions</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#of_type" class="internal-link" title="bootstraparse.modules.syntax.of_type">of<wbr></wbr>_type</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#readable_markup" class="internal-link" title="bootstraparse.modules.syntax.readable_markup">readable<wbr></wbr>_markup</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#reparse" class="internal-link" title="bootstraparse.modules.syntax.reparse">reparse</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#split_optionals" class="internal-link" title="bootstraparse.modules.syntax.split_optionals">split<wbr></wbr>_optionals</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+
+        <div class="childrenKindTitle">Variables</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#alias" class="internal-link" title="bootstraparse.modules.syntax.alias">alias</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#alias_element" class="internal-link" title="bootstraparse.modules.syntax.alias_element">alias<wbr></wbr>_element</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#assignation" class="internal-link" title="bootstraparse.modules.syntax.assignation">assignation</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#blockquote" class="internal-link" title="bootstraparse.modules.syntax.blockquote">blockquote</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#blockquote_author" class="internal-link" title="bootstraparse.modules.syntax.blockquote_author">blockquote<wbr></wbr>_author</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#class_insert" class="internal-link" title="bootstraparse.modules.syntax.class_insert">class<wbr></wbr>_insert</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#code" class="internal-link" title="bootstraparse.modules.syntax.code">code</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#display_element" class="internal-link" title="bootstraparse.modules.syntax.display_element">display<wbr></wbr>_element</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#enhanced_text" class="internal-link" title="bootstraparse.modules.syntax.enhanced_text">enhanced<wbr></wbr>_text</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#et_custom_span" class="internal-link" title="bootstraparse.modules.syntax.et_custom_span">et<wbr></wbr>_custom<wbr></wbr>_span</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#et_em" class="internal-link" title="bootstraparse.modules.syntax.et_em">et<wbr></wbr>_em</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#et_strikethrough" class="internal-link" title="bootstraparse.modules.syntax.et_strikethrough">et<wbr></wbr>_strikethrough</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#et_strong" class="internal-link" title="bootstraparse.modules.syntax.et_strong">et<wbr></wbr>_strong</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#et_underline" class="internal-link" title="bootstraparse.modules.syntax.et_underline">et<wbr></wbr>_underline</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#expression" class="internal-link" title="bootstraparse.modules.syntax.expression">expression</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#header_element" class="internal-link" title="bootstraparse.modules.syntax.header_element">header<wbr></wbr>_element</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#html_insert" class="internal-link" title="bootstraparse.modules.syntax.html_insert">html<wbr></wbr>_insert</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#il_link" class="internal-link" title="bootstraparse.modules.syntax.il_link">il<wbr></wbr>_link</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#image" class="internal-link" title="bootstraparse.modules.syntax.image">image</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#image_element" class="internal-link" title="bootstraparse.modules.syntax.image_element">image<wbr></wbr>_element</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#line" class="internal-link" title="bootstraparse.modules.syntax.line">line</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#line_to_replace" class="internal-link" title="bootstraparse.modules.syntax.line_to_replace">line<wbr></wbr>_to<wbr></wbr>_replace</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#markup" class="internal-link" title="bootstraparse.modules.syntax.markup">markup</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#multi_line" class="internal-link" title="bootstraparse.modules.syntax.multi_line">multi<wbr></wbr>_line</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#one_display" class="internal-link" title="bootstraparse.modules.syntax.one_display">one<wbr></wbr>_display</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#one_header" class="internal-link" title="bootstraparse.modules.syntax.one_header">one<wbr></wbr>_header</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#one_line" class="internal-link" title="bootstraparse.modules.syntax.one_line">one<wbr></wbr>_line</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#one_olist" class="internal-link" title="bootstraparse.modules.syntax.one_olist">one<wbr></wbr>_olist</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#one_ulist" class="internal-link" title="bootstraparse.modules.syntax.one_ulist">one<wbr></wbr>_ulist</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#optional" class="internal-link" title="bootstraparse.modules.syntax.optional">optional</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#quotation" class="internal-link" title="bootstraparse.modules.syntax.quotation">quotation</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#quotes" class="internal-link" title="bootstraparse.modules.syntax.quotes">quotes</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#rgx_import_file" class="internal-link" title="bootstraparse.modules.syntax.rgx_import_file">rgx<wbr></wbr>_import<wbr></wbr>_file</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#se" class="internal-link" title="bootstraparse.modules.syntax.se">se</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#se_end" class="internal-link" title="bootstraparse.modules.syntax.se_end">se<wbr></wbr>_end</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#se_start" class="internal-link" title="bootstraparse.modules.syntax.se_start">se<wbr></wbr>_start</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#SplitOptionals" class="internal-link" title="bootstraparse.modules.syntax.SplitOptionals"><wbr></wbr>Split<wbr></wbr>Optionals</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#structural_elements" class="internal-link" title="bootstraparse.modules.syntax.structural_elements">structural<wbr></wbr>_elements</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#table" class="internal-link" title="bootstraparse.modules.syntax.table">table</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#table_row" class="internal-link" title="bootstraparse.modules.syntax.table_row">table<wbr></wbr>_row</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#table_separator" class="internal-link" title="bootstraparse.modules.syntax.table_separator">table<wbr></wbr>_separator</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#text" class="internal-link" title="bootstraparse.modules.syntax.text">text</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#value" class="internal-link" title="bootstraparse.modules.syntax.value">value</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#var" class="internal-link" title="bootstraparse.modules.syntax.var">var</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+        
+      </div>
+  </div><div>
+
+      <div class="thingTitle">
+        <span>Package</span>
+        <code><a href="bootstraparse.modules.html" class="internal-link" title="The parent of this module">modules</a></code> 
+      </div>
+      
+      <div>
+        
+
+        <div class="childrenKindTitle">Modules</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.config.html" class="internal-link" title="bootstraparse.modules.config">config</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.context_mngr.html" class="internal-link" title="bootstraparse.modules.context_mngr">context<wbr></wbr>_mngr</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.environment.html" class="internal-link" title="bootstraparse.modules.environment">environment</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.error_mngr.html" class="internal-link" title="bootstraparse.modules.error_mngr">error<wbr></wbr>_mngr</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.export.html" class="internal-link" title="bootstraparse.modules.export">export</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.parser.html" class="internal-link" title="bootstraparse.modules.parser">parser</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.pathresolver.html" class="internal-link" title="bootstraparse.modules.pathresolver">pathresolver</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.preparser.html" class="internal-link" title="bootstraparse.modules.preparser">preparser</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.sitecrawler.html" class="internal-link" title="bootstraparse.modules.sitecrawler">sitecrawler</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.sitecreator.html" class="internal-link" title="bootstraparse.modules.sitecreator">sitecreator</a></code>
+            </div>
+        
+
+    </li><li class=" thisobject">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.syntax.html" class="internal-link" title="bootstraparse.modules.syntax">syntax</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.template_mngr.html" class="internal-link" title="bootstraparse.modules.template_mngr">template<wbr></wbr>_mngr</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="bootstraparse.modules.tools.html" class="internal-link" title="bootstraparse.modules.tools">tools</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+        
+
+        
+         
+
+        
+         
+
+        
+         
+
+        
+         
+        
+      </div>
+  </div>
+
+</nav>
+        </div>
+        <div id="collapseSideBar">
+          <a class="btn btn-link" onclick="toggleSideBarCollapse()" title="Toggle Sidebar Collapse">
+          </a>
+        </div> 
+        <script src="sidebartoggle.js" type="text/javascript"></script>
+       
+      </div>
+
+      <div id="main" class="">
+        
+
+        
+
+        <div class="page-header">
+          <h1 class="module"><code><code><a href="index.html" class="internal-link">bootstraparse</a></code><wbr></wbr>.<code><a href="bootstraparse.modules.html" class="internal-link" title="bootstraparse.modules">modules</a></code><wbr></wbr>.<code><a href="bootstraparse.modules.syntax.html" class="internal-link" title="bootstraparse.modules.syntax">syntax</a></code></code></h1>
+          <div id="showPrivate">
+            <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+          </div>
+        </div>
+
+        <div class="categoryHeader">
+          module documentation
+        </div>
+
+        <div class="extrasDocstring">
+          
+          <p></p>
+        </div>
+
+        <div class="moduleDocstring">
+          <div><p class="undocumented">Undocumented</p></div>
+        </div>
+
+        <div id="splitTables">
+          <table class="children sortable" id="id63">
+  
+  
+  <tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.AddFirstElementToLabel.html" class="internal-link" title="bootstraparse.modules.syntax.AddFirstElementToLabel"><wbr></wbr>Add<wbr></wbr>First<wbr></wbr>Element<wbr></wbr>To<wbr></wbr>Label</a></code></td>
+    <td>Class used for verification in the context manager. Adds the first element of the content to the label (for matching purposes).</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.AliasToken.html" class="internal-link" title="bootstraparse.modules.syntax.AliasToken"><wbr></wbr>Alias<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.BeAssignToken.html" class="internal-link" title="bootstraparse.modules.syntax.BeAssignToken"><wbr></wbr>Be<wbr></wbr>Assign<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.BeValueToken.html" class="internal-link" title="bootstraparse.modules.syntax.BeValueToken"><wbr></wbr>Be<wbr></wbr>Value<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.BlockQuoteAuthorToken.html" class="internal-link" title="bootstraparse.modules.syntax.BlockQuoteAuthorToken"><wbr></wbr>Block<wbr></wbr>Quote<wbr></wbr>Author<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.BlockQuoteToken.html" class="internal-link" title="bootstraparse.modules.syntax.BlockQuoteToken"><wbr></wbr>Block<wbr></wbr>Quote<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.ClosedSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.ClosedSemanticType"><wbr></wbr>Closed<wbr></wbr>Semantic<wbr></wbr>Type</a></code></td>
+    <td>Semantic type used to signify it has a matching start component and needs to be matched.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.CodeToken.html" class="internal-link" title="bootstraparse.modules.syntax.CodeToken"><wbr></wbr>Code<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.DisplayToken.html" class="internal-link" title="bootstraparse.modules.syntax.DisplayToken"><wbr></wbr>Display<wbr></wbr>Token</a></code></td>
+    <td>! string ! number of ! indicates level</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EmptySemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.EmptySemanticType"><wbr></wbr>Empty<wbr></wbr>Semantic<wbr></wbr>Type</a></code></td>
+    <td>Empty semantic type, the content is the only information we need.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EtCustomSpanToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtCustomSpanToken"><wbr></wbr>Et<wbr></wbr>Custom<wbr></wbr>Span<wbr></wbr>Token</a></code></td>
+    <td>(#int)</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EtEmToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtEmToken"><wbr></wbr>Et<wbr></wbr>Em<wbr></wbr>Token</a></code></td>
+    <td>*</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EtOlistToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtOlistToken"><wbr></wbr>Et<wbr></wbr>Olist<wbr></wbr>Token</a></code></td>
+    <td>#.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EtStrikethroughToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtStrikethroughToken"><wbr></wbr>Et<wbr></wbr>Strikethrough<wbr></wbr>Token</a></code></td>
+    <td>~~</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EtStrongToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtStrongToken"><wbr></wbr>Et<wbr></wbr>Strong<wbr></wbr>Token</a></code></td>
+    <td>**</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EtUlistToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtUlistToken"><wbr></wbr>Et<wbr></wbr>Ulist<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">No summary</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.EtUnderlineToken.html" class="internal-link" title="bootstraparse.modules.syntax.EtUnderlineToken"><wbr></wbr>Et<wbr></wbr>Underline<wbr></wbr>Token</a></code></td>
+    <td>__</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.ExplicitSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.ExplicitSemanticType"><wbr></wbr>Explicit<wbr></wbr>Semantic<wbr></wbr>Type</a></code></td>
+    <td>Explicit semantic type, the label is the only information we need.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.FinalSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.FinalSemanticType"><wbr></wbr>Final<wbr></wbr>Semantic<wbr></wbr>Type</a></code></td>
+    <td>Semantic type used by the context manager to ascertain token is possible to encapsulate.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.HeaderToken.html" class="internal-link" title="bootstraparse.modules.syntax.HeaderToken"><wbr></wbr>Header<wbr></wbr>Token</a></code></td>
+    <td># string # number of # indicates level</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.HyperlinkToken.html" class="internal-link" title="bootstraparse.modules.syntax.HyperlinkToken"><wbr></wbr>Hyperlink<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.ImageToken.html" class="internal-link" title="bootstraparse.modules.syntax.ImageToken"><wbr></wbr>Image<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.Linebreak.html" class="internal-link" title="bootstraparse.modules.syntax.Linebreak"><wbr></wbr>Linebreak</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.OpenedSemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.OpenedSemanticType"><wbr></wbr>Opened<wbr></wbr>Semantic<wbr></wbr>Type</a></code></td>
+    <td>Semantic type used to signify it has a matching end component and needs to be matched.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.OptionalClassToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalClassToken"><wbr></wbr>Optional<wbr></wbr>Class<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.OptionalInsertToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalInsertToken"><wbr></wbr>Optional<wbr></wbr>Insert<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.OptionalToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalToken"><wbr></wbr>Optional<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.OptionalVarToken.html" class="internal-link" title="bootstraparse.modules.syntax.OptionalVarToken"><wbr></wbr>Optional<wbr></wbr>Var<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.SemanticType.html" class="internal-link" title="bootstraparse.modules.syntax.SemanticType"><wbr></wbr>Semantic<wbr></wbr>Type</a></code></td>
+    <td>Allows us to access basic operations and identify each token parsed.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.StructuralElementEndToken.html" class="internal-link" title="bootstraparse.modules.syntax.StructuralElementEndToken"><wbr></wbr>Structural<wbr></wbr>Element<wbr></wbr>End<wbr></wbr>Token</a></code></td>
+    <td>div|article|section|aside|header|body|nav&gt;&gt;</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.StructuralElementStartToken.html" class="internal-link" title="bootstraparse.modules.syntax.StructuralElementStartToken"><wbr></wbr>Structural<wbr></wbr>Element<wbr></wbr>Start<wbr></wbr>Token</a></code></td>
+    <td>&lt;&lt;div|article|section|aside|header|body|nav</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.TableCellToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableCellToken"><wbr></wbr>Table<wbr></wbr>Cell<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.TableRowToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableRowToken"><wbr></wbr>Table<wbr></wbr>Row<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.TableSeparatorToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableSeparatorToken"><wbr></wbr>Table<wbr></wbr>Separator<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.TableToken.html" class="internal-link" title="bootstraparse.modules.syntax.TableToken"><wbr></wbr>Table<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.TextToken.html" class="internal-link" title="bootstraparse.modules.syntax.TextToken"><wbr></wbr>Text<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.TokensToMatch.html" class="internal-link" title="bootstraparse.modules.syntax.TokensToMatch"><wbr></wbr>Tokens<wbr></wbr>To<wbr></wbr>Match</a></code></td>
+    <td>Class used for verification in the context manager. Classes inheriting this should be added to matched_elements.</td>
+  </tr><tr class="class">
+    
+    <td>Class</td>
+    <td><code><a href="bootstraparse.modules.syntax.UnimplementedToken.html" class="internal-link" title="bootstraparse.modules.syntax.UnimplementedToken"><wbr></wbr>Unimplemented<wbr></wbr>Token</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="function">
+    
+    <td>Function</td>
+    <td><code><a href="#of_type" class="internal-link" title="bootstraparse.modules.syntax.of_type">of<wbr></wbr>_type</a></code></td>
+    <td>Function creating a custom function for generating the given Token type. :param token_class: SemanticType class :type token_class: type :return: returns a function creating an instance of the given class :rtype: function...</td>
+  </tr><tr class="function">
+    
+    <td>Function</td>
+    <td><code><a href="#readable_markup" class="internal-link" title="bootstraparse.modules.syntax.readable_markup">readable<wbr></wbr>_markup</a></code></td>
+    <td>Function used for testing and readability purposes. Replaces matched markup with html-like tags. :param list_of_tokens: list of matched markup tokens in analysed text. :type list_of_tokens: list :return: returns readable string...</td>
+  </tr><tr class="function">
+    
+    <td>Function</td>
+    <td><code><a href="#reparse" class="internal-link" title="bootstraparse.modules.syntax.reparse">reparse</a></code></td>
+    <td>Creates a function which reparses given match with specified parsing element. :param parse_element: pp object defining desired match :type parse_element: pp.ParserElement :return: returns a function parsing given match with specified parsing element :rtype: function...</td>
+  </tr><tr class="function">
+    
+    <td>Function</td>
+    <td><code><a href="#split_optionals" class="internal-link" title="bootstraparse.modules.syntax.split_optionals">split<wbr></wbr>_optionals</a></code></td>
+    <td>Splits the optional attributes into separate lists. :param optionals: list of optional attributes :type optionals: OptionalToken :return: SplitOptionals object containing the split optionals :rtype: SplitOptionals...</td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#alias" class="internal-link" title="bootstraparse.modules.syntax.alias">alias</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#alias_element" class="internal-link" title="bootstraparse.modules.syntax.alias_element">alias<wbr></wbr>_element</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#assignation" class="internal-link" title="bootstraparse.modules.syntax.assignation">assignation</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#blockquote" class="internal-link" title="bootstraparse.modules.syntax.blockquote">blockquote</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#blockquote_author" class="internal-link" title="bootstraparse.modules.syntax.blockquote_author">blockquote<wbr></wbr>_author</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#class_insert" class="internal-link" title="bootstraparse.modules.syntax.class_insert">class<wbr></wbr>_insert</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#code" class="internal-link" title="bootstraparse.modules.syntax.code">code</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#display_element" class="internal-link" title="bootstraparse.modules.syntax.display_element">display<wbr></wbr>_element</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#enhanced_text" class="internal-link" title="bootstraparse.modules.syntax.enhanced_text">enhanced<wbr></wbr>_text</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#et_custom_span" class="internal-link" title="bootstraparse.modules.syntax.et_custom_span">et<wbr></wbr>_custom<wbr></wbr>_span</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#et_em" class="internal-link" title="bootstraparse.modules.syntax.et_em">et<wbr></wbr>_em</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#et_strikethrough" class="internal-link" title="bootstraparse.modules.syntax.et_strikethrough">et<wbr></wbr>_strikethrough</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#et_strong" class="internal-link" title="bootstraparse.modules.syntax.et_strong">et<wbr></wbr>_strong</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#et_underline" class="internal-link" title="bootstraparse.modules.syntax.et_underline">et<wbr></wbr>_underline</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#expression" class="internal-link" title="bootstraparse.modules.syntax.expression">expression</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#header_element" class="internal-link" title="bootstraparse.modules.syntax.header_element">header<wbr></wbr>_element</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#html_insert" class="internal-link" title="bootstraparse.modules.syntax.html_insert">html<wbr></wbr>_insert</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#il_link" class="internal-link" title="bootstraparse.modules.syntax.il_link">il<wbr></wbr>_link</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#image" class="internal-link" title="bootstraparse.modules.syntax.image">image</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#image_element" class="internal-link" title="bootstraparse.modules.syntax.image_element">image<wbr></wbr>_element</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#line" class="internal-link" title="bootstraparse.modules.syntax.line">line</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#line_to_replace" class="internal-link" title="bootstraparse.modules.syntax.line_to_replace">line<wbr></wbr>_to<wbr></wbr>_replace</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#markup" class="internal-link" title="bootstraparse.modules.syntax.markup">markup</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#multi_line" class="internal-link" title="bootstraparse.modules.syntax.multi_line">multi<wbr></wbr>_line</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#one_display" class="internal-link" title="bootstraparse.modules.syntax.one_display">one<wbr></wbr>_display</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#one_header" class="internal-link" title="bootstraparse.modules.syntax.one_header">one<wbr></wbr>_header</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#one_line" class="internal-link" title="bootstraparse.modules.syntax.one_line">one<wbr></wbr>_line</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#one_olist" class="internal-link" title="bootstraparse.modules.syntax.one_olist">one<wbr></wbr>_olist</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#one_ulist" class="internal-link" title="bootstraparse.modules.syntax.one_ulist">one<wbr></wbr>_ulist</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#optional" class="internal-link" title="bootstraparse.modules.syntax.optional">optional</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#quotation" class="internal-link" title="bootstraparse.modules.syntax.quotation">quotation</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#quotes" class="internal-link" title="bootstraparse.modules.syntax.quotes">quotes</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#rgx_import_file" class="internal-link" title="bootstraparse.modules.syntax.rgx_import_file">rgx<wbr></wbr>_import<wbr></wbr>_file</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#se" class="internal-link" title="bootstraparse.modules.syntax.se">se</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#se_end" class="internal-link" title="bootstraparse.modules.syntax.se_end">se<wbr></wbr>_end</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#se_start" class="internal-link" title="bootstraparse.modules.syntax.se_start">se<wbr></wbr>_start</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#SplitOptionals" class="internal-link" title="bootstraparse.modules.syntax.SplitOptionals"><wbr></wbr>Split<wbr></wbr>Optionals</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#structural_elements" class="internal-link" title="bootstraparse.modules.syntax.structural_elements">structural<wbr></wbr>_elements</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#table" class="internal-link" title="bootstraparse.modules.syntax.table">table</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#table_row" class="internal-link" title="bootstraparse.modules.syntax.table_row">table<wbr></wbr>_row</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#table_separator" class="internal-link" title="bootstraparse.modules.syntax.table_separator">table<wbr></wbr>_separator</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#text" class="internal-link" title="bootstraparse.modules.syntax.text">text</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#value" class="internal-link" title="bootstraparse.modules.syntax.value">value</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="variable">
+    
+    <td>Variable</td>
+    <td><code><a href="#var" class="internal-link" title="bootstraparse.modules.syntax.var">var</a></code></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+</table>
+          
+
+            
+        </div>
+
+        <div id="childList">
+          <div class="basefunction">
+  
+  
+  <a name="bootstraparse.modules.syntax.of_type">
+    
+  </a>
+  <a name="of_type">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">of_type</span>(token_class):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Function creating a custom function for generating the given Token type. :param token_class: SemanticType class :type token_class: type :return: returns a function creating an instance of the given class :rtype: function</p>
+</div>
+  </div>
+</div><div class="basefunction">
+  
+  
+  <a name="bootstraparse.modules.syntax.readable_markup">
+    
+  </a>
+  <a name="readable_markup">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">readable_markup</span>(list_of_tokens):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Function used for testing and readability purposes. Replaces matched markup with html-like tags. :param list_of_tokens: list of matched markup tokens in analysed text. :type list_of_tokens: list :return: returns readable string. :rtype: string</p>
+</div>
+  </div>
+</div><div class="basefunction">
+  
+  
+  <a name="bootstraparse.modules.syntax.reparse">
+    
+  </a>
+  <a name="reparse">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">reparse</span>(parse_element):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Creates a function which reparses given match with specified parsing element. :param parse_element: pp object defining desired match :type parse_element: pp.ParserElement :return: returns a function parsing given match with specified parsing element :rtype: function</p>
+</div>
+  </div>
+</div><div class="basefunction">
+  
+  
+  <a name="bootstraparse.modules.syntax.split_optionals">
+    
+  </a>
+  <a name="split_optionals">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-keyword">def</span> <span class="py-defname">split_optionals</span>(optionals):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Splits the optional attributes into separate lists. :param optionals: list of optional attributes :type optionals: OptionalToken :return: SplitOptionals object containing the split optionals :rtype: SplitOptionals</p>
+</div>
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.alias">
+    
+  </a>
+  <a name="alias">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">alias</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.alias_element">
+    
+  </a>
+  <a name="alias_element">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">alias_element</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.assignation">
+    
+  </a>
+  <a name="assignation">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">assignation</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.blockquote">
+    
+  </a>
+  <a name="blockquote">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">blockquote</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.blockquote_author">
+    
+  </a>
+  <a name="blockquote_author">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">blockquote_author</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.class_insert">
+    
+  </a>
+  <a name="class_insert">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">class_insert</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.code">
+    
+  </a>
+  <a name="code">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">code</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.display_element">
+    
+  </a>
+  <a name="display_element">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">display_element</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.enhanced_text">
+    
+  </a>
+  <a name="enhanced_text">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">enhanced_text</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.et_custom_span">
+    
+  </a>
+  <a name="et_custom_span">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">et_custom_span</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.et_em">
+    
+  </a>
+  <a name="et_em">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">et_em</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.et_strikethrough">
+    
+  </a>
+  <a name="et_strikethrough">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">et_strikethrough</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.et_strong">
+    
+  </a>
+  <a name="et_strong">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">et_strong</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.et_underline">
+    
+  </a>
+  <a name="et_underline">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">et_underline</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.expression">
+    
+  </a>
+  <a name="expression">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">expression</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.header_element">
+    
+  </a>
+  <a name="header_element">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">header_element</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.html_insert">
+    
+  </a>
+  <a name="html_insert">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">html_insert</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.il_link">
+    
+  </a>
+  <a name="il_link">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">il_link</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.image">
+    
+  </a>
+  <a name="image">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">image</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.image_element">
+    
+  </a>
+  <a name="image_element">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">image_element</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.line">
+    
+  </a>
+  <a name="line">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">line</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.line_to_replace">
+    
+  </a>
+  <a name="line_to_replace">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">line_to_replace</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.markup">
+    
+  </a>
+  <a name="markup">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">markup</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.multi_line">
+    
+  </a>
+  <a name="multi_line">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">multi_line</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.one_display">
+    
+  </a>
+  <a name="one_display">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">one_display</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.one_header">
+    
+  </a>
+  <a name="one_header">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">one_header</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.one_line">
+    
+  </a>
+  <a name="one_line">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">one_line</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.one_olist">
+    
+  </a>
+  <a name="one_olist">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">one_olist</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.one_ulist">
+    
+  </a>
+  <a name="one_ulist">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">one_ulist</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.optional">
+    
+  </a>
+  <a name="optional">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">optional</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.quotation">
+    
+  </a>
+  <a name="quotation">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">quotation</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.quotes">
+    
+  </a>
+  <a name="quotes">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">quotes</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.rgx_import_file">
+    
+  </a>
+  <a name="rgx_import_file">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">rgx_import_file</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.se">
+    
+  </a>
+  <a name="se">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">se</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.se_end">
+    
+  </a>
+  <a name="se_end">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">se_end</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.se_start">
+    
+  </a>
+  <a name="se_start">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">se_start</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.SplitOptionals">
+    
+  </a>
+  <a name="SplitOptionals">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">SplitOptionals</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.structural_elements">
+    
+  </a>
+  <a name="structural_elements">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">structural_elements</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.table">
+    
+  </a>
+  <a name="table">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">table</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.table_row">
+    
+  </a>
+  <a name="table_row">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">table_row</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.table_separator">
+    
+  </a>
+  <a name="table_separator">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">table_separator</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.text">
+    
+  </a>
+  <a name="text">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">text</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.value">
+    
+  </a>
+  <a name="value">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">value</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div><div class="basevariable">
+  
+  
+  <a name="bootstraparse.modules.syntax.var">
+    
+  </a>
+  <a name="var">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">var</span> =
+    
+  </div>
+  <div class="functionBody">
+    
+    
+    <div><p class="undocumented">Undocumented</p></div>
+    
+  </div>
+</div>
+        </div>
+      
+      </div>
+    </div>
+
+    <footer class="navbar navbar-default">
+
+  
+  <div class="container">
+    <a href="index.html">API Documentation</a> for bootstraparse,
+  generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a>
+    22.5.1 at 2022-06-15 19:33:33.
+  </div>
+
+  <!-- Search related scripts needs to be loaded at the end of HTML 
+    parsing not to introduce overhead and display HTML data asap -->
+  <script src="ajax.js" type="text/javascript"></script>
+  <script src="searchlib.js" type="text/javascript"></script>
+  <script src="search.js" type="text/javascript"></script>
+
+</footer>
+  
+    <script src="pydoctor.js" type="text/javascript"></script>
+
+  </body>
+</html>
