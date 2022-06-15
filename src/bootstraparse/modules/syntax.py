@@ -315,7 +315,7 @@ class TableSeparatorToken(FinalSemanticType):
 
 
 class TableCellSizeToken(FinalSemanticType):
-    label = ":cell_size"
+    label = "table:cell_size"
 
 
 class OptionalToken(SemanticType):

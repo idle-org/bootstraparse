@@ -187,19 +187,24 @@ def compare(me, other):
     import rich
     from bootstraparse.modules import syntax, context_mngr
 
+    rich.print(f"Comparing in : {me} and {other}")
+    if type(me) != type(other):
+        rich.print(f"Type: {type(me)} != {type(other)}")
+        return False
     for e, f in zip(me, other):
         if isinstance(e, context_mngr.BaseContainer) or isinstance(e, syntax.SemanticType):
-            compare(e, f)
+            if not compare(e, f):
+                return False
         elif e != f:
-            rich.print(f'elt:{e} != {f}')
+            rich.print(f'[{me}/{other}:elt]:{e} != {f}')
             return False
-    if hasattr(me, "optionals"):
+    if hasattr(me, "optionals") or hasattr(other, "optionals"):
         if me.optionals != other.optionals:
-            rich.print(f'opt:{me.optionals} != {other.optionals}')
+            rich.print(f'[{me.label}:opt]]:{me.optionals} != {other.optionals}')
             return False
-    if hasattr(me, "others"):
+    if hasattr(me, "others") or hasattr(other, "others"):
         if me.others != other.others:
-            rich.print(f'oth:{me.others} != {other.others}')
+            rich.print(f'[{me.label}:oth]:{me.others} != {other.others}')
             return False
     rich.print("No differences found")
     return True
