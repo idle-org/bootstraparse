@@ -528,15 +528,13 @@ multi_line = se | table | quotation
 one_header = (
         header_element +
         pp.SkipTo(pp.match_previous_literal(header_element)) +
-        pps(pp.match_previous_literal(header_element)) +
-        pp.Opt(optional)
-).add_parse_action(of_type(HeaderToken))
+        pps(pp.match_previous_literal(header_element))
+).add_parse_action(of_type(HeaderToken)) + pp.Opt(optional)
 one_display = (
         display_element +
         pp.SkipTo(pp.match_previous_literal(display_element)) +
-        pps(pp.match_previous_literal(display_element)) +
-        pp.Opt(optional)
-).add_parse_action(of_type(DisplayToken))
+        pps(pp.match_previous_literal(display_element))
+).add_parse_action(of_type(DisplayToken)) + pp.Opt(optional)
 one_olist = pp.line_start + (
         pps(pp.Combine(pp.line_start + pp.Literal('#.'))) + (
          (pp.SkipTo(optional)('text').add_parse_action(reparse(enhanced_text)) + optional) |
