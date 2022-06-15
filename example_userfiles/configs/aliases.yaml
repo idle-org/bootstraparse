@@ -1,42 +1,10 @@
 shortcuts:
-  copyright: 'Copyright (c) 2020 by Idle-Corp, all rights reserved.'
-  website_url: 'https://idle-corp.com'
-  website_name: 'Idle-Corp'
-  cc_license: 'CC-BY-SA-4.0'
-  replace: 'Test with {} and {}'
-  alias: 'test alias replacement with format {test}'
   do_not_remove_s: 'This is a test'
   do_not_remove_f: 'This is a test {} {} {a} {b}'
-  tab_bnw: 'tab_bnw_imported'
-  tab_color: 'tab_colour_imported'
-  custom_permutation: 'custom_permutated'
-
-  start: |
-    <!doctype html>
-     <html lang="en">
-     <head>
-         <meta charset="UTF-8">
-         <meta name="viewport"
-               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-         <title>{}</title>
-     </head>
-     <body>
-
-  end:
-    '</body>
-     </html>'
+  end_article: 'article>>{{my-3}} {id="{}"}'
+  structural_div_1: 'bd-heading sticky-xl-top align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2'
 
 images:
-  logo: 'resources/images/logo.png'
-  favicon: 'resources/images/favicon.png'
+  sge: 'img/sge/{}.png'
   do_not_remove_p: 'This is a test'
   do_not_remove_f: 'This is a test {} {} {a} {b}'
-  custom_pict: 'custom_pict.png'
-  sch: 'sch.png'
-  vuln: 'vuln.png'
-  image: 'image.img'
-  whatever_picture: 'whatever_picture.pic'
-  image.png: 'image.png.png'
