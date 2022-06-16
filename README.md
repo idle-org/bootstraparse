@@ -29,19 +29,21 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Fixed continuous integration
 - Added doc generation
 
-## Roadmap
 ### V1.0.4
-- Make the default example site way more useful ☐
-- Write a documentation for the application (use specs.yaml) ☐
-- Move the WARNING-level output to INFO for config overwrite ☐
+- Made the default example site more useful
+- Wrote a barebone documentation for the application
 
+
+## Roadmap
 ### V1.0.5
 - Add more context to the warning messages ☐
 - Test configs more in-depth ☐
 - Test overall site generation ☐
+- Move the WARNING-level output to INFO for config overwrite ☐
 
 ### V1.0.6
-- Option to ignore br behavior ☐$
+- Option to ignore br behavior ☐
+- Make the default example site way more useful ☐
 
 ### V1.1
 - Functioning `table` Token ☐
@@ -62,6 +64,7 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 
 ### V1.4
 - Add html indentation for human readability of the output. ☐
+- Write thourough documentation for the application (use specs.yaml) ☐
 
 ### V2
 - Add a functioning post-context enhancer able to generate menus and elements from arbitrary logic.
