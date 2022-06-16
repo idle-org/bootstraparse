@@ -1,16 +1,16 @@
-# Interprets where the parser is located and resolves errors
-# You're probably here for the ContextManager class.
-# Containers have class_name, debug_map and validate methods for debug,
-#   self.content: accessible via __getitem__, __setitem__, add, __len__, __iter__ and __getslice__.
-#   self.optionals: accessible via __rshift__ (remapped to return self.map[other]())
-#   and self.map: accessible via __invert__ (remapped to return self.optionals)
-# Usage:
-#   from bootstraparse.modules.context_mngr import ContextManager
-#   ctx = ContextManager()
-#   container = BaseContainer()
-#   container[number] -> The number element in the content
-#   "class_insert" >> container[number] -> Get an element from one of the mapped methods
-
+"""Interprets where the parser is located and resolves errors
+You're probably here for the ContextManager class.
+Containers have class_name, debug_map and validate methods for debug,
+ - self.content: accessible via __getitem__, __setitem__, add, __len__, __iter__ and __getslice__.
+ - self.optionals: accessible via __rshift__ (remapped to return self.map[other]())
+ - and self.map: accessible via __invert__ (remapped to return self.optionals)
+Usage:
+ - from bootstraparse.modules.context_mngr import ContextManager
+ - ctx = ContextManager()
+ - container = BaseContainer()
+ - container[number] -> The number element in the content
+ - "class_insert" >> container[number] -> Get an element from one of the mapped methods
+"""
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message, LonelyOptionalError # noqa
 
@@ -208,7 +208,7 @@ class BaseContainer:
         :rtype : str
         """
         return '{} ({})'.format(", ".join(map(str, self.content)),
-                                ", ".join(map(str, self.get_optionals())) if self.get_optionals() else "")
+                                ", ".join(map(str, self.get_optionals().content)) if self.get_optionals() else "")
 
     def __repr__(self):
         """
@@ -551,6 +551,7 @@ class ContextManager:
         while index < len(self.parsed_list):
             token = self.parsed_list[index]
             token.line_number = line_number
+            token.index = index
             token.file_name = self.name
             token.ident = self.ident
             self.pile.append(token)
@@ -583,16 +584,17 @@ class ContextManager:
 
                 # Error if closing token does not have a start
                 elif isinstance(token, syntax.ClosedSemanticType):
-                    raise MismatchedContainerError(token)
+                    raise MismatchedContainerError(token, self.parsed_list)
 
                 # Starting token by default (can cause unintended behaviours on bad implementations)
                 elif isinstance(token, syntax.TokensToMatch):
                     self._add_matched(token.label, index)
 
                 else:
-                    raise MismatchedContainerError(token)
+                    raise MismatchedContainerError(token, self.parsed_list)
 
             except MismatchedContainerError as e:
+                error_mngr.log_message(f"In context: {e.get_context()}", level="CRITICAL")
                 error_mngr.log_exception(e, level="CRITICAL")  # FUTURE: Try to guess some hints.
             index += 1
 

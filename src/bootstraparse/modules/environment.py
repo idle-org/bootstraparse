@@ -1,19 +1,20 @@
-# Module for containing super important variables
-# Environment has self._mParams for mandatory parameters, self._sParams for secondary parameters and
-#   self.wasInitialised and integrity_check for debug.
-#   __getattr__ and __setattr__ check for existing super, s or m parameters, returns error if not found.
-# Usage:
-#   from bootstraparse.modules.environment import Environment
-#   env = Environment()
-#   env.integrity_check() -> Checks if all mandatory parameters are set.
-#   env["config"] -> returns config object
-#   env["template"] -> returns template object
-#   env["export_mngr"] -> returns export manager object
-#   env["global_path"] -> returns global path ???
-#   env["user_path"] -> returns user path ???
-#   env["site_path"] -> returns site path
-#   env["export"] -> returns export object ???
-#   env["site_crawler"] -> returns site crawler object
+"""Module for containing super important variables
+Environment has self._mParams for mandatory parameters, self._sParams for secondary parameters and
+ - self.wasInitialised and integrity_check for debug.
+ - __getattr__ and __setattr__ check for existing super, s or m parameters, returns error if not found.
+Usage:
+ - from bootstraparse.modules.environment import Environment
+ - env = Environment()
+ - env.integrity_check() -> Checks if all mandatory parameters are set.
+ - env["config"] -> returns config object
+ - env["template"] -> returns template object
+ - env["export_mngr"] -> returns export manager object
+ - env["global_path"] -> returns global path ???
+ - env["user_path"] -> returns user path ???
+ - env["site_path"] -> returns site path
+ - env["export"] -> returns export object ???
+ - env["site_crawler"] -> returns site crawler object
+ """
 
 from bootstraparse.modules import error_mngr
 

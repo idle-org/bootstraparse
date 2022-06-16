@@ -1,11 +1,13 @@
-###############################################################################
-# List of tools for testing
-###############################################################################
-# Usage:
-#   from bootstraparse.modules.tools import __GLk, __GL, find_*_in_file
-#   __GLk(n) # Returns a file link n traceback objects back
-#   __GL() # Returns a line number at current position
-#   find_*_in_file(file)  # Try to find (class, function or variable) in file and return its line number
+"""
+List of tools for testing
+=========================
+
+Usage:
+ - from bootstraparse.modules.tools import __GLk, __GL, find_*_in_file
+ - __GLk(n) # Returns a file link n traceback objects back
+ - __GL() # Returns a line number at current position
+ -  find_*_in_file(file)  # Try to find (class, function or variable) in file and return its line number
+"""
 
 import inspect
 import os
