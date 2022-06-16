@@ -10,7 +10,7 @@ shortcuts:
   tab_bnw: 'tab_bnw_imported'
   tab_color: 'tab_colour_imported'
   custom_permutation: 'custom_permutated'
-
+  empty: ''
   start: |
     <!doctype html>
      <html lang="en">

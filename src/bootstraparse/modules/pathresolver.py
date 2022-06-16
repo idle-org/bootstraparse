@@ -1,11 +1,12 @@
-# Module for resolving relative path problems
-# PathResolver takes a relative path in the module and outputs the absolute path,
-# BoostraPath can deal with relative paths in the installation folder.
-# Usage:
-#   from bootstraparse.modules.pathresolver import PathResolver, b_path
-#   b_path("../relative/path/to/file") # returns absolute path to file from the bootstraparse folder
-#   path= PathResolver("../relative/path/to/file") # Make a PathResolver object pointing at the first path given
-
+"""
+Module for resolving relative path problems
+PathResolver takes a relative path in the module and outputs the absolute path,
+BoostraPath can deal with relative paths in the installation folder.
+Usage:
+ - from bootstraparse.modules.pathresolver import PathResolver, b_path
+ - b_path("../relative/path/to/file") # returns absolute path to file from the bootstraparse folder
+ - path= PathResolver("../relative/path/to/file") # Make a PathResolver object pointing at the first path given
+"""
 import os
 
 

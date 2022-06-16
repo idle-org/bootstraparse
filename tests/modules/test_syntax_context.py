@@ -47,6 +47,7 @@ def test_counterpart_container(type_n, expected_counterpart, expected_container,
     try:
         token = type_n(["test"])  # noqa
         token.line_number = 1
+        token.index = 1
         assert token.counterpart() == expected_counterpart
         if expected_container == "error":
             with pytest.raises(error_mngr.MismatchedContainerError):

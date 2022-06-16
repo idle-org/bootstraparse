@@ -1,3 +1,4 @@
+"""
 # Dedicated module for the syntax of all the parsing
 # All tokens inherit a SemanticType among SemanticType, ExplicitSemanticType and EmptySemanticType
 # All tokens have a label, and __eq__ and __ne__ methods.
@@ -8,6 +9,7 @@
 #   line_to_replace.parse_line('string') # returns a List of tokens parsed for replacements
 #   imports.parse_line('string', True) # returns a List of tokens parsed for imports
 #   any_token.create_diagram("filename") # Debugging
+"""
 
 import os
 from itertools import zip_longest
@@ -555,10 +557,9 @@ alias = alias_element + pp.Opt(optional)
 
 # Syntax elements
 line_to_replace = pp.OneOrMore(
-    pp.SkipTo(image ^ alias)('text').add_parse_action(of_type(TextToken))
-    ^ image.add_parse_action(of_type(ImageToken))
-    ^ alias.add_parse_action(of_type(AliasToken))
-) ^ pp.rest_of_line('text').add_parse_action(of_type(TextToken))
+    pp.SkipTo(image)('text').add_parse_action(of_type(TextToken)) + image.add_parse_action(of_type(ImageToken)) |
+    pp.SkipTo(alias)('text').add_parse_action(of_type(TextToken)) + alias.add_parse_action(of_type(AliasToken))
+) | pp.rest_of_line('text').add_parse_action(of_type(TextToken))
 
 
 ##############################################################################

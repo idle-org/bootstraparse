@@ -2,7 +2,7 @@ global:
   template: "bootstrap.yml"
   output: "example_site/"
   bootstrap_version: "3.3.7"
-  version: "1.0.3"
+  version: "1.0.4"
   bootstrap_location: ""
 
 logging:
