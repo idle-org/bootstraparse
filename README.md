@@ -35,16 +35,25 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Write a documentation for the application (use specs.yaml) ☐
 - Move the WARNING-level output to INFO for config overwrite ☐
 
+### V1.0.5
+- Add more context to the warning messages ☐
+- Test configs more in-depth ☐
+- Test overall site generation ☐
+
+### V1.0.6
+- Option to ignore br behavior ☐$
+
 ### V1.1
 - Functioning `table` Token ☐
 - Functioning `code` Token ☐
 - Establish a list of all configurable parameters to implement in the future, and update the roadmap with them. ☐
 - Decide level of logic to be implemented, and whether it should be configurable ☐
 - Update the uses of remaining files ☐
-
+- Add a global line count and a line tracker to the parser ☐
 
 ### V1.2
 - Check error messages and add a real debug level to parameters ☐
+- Thouroughly test logging, and error messages for the user ☐
 - Functioning `blockquote` Token ☐
 
 ### V1.3
