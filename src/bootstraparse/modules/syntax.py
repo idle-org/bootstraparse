@@ -557,10 +557,9 @@ alias = alias_element + pp.Opt(optional)
 
 # Syntax elements
 line_to_replace = pp.OneOrMore(
-    pp.SkipTo(image ^ alias)('text').add_parse_action(of_type(TextToken))
-    ^ image.add_parse_action(of_type(ImageToken))
-    ^ alias.add_parse_action(of_type(AliasToken))
-) ^ pp.rest_of_line('text').add_parse_action(of_type(TextToken))
+    pp.SkipTo(image)('text').add_parse_action(of_type(TextToken)) + image.add_parse_action(of_type(ImageToken)) |
+    pp.SkipTo(alias)('text').add_parse_action(of_type(TextToken)) + alias.add_parse_action(of_type(AliasToken))
+) | pp.rest_of_line('text').add_parse_action(of_type(TextToken))
 
 
 ##############################################################################
