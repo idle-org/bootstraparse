@@ -95,6 +95,54 @@ class BootstraparseError(Exception):
     pass
 
 
+class BootstraparseTokenError(BootstraparseError):
+    """
+    Error on a token, provides if possible the line and column number of the error,
+    the file name and the message of the error
+    and if possible a context for the error
+    """
+    def __init__(self, token, pile, message):
+        self.token = token
+        self.pile = pile
+        if token is not None:
+            self.line = token.line_number
+            self.index = token.index
+            self.label = token.label
+            self.name = token.file_name
+        else:
+            self.line = None
+            self.index = None
+            self.label = None
+            self.name = None
+        self.context = self.get_context()
+        super().__init__(message+"\n"+self.context_multiline())
+
+    def get_context(self, context_size=5):
+        """
+        Returns the context of the error
+        :return: The context of the error
+        :rtype: str
+        """
+        if self.pile:
+            st = max(0, self.index - context_size)
+            en = min(len(self.pile), self.index + context_size)
+            return self.pile[st:en]
+        return []
+
+    def context_multiline(self, context_size=10):
+        """
+        Returns the context of the error as a multiline string
+        :return: The context of the error
+        :rtype: str
+        """
+        if self.pile:
+            return "\n".join([
+                f"{'  ' if i!=context_size else '> '}{i-context_size:2d}: {j}"
+                for i, j in enumerate(self.get_context(context_size)) if j.label != "linebreak"
+            ])
+        return ""
+
+
 class ParsingError(Exception):
     """
     Exception class for parsing errors
@@ -133,17 +181,18 @@ class ParsingError(Exception):
             return str(self.message)
 
 
-class MismatchedContainerError(BootstraparseError):
+class MismatchedContainerError(BootstraparseTokenError):
     """
     The token is not final and cannot be contained. Indicative of a mismatched token.
     """
-    def __init__(self, token):
+    def __init__(self, token, pile=None):
         """
         Initializes the MismatchedContainerError class with the token that was not final
         :param token: The token that is not final
         :type token: syntax.SemanticType
         """
         self.token = token
+        self.pile = pile
         if token:
             self.line = token.line_number
             self.label = token.label
@@ -152,7 +201,7 @@ class MismatchedContainerError(BootstraparseError):
             self.line = None
             self.label = None
             self.name = None
-        super().__init__(f"Could not process {self.label} at line {self.line} in file {self.name}.")
+        super().__init__(token, pile, f"Could not process {self.label} at line {self.line} in file {self.name}.")
 
 
 class LonelyOptionalError(BootstraparseError):
