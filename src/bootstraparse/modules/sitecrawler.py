@@ -1,4 +1,14 @@
-# Module for file and directories repartition
+"""
+Module for file and directories repartition
+Usage:
+ - from bootstraparse.modules import SiteCrawler
+ - crawler = SiteCrawler(origin_path, dest_path, _env)
+ - crawler.set_all_preparsers()
+ - crawler.copy_unparsable_files()
+ - for element, destination in crawler:
+ -  - save(preparse_parse(element), destination, _env)
+"""
+
 import os
 import shutil
 from bootstraparse.modules import pathresolver, preparser, error_mngr, environment, export

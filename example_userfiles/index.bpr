@@ -1,51 +1,28 @@
-@[start]['bootstrap']
-
-Structural Elements:
+@[start]['Bootstraparse']
 <<div
-This is a div
-div>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
-<<article
-This is an article
-article>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
-<<aside
-This is an aside
-aside>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
-<<section
-This is a section
-section>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
+<<header
 <<div
-<<article
-<<aside
-<<section
-Text
-section>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
-aside>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
-article>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
-div>>{class='blue', 123}{{cinsertion}}[var='test', number=11]
-# Header 1 #{class='blue', 123}{{cinsertion}}[var='test', number=11]
-! Display 1 !{class='blue', 123}{{cinsertion}}[var='test', number=11]
+<<div
+Bootstraparse
+div>>{{blog-header-logo text-dark text-center border-bottom}}
+div>>{{row flex-nowrap justify-content-between align-items-center}}
+header>>{{blog-header py-3}}
+<<div
+# What is bootstraparse ? #
+
+bootstraparse is a tool that allows you to bootstrap your own project.
+In a very small number of steps, you can create a new project with the
+following features:
+- Imports, with the <code>: :< filename > </code>syntax you can import another file and have it's contents dumped into your file.
+- Markup, a subset of markdown is already supported and the rest is incomming !
+- Aliases : With the <code> @[alias_name] </code> syntax you can create an alias for a string of text, with replacement capabilities.
+- Images: With the <code> @&#123;imagename&#125; </code> syntax you can specify an image template to import, with replacement capabilities.
+
+And much much more !
 
 
-Inline Element:
-[Link text]('http://this.is.a.link')
-*This is in italic*
-**This is strong**
-~~This is stricken through~~
-__This is underlined__
-(#1)This is a custom span(#1)
-
-
-Oneline elements:
-- This is an unordered list item
-- This is an unordered list item
-- This is an unordered list item{class='blue', 123}{{cinsertion}}[var='test', number=11]
-#. This is an ordered list item
-#. This is an ordered list item
-#. This is an ordered list item{class='blue', 123}{{cinsertion}}[var='test', number=11]
-
-This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment. This is a long text segment.
-This is still the same long text segment. This is still the same long text segment. This is still the same long text segment.
-
-Use a double linebreak to force linebreaks.
-
+We encourage you to read the [documentation]("apidoc/index.html") to learn more about bootstraparse
+or explore the [source code]("https://github.com/idle-org/bootstraparse")
+div>>{{nav-scroller py-1 mb-2}}
+div>>{{container}}
 @[end]

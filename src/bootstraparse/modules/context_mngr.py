@@ -1,16 +1,16 @@
-# Interprets where the parser is located and resolves errors
-# You're probably here for the ContextManager class.
-# Containers have class_name, debug_map and validate methods for debug,
-#   self.content: accessible via __getitem__, __setitem__, add, __len__, __iter__ and __getslice__.
-#   self.optionals: accessible via __rshift__ (remapped to return self.map[other]())
-#   and self.map: accessible via __invert__ (remapped to return self.optionals)
-# Usage:
-#   from bootstraparse.modules.context_mngr import ContextManager
-#   ctx = ContextManager()
-#   container = BaseContainer()
-#   container[number] -> The number element in the content
-#   "class_insert" >> container[number] -> Get an element from one of the mapped methods
-
+"""Interprets where the parser is located and resolves errors
+You're probably here for the ContextManager class.
+Containers have class_name, debug_map and validate methods for debug,
+ - self.content: accessible via __getitem__, __setitem__, add, __len__, __iter__ and __getslice__.
+ - self.optionals: accessible via __rshift__ (remapped to return self.map[other]())
+ - and self.map: accessible via __invert__ (remapped to return self.optionals)
+Usage:
+ - from bootstraparse.modules.context_mngr import ContextManager
+ - ctx = ContextManager()
+ - container = BaseContainer()
+ - container[number] -> The number element in the content
+ - "class_insert" >> container[number] -> Get an element from one of the mapped methods
+"""
 from bootstraparse.modules import syntax, error_mngr, export
 from bootstraparse.modules.error_mngr import MismatchedContainerError, log_exception, log_message, LonelyOptionalError # noqa
 
