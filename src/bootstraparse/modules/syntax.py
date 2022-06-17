@@ -365,7 +365,7 @@ def reparse(parse_element):
     :rtype: function
     """
     def _reparse(__, _, tokens):
-        return parse_element.parseString(tokens[0])  # Future: document this behaviour more in-depth
+        return parse_element.parseString(tokens[0])
 
     return _reparse
 

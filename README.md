@@ -42,10 +42,15 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Test configs more in-depth ☐
 - Test overall site generation ☐
 - Move the WARNING-level output to INFO for config overwrite ☐
+- Better error handling ☐
+  - Stack dropping on error ☐
+  - Better context for error messages ☐
+  - Move error context to the calling function ☐
 
 ### V1.0.6
 - Option to ignore br behavior ☐
 - Make the default example site way more useful ☐
+- Add an indentation level to every token for human readability of the final output ☐
 
 ### V1.0.7
 - Add a way to ignore certain files ☐
@@ -58,6 +63,7 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 
 ### V1.0.9
 - Add a benchmark ☐
+- Document the syntax.reparse function and behavior better ☐
 
 ### V1.1
 - Functioning `table` Token ☐
@@ -93,15 +99,17 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Option to treat some errors as warnings ☐ (Mostly for the parser and context manager)
 - Option to treat some warnings as errors ☐
 - Option to change the behaviour of some specific tokens (change br behaviour mainly) ☐
+
 ### V1.1.2
 - Mark the parsed files with a timestamp or hash in a way that can be used to determine if they have been changed ☐
 - Option to ignore files that have not been changed ☐
+
 ### V1.2
 - Check error messages and add a real debug level to parameters ☐
 - Thouroughly test logging, and error messages for the user ☐
 - Functioning `blockquote` Token ☐
 
-### V1.3 ☑
+### V1.3
 - Add advanced lookahead logic for `*` ☐
 - Functioning `lead` Token ☐
 

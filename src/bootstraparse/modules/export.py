@@ -115,7 +115,6 @@ class ExportManager:
                 ),
                 level='CRITICAL'
             )
-        # future: allow for template selection
         optionals = format_optionals(export_request.optionals)
 
         return start, end, optionals
