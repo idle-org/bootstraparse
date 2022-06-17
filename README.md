@@ -36,6 +36,8 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 
 ## Roadmap
 ### V1.0.5
+- Improved the roadmap ☑
+- Established a list of many configurable parameters to implement in the future, and updated the roadmap with them. ☑
 - Add more context to the warning messages ☐
 - Test configs more in-depth ☐
 - Test overall site generation ☐
@@ -45,30 +47,72 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 - Option to ignore br behavior ☐
 - Make the default example site way more useful ☐
 
+### V1.0.7
+- Add a way to ignore certain files ☐
+- Add a way to ignore certain directories ☐
+- Add a way to ignore certain file extensions ☐
+
+### V1.0.8
+- Add a post process function ☐
+- Add a way to mark lines to be post-processed ☐
+
+### V1.0.9
+- Add a benchmark ☐
+
 ### V1.1
 - Functioning `table` Token ☐
 - Functioning `code` Token ☐
-- Establish a list of all configurable parameters to implement in the future, and update the roadmap with them. ☐
-- Decide level of logic to be implemented, and whether it should be configurable ☐
+- Have the context manager able to analyse the context and depending on some conditions, add post processing hooks ☐
+  - Decide if it should be able to be used on multiple files ☐
+  - Decide the number and complexity of the hooks ☐
+  - Decide on the scope of the hooks (Create navbar, create glossary, create links etc...) ☐
+  - Decide if they should be configurable (user side) ☐
 - Update the uses of remaining files ☐
 - Add a global line count and a line tracker to the parser ☐
 
+### V1.1.1
+- Option to save intermediate files ☐
+  - Only save files after preparsing ☐
+  - Only save files after parsing ☐
+  - Only save files after postprocessing ☐
+  - Only save files after generating the site ☐
+- Option to ignore some steps ☐
+  - Ignore preparsing ☐
+  - Ignore parsing ☐
+  - Ignore postprocessing ☐
+  - Ignore generating the site ☐
+- Option to set the debug level ☐
+- Option to fetch the config file from a remote source ☐
+- Option to fetch the template file from a remote source ☐
+- Option to switch between different templates ☐ (Why not just use different files tho ?)
+- Option to remove destination files before generating ☐
+- Option to remove destination directories before generating ☐
+- Option to pass some arguments to the parser ☐
+- Option to pass some arguments to the post processor ☐
+- Option to ignore some markup elements (likely only in context though) ☐
+- Option to treat some errors as warnings ☐ (Mostly for the parser and context manager)
+- Option to treat some warnings as errors ☐
+- Option to change the behaviour of some specific tokens (change br behaviour mainly) ☐
+### V1.1.2
+- Mark the parsed files with a timestamp or hash in a way that can be used to determine if they have been changed ☐
+- Option to ignore files that have not been changed ☐
 ### V1.2
 - Check error messages and add a real debug level to parameters ☐
 - Thouroughly test logging, and error messages for the user ☐
 - Functioning `blockquote` Token ☐
 
-### V1.3
-- Add advanced lookahead logic for `*`
-- Functioning `lead` Token
+### V1.3 ☑
+- Add advanced lookahead logic for `*` ☐
+- Functioning `lead` Token ☐
 
 ### V1.4
 - Add html indentation for human readability of the output. ☐
 - Write thourough documentation for the application (use specs.yaml) ☐
 
 ### V2
-- Add a functioning post-context enhancer able to generate menus and elements from arbitrary logic.
-- Achieve perfect markdown compatibility with appropriate config parameters
+- Add a functioning post-context enhancer able to generate menus and elements from arbitrary logic. ☐
+- Achieve perfect markdown compatibility with appropriate config parameters ☐
 
 ### V3
-- Add Template customisation.
+- Add Template customisation. ☐
+- Add a lot of base templates (released as themes ?). ☐
