@@ -64,6 +64,7 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 ### V1.0.9
 - Add a benchmark ☐
 - Document the syntax.reparse function and behavior better ☐
+- Multithreaded contexting ☐
 
 ### V1.1
 - Functioning `table` Token ☐
@@ -112,6 +113,7 @@ You can refer to the `example_userfiles` for an idea of what the parser expects 
 ### V1.3
 - Add advanced lookahead logic for `*` ☐
 - Functioning `lead` Token ☐
+- Multithreaded parsing ☐
 
 ### V1.4
 - Add html indentation for human readability of the output. ☐
