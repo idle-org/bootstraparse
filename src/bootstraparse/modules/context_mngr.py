@@ -38,7 +38,7 @@ class BaseContainer:
         self.content = content
         self.map = {}
         self.optionals = optionals
-        self.indentation_level = 0  # future: add an indentation level to every token for human readability of the final output
+        self.indentation_level = 0
 
     def get_content(self, exm, arbitrary_list=None):
         """
@@ -452,8 +452,8 @@ class ContextManager:
         self.dict_lookahead = {
             "list:ulist": ["list:ulist"],
             "list:olist": ["list:olist"],
-            "table:row": ["table:separator", "table:row"],  # future: Implement tables
-            "blockquotes": [],  # future: Implement blockquotes
+            "table:row": ["table:separator", "table:row"],
+            "blockquotes": [],
             "linebreak": ["linebreak"],
         }
         self.contextualised = False
@@ -572,7 +572,7 @@ class ContextManager:
                     index += lookahead_return[0]
                     line_number += lookahead_return[1]
 
-                # future: advanced lookahead for * logic
+                # FUTURE: Advanced lookahead for * logic
                 # elif token.label in self.dict_advanced_lookahead:
 
                 elif isinstance(token, syntax.FinalSemanticType):  # one-liners
