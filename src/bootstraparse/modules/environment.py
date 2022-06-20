@@ -104,3 +104,12 @@ class Environment:
                 f'\nSecondary parameters:\n{self._sParams}'
                 f'\nReserved parameters are preceded with an underscore.'
             ), level='CRITICAL')  # Could also add attribute as a new entry
+
+    def __repr__(self):
+        """
+        Returns a string representation of the environment.
+        :return: String representation of the environment.
+        """
+        return f'Environment object with the following parameters:\n' \
+               f'Mandatory parameters:\n{self._mParams}\n' \
+               f'Secondary parameters:\n{self._sParams}'
